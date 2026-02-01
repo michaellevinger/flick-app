@@ -48,9 +48,10 @@
 ### 1. The "Fresh-Start" Profile ✅ COMPLETE
 **Status:** Implemented in `src/screens/CameraScreen.js` and `src/screens/SetupScreen.js`
 
-- **The Selfie:** Uses `expo-camera`. Photos are NEVER saved to device gallery.
-  - Front-facing camera only
-  - No gallery access
+- **The Selfie:** Uses `expo-camera` with gallery fallback. Photos upload to Supabase Storage.
+  - Front-facing camera (primary, inviting design)
+  - Gallery access available (secondary option)
+  - Camera encouraged with "Show Your Real Self" messaging
   - Retake option before confirming
   - Uploads directly to Supabase Storage (`selfies` bucket)
 

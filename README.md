@@ -5,7 +5,7 @@ A proximity-based social catalyst designed to eliminate "approach anxiety" by pr
 
 ### Phase 1: Minimum Viable Interaction ✅
 
-- **Camera Check-in Screen**: Take a fresh selfie (no old photos or gallery access)
+- **Camera Check-in Screen**: Take a fresh selfie (camera encouraged, gallery available)
 - **Setup Form**: Collect Name + Age only (no bios)
 - **Main Dashboard**: Toggle ON/OFF for availability with visual feedback
 - **Radar Feed UI**: Shows nearby users with distance and nudge capability
@@ -101,7 +101,7 @@ Follow the detailed guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) to:
 
 ### The Flow
 
-1. **Check-in**: Take a fresh selfie (no old photos allowed!)
+1. **Check-in**: Take a fresh selfie (camera encouraged, gallery available)
 2. **Profile**: Enter your first name and age
 3. **Go Live**: Your profile is created in Supabase and status is set to ON
 4. **Location Updates**: Every 60 seconds, your location updates automatically
