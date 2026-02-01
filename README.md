@@ -1,4 +1,4 @@
-# SPOT - Digital Social Lubricant
+# HeyU - Digital Social Lubricant
 
 A proximity-based social app that strips away bios and chat, leaning into the "proximity is chemistry" philosophy.
 
@@ -39,6 +39,16 @@ A proximity-based social app that strips away bios and chat, leaning into the "p
 - **Distance Dissolution**: Matches auto-delete when users move >100m apart
 - **Heartbeat Integration**: Distance checks run every 60 seconds
 - **Complete Cleanup**: Selfies, nudges, and user data all removed
+
+### Phase 5: Number Exchange "The Off-Ramp" ✅
+
+- **Secure Phone Exchange**: After matching, users can optionally exchange phone numbers
+- **15-Minute TTL**: Numbers self-destruct after 15 minutes with countdown timer
+- **Proximity Wipe**: Exchange auto-deletes if users move >100m apart
+- **Request/Accept Flow**: Both users must consent before numbers are revealed
+- **Vault Screen**: Displays both numbers with quick actions (Call, Text, Save)
+- **Privacy First**: No history kept after expiration, complete data deletion
+- **Optional Feature**: Phone number is optional during profile setup
 
 ## Tech Stack
 
@@ -108,6 +118,7 @@ users table (PostGIS-enabled)
 ├── name (TEXT)
 ├── age (INTEGER)
 ├── selfie_url (TEXT)
+├── phone_number (TEXT) - Optional, for number exchange
 ├── status (BOOLEAN) - ON/OFF
 ├── location (GEOGRAPHY) - Lat/long point
 └── last_heartbeat (TIMESTAMP) - For auto-wipe
@@ -116,6 +127,17 @@ nudges table
 ├── from_user_id → users(id)
 ├── to_user_id → users(id)
 └── created_at
+
+exchanges table (15-minute TTL)
+├── id (UUID, primary key)
+├── user_a_id → users(id)
+├── user_b_id → users(id)
+├── user_a_phone (TEXT)
+├── user_b_phone (TEXT)
+├── status (TEXT) - pending/accepted
+├── requested_by (TEXT)
+├── created_at (TIMESTAMP)
+└── expires_at (TIMESTAMP) - NOW() + 15 minutes
 
 Storage: selfies bucket (public, auto-delete policies)
 ```
@@ -142,23 +164,33 @@ Storage: selfies bucket (public, auto-delete policies)
 ## Project Structure
 
 ```
-spot-app/
+heyu-app/
 ├── src/
 │   ├── screens/
 │   │   ├── CameraScreen.js      # Selfie capture with permissions
-│   │   ├── SetupScreen.js       # Name + Age form → Supabase
-│   │   └── DashboardScreen.js   # Main app with real data
+│   │   ├── SetupScreen.js       # Name + Age + Phone (optional)
+│   │   ├── DashboardScreen.js   # Main app with real data
+│   │   ├── GreenLightScreen.js  # Match screen with number exchange
+│   │   └── VaultScreen.js       # Number exchange with 15-min timer
 │   ├── lib/
 │   │   ├── supabase.js          # Supabase client config
 │   │   ├── database.js          # DB queries and functions
 │   │   ├── location.js          # Location utilities
-│   │   └── userContext.js       # User state management + heartbeat
+│   │   ├── userContext.js       # User state management + heartbeat
+│   │   ├── nudges.js            # Nudge operations
+│   │   ├── vault.js             # Number exchange operations
+│   │   └── matchCleanup.js      # Distance-based dissolution
 │   └── constants/
 │       └── theme.js             # Design system (black/white/green)
+├── supabase/
+│   └── functions/
+│       └── auto-cleanup/        # Edge Function for auto-wipe
 ├── App.js                       # Navigation + UserProvider
 ├── app.json                     # Expo config + permissions
-├── supabase-setup.sql           # Complete DB schema
-└── SUPABASE_SETUP.md            # Step-by-step setup guide
+├── supabase-setup.sql           # Base DB schema
+├── supabase-exchanges-schema.sql # Number exchange schema
+├── SUPABASE_SETUP.md            # Step-by-step setup guide
+└── NUMBER_EXCHANGE_SETUP.md     # Number exchange setup guide
 ```
 
 ## What's Next

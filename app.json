@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "spot-app",
-    "slug": "spot-app",
+    "name": "HeyU",
+    "slug": "heyu-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,8 +15,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "SPOT needs access to your camera to take a fresh check-in selfie.",
-        "NSLocationWhenInUseUsageDescription": "SPOT uses your location to show you people nearby within 100m."
+        "NSCameraUsageDescription": "HeyU needs access to your camera to take a fresh check-in selfie.",
+        "NSLocationWhenInUseUsageDescription": "HeyU uses your location to show you people nearby within 100m."
       }
     },
     "android": {
