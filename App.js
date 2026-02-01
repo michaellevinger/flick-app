@@ -1,20 +1,45 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+
+import CameraScreen from './src/screens/CameraScreen';
+import SetupScreen from './src/screens/SetupScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
+import GreenLightScreen from './src/screens/GreenLightScreen';
+import VaultScreen from './src/screens/VaultScreen';
+import { COLORS } from './src/constants/theme';
+import { UserProvider } from './src/lib/userContext';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <UserProvider>
+      <StatusBar style="dark" />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Camera"
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: COLORS.white },
+          }}
+        >
+          <Stack.Screen name="Camera" component={CameraScreen} />
+          <Stack.Screen name="Setup" component={SetupScreen} />
+          <Stack.Screen name="Dashboard" component={DashboardScreen} />
+          <Stack.Screen
+            name="GreenLight"
+            component={GreenLightScreen}
+            options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="Vault"
+            component={VaultScreen}
+            options={{ presentation: 'modal' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

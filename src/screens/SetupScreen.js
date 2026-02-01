@@ -1,0 +1,197 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { useUser } from '../lib/userContext';
+
+export default function SetupScreen({ route, navigation }) {
+  const { photoUri } = route.params;
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const { createUser } = useUser();
+
+  const isValid = name.trim().length > 0 && age.length > 0 && parseInt(age) >= 18;
+
+  const handleContinue = async () => {
+    if (!isValid || isCreating) return;
+
+    setIsCreating(true);
+
+    try {
+      await createUser({
+        name: name.trim(),
+        age: parseInt(age),
+        photoUri,
+        phoneNumber: phoneNumber.trim() || null,
+      });
+
+      navigation.navigate('Dashboard');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      Alert.alert(
+        'Error',
+        'Failed to create your profile. Please check your internet connection and try again.'
+      );
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <View style={styles.content}>
+        <Text style={styles.title}>Almost There</Text>
+        <Text style={styles.subtitle}>Just the basics</Text>
+
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>First Name</Text>
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="Alex"
+              placeholderTextColor={COLORS.gray}
+              autoCapitalize="words"
+              maxLength={20}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Age</Text>
+            <TextInput
+              style={styles.input}
+              value={age}
+              onChangeText={setAge}
+              placeholder="25"
+              placeholderTextColor={COLORS.gray}
+              keyboardType="number-pad"
+              maxLength={2}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>
+              Phone Number <Text style={styles.optionalLabel}>(Optional)</Text>
+            </Text>
+            <Text style={styles.helperText}>
+              For number exchange after matching
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              placeholder="(555) 123-4567"
+              placeholderTextColor={COLORS.gray}
+              keyboardType="phone-pad"
+              maxLength={20}
+            />
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.button, (!isValid || isCreating) && styles.buttonDisabled]}
+          onPress={handleContinue}
+          disabled={!isValid || isCreating}
+        >
+          {isCreating ? (
+            <ActivityIndicator color={COLORS.black} />
+          ) : (
+            <Text style={styles.buttonText}>Continue</Text>
+          )}
+        </TouchableOpacity>
+
+        <Text style={styles.notice}>
+          No bios. No chat. Just proximity.
+        </Text>
+      </View>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: SPACING.xl,
+  },
+  title: {
+    ...TYPOGRAPHY.title,
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
+  },
+  subtitle: {
+    ...TYPOGRAPHY.body,
+    textAlign: 'center',
+    color: COLORS.gray,
+    marginBottom: SPACING.xxl,
+  },
+  form: {
+    gap: SPACING.lg,
+    marginBottom: SPACING.xl,
+  },
+  inputGroup: {
+    gap: SPACING.sm,
+  },
+  label: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+  },
+  optionalLabel: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.gray,
+    fontWeight: '400',
+  },
+  helperText: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.gray,
+    marginBottom: SPACING.xs,
+  },
+  input: {
+    ...TYPOGRAPHY.subtitle,
+    borderWidth: 2,
+    borderColor: COLORS.black,
+    borderRadius: 8,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
+    backgroundColor: COLORS.white,
+  },
+  button: {
+    backgroundColor: COLORS.green,
+    paddingVertical: SPACING.md,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  buttonDisabled: {
+    backgroundColor: COLORS.gray,
+  },
+  buttonText: {
+    ...TYPOGRAPHY.subtitle,
+    color: COLORS.black,
+    fontWeight: 'bold',
+  },
+  notice: {
+    ...TYPOGRAPHY.caption,
+    textAlign: 'center',
+    color: COLORS.gray,
+  },
+});

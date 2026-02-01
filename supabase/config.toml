@@ -1,0 +1,32 @@
+# Supabase Local Development Config
+# This file is for local development with Supabase CLI
+# Not needed for production deployment
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:19006"
+additional_redirect_urls = []
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+# Edge Functions
+[functions.auto-cleanup]
+verify_jwt = false
