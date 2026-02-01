@@ -8,6 +8,13 @@
 - Updated README to document Number Exchange feature
 - All code committed and pushed to GitHub
 
+### 1.5. Camera Screen Update ✅
+- Added gallery access option to camera screen
+- Camera remains primary/encouraged option with inviting design
+- "Choose from Gallery" button as subtle secondary option
+- Updated messaging: "Show Your Real Self" + "Take a fresh selfie"
+- Gallery button has translucent styling (less prominent)
+
 ### 2. Supabase Project Created ✅
 - Project URL: `https://oithyuuztrmohcbfglrh.supabase.co`
 - Anon Key: Configured in `.env` file (not committed to git)
