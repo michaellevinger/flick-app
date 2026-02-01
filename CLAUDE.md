@@ -4,7 +4,7 @@
 ## 🎯 Project Status
 
 ### ✅ Completed Features
-- [x] Fresh-Start Profile (Camera + Name + Age)
+- [x] Fresh-Start Profile (Camera + Name + Age + Optional Phone)
 - [x] Supabase backend integration (PostGIS + Storage)
 - [x] 100M Radar with real-time proximity detection
 - [x] Location tracking with 60s heartbeat
@@ -16,11 +16,21 @@
 - [x] Real-time nudge subscriptions
 - [x] Auto-wipe automation (Supabase Edge Function)
 - [x] Distance-based match dissolution
+- [x] Number Exchange "The Off-Ramp" (15-min TTL, proximity wipe)
+- [x] Request/Accept flow for number sharing
+- [x] Vault Screen with countdown timer
+
+### 🚧 In Progress - Supabase Setup
+- [x] Project created (oithyuuztrmohcbfglrh.supabase.co)
+- [x] .env file configured with credentials
+- [x] PostGIS extension manually enabled
+- [ ] Base schema SQL execution (users, nudges, functions)
+- [ ] Exchange schema SQL execution (exchanges table)
+- [ ] Storage bucket creation (selfies)
+- [ ] Edge Function deployment (auto-cleanup)
 
 ### 🔮 Future
-- [ ] Number exchange flow
 - [ ] Push notifications
-- [ ] Match history (temporary storage)
 - [ ] Polish & testing (Task #10)
 
 ---
