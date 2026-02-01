@@ -1,6 +1,5 @@
-# HeyU - Digital Social Lubricant
-
-A proximity-based social app that strips away bios and chat, leaning into the "proximity is chemistry" philosophy.
+# HeyU — The Digital "Green Light"
+A proximity-based social catalyst designed to eliminate "approach anxiety" by providing a digital signal for face-to-face interaction. It strips away bios and chat, replacing the digital distraction with a "warm introduction" to the people standing right in front of you.
 
 ## What We've Built So Far
 
