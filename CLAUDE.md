@@ -20,16 +20,17 @@
 - [x] Request/Accept flow for number sharing
 - [x] Vault Screen with countdown timer
 
-### 🚧 In Progress - Supabase Setup
+### ✅ Supabase Setup - COMPLETE
 - [x] Project created (oithyuuztrmohcbfglrh.supabase.co)
 - [x] .env file configured with credentials
 - [x] PostGIS extension manually enabled
-- [ ] Base schema SQL execution (users, nudges, functions)
-- [ ] Exchange schema SQL execution (exchanges table)
-- [ ] Storage bucket creation (selfies)
-- [ ] Edge Function deployment (auto-cleanup)
+- [x] Base schema SQL execution (users, nudges, functions)
+- [x] Exchange schema SQL execution (exchanges table)
+- [x] Storage bucket creation (selfies)
+- [ ] Edge Function deployment (auto-cleanup) - Optional
 
-### 🔮 Future
+### 🔮 Next Up
+- [ ] End-to-end testing
 - [ ] Push notifications
 - [ ] Polish & testing (Task #10)
 

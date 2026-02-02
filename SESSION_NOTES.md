@@ -27,56 +27,60 @@
 
 ---
 
-## Current Status: Supabase Database Setup IN PROGRESS
+## Current Status: Supabase Database Setup ✅ COMPLETE
 
 ### ✅ Completed Steps:
 1. Supabase project created
 2. .env file created with credentials
 3. PostGIS extension enabled (ran `CREATE EXTENSION IF NOT EXISTS postgis;`)
+4. **Base schema SQL executed** (users, nudges, functions)
+5. **Exchange schema SQL executed** (exchanges table, phone_number column)
+6. **Storage bucket created** (selfies, PUBLIC)
 
-### 🔴 NEXT STEPS (When You Return):
+### 🎯 NEXT STEPS: End-to-End Testing
 
-#### Step 1: Run Base Schema SQL
-1. Go to Supabase dashboard: https://supabase.com/dashboard/project/oithyuuztrmohcbfglrh
-2. Click **SQL Editor** → **New query**
-3. Copy ALL the SQL from the file: `supabase-setup.sql` (lines 8-122)
-4. Paste into SQL Editor
-5. Click **Run**
-6. Should see "Success. No rows returned"
-
-**What this creates:**
-- `users` table with PostGIS location column
-- `nudges` table for matches
-- SQL functions: `find_nearby_users()`, `check_mutual_nudge()`, `auto_wipe_inactive_users()`
-- RLS policies
-
-#### Step 2: Run Exchange Schema SQL
-1. SQL Editor → **New query**
-2. Copy ALL the SQL from: `supabase-exchanges-schema.sql`
-3. Paste and Run
-4. Should see "Success. No rows returned"
-
-**What this creates:**
-- Adds `phone_number` column to users
-- `exchanges` table with 15-minute TTL
-- SQL functions: `cleanup_expired_exchanges()`, `get_active_exchange()`
-- RLS policies
-
-#### Step 3: Create Storage Bucket
-1. In Supabase dashboard, click **Storage**
-2. Click **Create a new bucket**
-3. Name: `selfies`
-4. **Toggle "Public bucket" to ON** ⚠️ Important!
-5. Click **Create bucket**
-
-#### Step 4: Verify Setup (Optional but Recommended)
-Run this command in terminal to verify everything works:
+#### Step 1: Start the App
 ```bash
 cd /Users/michaellevinger/dev/spot-app/spot-app
 npx expo start
 ```
 
-Try creating a profile and see if it saves to Supabase!
+#### Step 2: Test Full User Journey
+1. **Onboarding:**
+   - Take a selfie (or choose from gallery)
+   - Enter name and age
+   - Verify profile saves to Supabase
+
+2. **Dashboard:**
+   - Check that status defaults to ON
+   - Verify location tracking starts automatically
+   - Test ON/OFF toggle
+
+3. **Proximity Testing (requires 2 devices):**
+   - Create profiles on 2 devices
+   - Move devices within 100m of each other
+   - Verify they appear in each other's radar
+   - Test distance sorting
+
+4. **Nudge System:**
+   - User A nudges User B
+   - Verify User B sees green border + "Wants to meet"
+   - User B nudges back
+   - Verify both see Green Light screen with haptics
+
+5. **Number Exchange:**
+   - From Green Light, request number
+   - Accept on other device
+   - Verify both see each other's numbers
+   - Check 15-minute countdown timer
+   - Test distance-based wipe (move >100m apart)
+
+#### Step 3: Verify Database
+Check Supabase dashboard to confirm:
+- Users are being created in `users` table
+- Locations are being stored correctly
+- Nudges are being recorded in `nudges` table
+- Exchanges are created with proper TTL
 
 ---
 
@@ -96,10 +100,13 @@ Try creating a profile and see if it saves to Supabase!
    - Proximity-based wipe (>100m)
    - Vault screen with quick actions
 
-### What's NOT Working Yet:
-❌ Database connection (needs schema setup - see Step 1 above)
-❌ Photo uploads (needs storage bucket - see Step 3 above)
-❌ Auto-cleanup (needs Edge Function deployment - optional for MVP)
+### What's Ready to Test:
+✅ Database connection (schema complete!)
+✅ Photo uploads (storage bucket created!)
+✅ All app features coded and ready
+
+### Optional Enhancement:
+⚪ Auto-cleanup Edge Function deployment (not required for MVP testing)
 
 ---
 
@@ -166,28 +173,26 @@ git log --oneline -5
 
 **User's Intent:** Build and test HeyU app end-to-end
 
-**Current Blocker:** Need to complete Supabase database setup (3 steps: base schema, exchange schema, storage bucket)
+**Latest Update (2026-02-02):** User completed all 3 Supabase setup steps!
 
-**User's Question:** "can you commit and push and make sure you update the status in the CLAUDE MD and the to do list? i want all the context to be remained"
-
-**My Response:**
-- ✅ Committed and pushed all changes
-- ✅ Updated CLAUDE.md with current status
-- ✅ Created Task #12 for Supabase setup (marked as in_progress)
-- ✅ Created this SESSION_NOTES.md to preserve all context
+**Current Status:**
+- ✅ All code features implemented
+- ✅ Supabase database fully configured
+- ✅ Storage bucket created
+- ✅ Ready for end-to-end testing
 
 **Next Action When User Returns:**
-Resume at "Step 1: Run Base Schema SQL" above. The SQL is ready in `supabase-setup.sql` - just needs to be pasted into Supabase SQL Editor and run.
+Start testing the app! Run `npx expo start` and go through the full user journey (see "Step 2: Test Full User Journey" above). This is the first time everything should work together.
 
 ---
 
 ## Task List Status
 
 - Task #1-11: ✅ Completed (all features implemented)
-- Task #12: 🚧 In Progress (Supabase database setup)
-- Task #10: 📋 Pending (Polish & Testing - after Task #12)
+- Task #12: ✅ Completed (Supabase database setup)
+- Task #10: 📋 Next Up (End-to-end testing & polish)
 
 ---
 
-**Last Updated:** 2026-02-01 (User went to work during Supabase setup)
-**Resume From:** Step 1 - Run base schema SQL in Supabase SQL Editor
+**Last Updated:** 2026-02-02 (Supabase setup completed)
+**Resume From:** End-to-end testing - Run `npx expo start` and test all features
