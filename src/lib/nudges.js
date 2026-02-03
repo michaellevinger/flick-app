@@ -1,6 +1,18 @@
 import { supabase } from './supabase';
 
 /**
+ * Normalize user data to ensure correct types
+ */
+function normalizeUserData(user) {
+  if (!user) return null;
+  return {
+    ...user,
+    status: user.status !== undefined ? Boolean(user.status) : undefined,
+    age: user.age !== undefined ? Number(user.age) : undefined,
+  };
+}
+
+/**
  * Send a nudge from one user to another
  */
 export async function sendNudge(fromUserId, toUserId) {
@@ -165,7 +177,7 @@ export async function getMatchedUserInfo(userId) {
 
     if (error) throw error;
 
-    return data;
+    return normalizeUserData(data);
   } catch (error) {
     console.error('Error fetching matched user info:', error);
     throw error;

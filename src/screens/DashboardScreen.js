@@ -243,7 +243,7 @@ export default function DashboardScreen({ navigation }) {
           <Text style={styles.toggleStatus}>{user.status ? 'ON' : 'OFF'}</Text>
         </View>
         <Switch
-          value={user.status}
+          value={Boolean(user.status)}
           onValueChange={handleToggleAvailability}
           trackColor={{ false: COLORS.gray, true: COLORS.green }}
           thumbColor={COLORS.white}

@@ -1,6 +1,18 @@
 import { supabase } from './supabase';
 
 /**
+ * Normalize user data to ensure correct types
+ */
+function normalizeUserData(user) {
+  if (!user) return null;
+  return {
+    ...user,
+    status: Boolean(user.status),
+    age: Number(user.age),
+  };
+}
+
+/**
  * Create or update a user in the database
  */
 export async function upsertUser({ id, name, age, selfieUrl, status, location, phoneNumber }) {
@@ -29,7 +41,7 @@ export async function upsertUser({ id, name, age, selfieUrl, status, location, p
     throw error;
   }
 
-  return data;
+  return normalizeUserData(data);
 }
 
 /**
@@ -99,7 +111,7 @@ export async function findNearbyUsers(userId, location, radiusMeters = 100) {
     throw error;
   }
 
-  return data || [];
+  return (data || []).map(normalizeUserData);
 }
 
 /**

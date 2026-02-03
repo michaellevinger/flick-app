@@ -41,7 +41,10 @@ export function UserProvider({ children }) {
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
-        setUser(JSON.parse(userData));
+        const parsedUser = JSON.parse(userData);
+        // Ensure status is always a boolean
+        parsedUser.status = Boolean(parsedUser.status);
+        setUser(parsedUser);
       }
     } catch (error) {
       console.error('Error loading user:', error);
