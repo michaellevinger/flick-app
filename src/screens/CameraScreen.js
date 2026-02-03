@@ -48,14 +48,20 @@ export default function CameraScreen({ navigation }) {
   };
 
   const pickFromGallery = async () => {
+    // Request media library permissions first
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to select photos!');
+      return;
+    }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [3, 4],
+      allowsEditing: false, // Skip crop screen for simpler UX
       quality: 0.7,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       setPhoto({ uri: result.assets[0].uri });
     }
   };
