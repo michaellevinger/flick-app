@@ -1,4 +1,4 @@
-# Session Notes - 2026-02-01
+# Session Notes - 2026-02-03
 
 ## What We Accomplished Today
 
@@ -194,5 +194,67 @@ Start testing the app! Run `npx expo start` and go through the full user journey
 
 ---
 
-**Last Updated:** 2026-02-02 (Supabase setup completed)
-**Resume From:** End-to-end testing - Run `npx expo start` and test all features
+---
+
+## Session 2026-02-03: Storage Setup & Android Bug Fix ✅
+
+### What We Accomplished:
+
+#### 1. Storage Bucket Configuration ✅
+- Created "selfies" storage bucket via Supabase Dashboard
+- Configured bucket as PUBLIC
+- Added RLS policies for uploads, downloads, and deletes:
+  - `Allow anonymous uploads` - INSERT policy
+  - `Allow public downloads` - SELECT policy
+  - `Allow deletes` - DELETE policy
+- Verified uploads working with test-upload.js script
+
+#### 2. Fixed Critical Android Bug ✅
+**Issue:** `java.lang.String cannot be cast to java.lang.Boolean` error
+**Root Cause:** Switch component receiving string "true"/"false" instead of boolean
+**Solution:**
+- Added `normalizeUserData()` helper function to database.js and nudges.js
+- Ensures `status` field is always boolean, `age` is always number
+- Applied to all database queries: upsertUser(), findNearbyUsers(), getMatchedUserInfo()
+- Fixed Switch component in DashboardScreen.js with `Boolean(user.status)`
+- Fixed userContext.js to normalize data when loading from AsyncStorage
+
+#### 3. Testing Infrastructure ✅
+Created comprehensive testing setup:
+- **TESTING_CHECKLIST.md** - Complete 9-scenario testing guide
+- **READY_TO_TEST.md** - Quick start guide with setup instructions
+- **manage-storage.js** - Unified storage management script
+- **test-upload.js** - Validates storage upload/download/delete
+- **test-setup.sh** - One-command verification script
+- **check-policies.js** - Debug storage policies
+
+#### 4. Environment Updates ✅
+- Updated package.json with dotenv, TypeScript types, Expo CLI
+- Updated supabase.js to load from environment variables
+- Updated verify-supabase.js with dotenv support
+- All verification scripts now use .env file
+
+### Git Commit:
+- Commit: `6c9e82a` - "Fix Android boolean casting error and complete Supabase setup"
+- Pushed to: https://github.com/MikeyLevinger/heyu-app
+- 16 files changed, 1736 insertions(+), 318 deletions(-)
+
+### Current Status:
+✅ Database fully configured
+✅ Storage bucket operational
+✅ All RLS policies configured
+✅ Android boolean bug FIXED
+✅ Tunnel mode working (`npx expo start --tunnel`)
+🧪 **READY FOR APP TESTING**
+
+### Next Steps:
+1. Reload app with fixes (should work now!)
+2. Test onboarding flow (camera → setup → dashboard)
+3. Verify status toggle works without error
+4. Test location tracking
+5. Begin multi-device proximity testing
+
+---
+
+**Last Updated:** 2026-02-03 (Android bug fixed, storage configured)
+**Resume From:** Reload app - Error should be fixed, ready for onboarding test
