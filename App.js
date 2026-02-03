@@ -1,7 +1,11 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
+import { enableScreens } from 'react-native-screens';
+
+// WORKAROUND: Disable native screens for Expo SDK 54 compatibility
+enableScreens(false);
 
 import CameraScreen from './src/screens/CameraScreen';
 import SetupScreen from './src/screens/SetupScreen';
@@ -11,7 +15,7 @@ import VaultScreen from './src/screens/VaultScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
@@ -22,22 +26,13 @@ export default function App() {
           initialRouteName="Camera"
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: COLORS.white },
           }}
         >
           <Stack.Screen name="Camera" component={CameraScreen} />
           <Stack.Screen name="Setup" component={SetupScreen} />
           <Stack.Screen name="Dashboard" component={DashboardScreen} />
-          <Stack.Screen
-            name="GreenLight"
-            component={GreenLightScreen}
-            options={{ presentation: 'modal' }}
-          />
-          <Stack.Screen
-            name="Vault"
-            component={VaultScreen}
-            options={{ presentation: 'modal' }}
-          />
+          <Stack.Screen name="GreenLight" component={GreenLightScreen} />
+          <Stack.Screen name="Vault" component={VaultScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
