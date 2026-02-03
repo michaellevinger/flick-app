@@ -9,10 +9,21 @@ export async function requestLocationPermission() {
 }
 
 /**
- * Get current location
+ * Get current location (requests permissions if needed)
  */
 export async function getCurrentLocation() {
   try {
+    // Check if we have permission
+    const { status } = await Location.getForegroundPermissionsAsync();
+
+    if (status !== 'granted') {
+      // Request permission
+      const { status: newStatus } = await Location.requestForegroundPermissionsAsync();
+      if (newStatus !== 'granted') {
+        throw new Error('Location permission not granted');
+      }
+    }
+
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
     });

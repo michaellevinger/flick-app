@@ -88,22 +88,21 @@ export default function CameraScreen({ navigation }) {
         style={styles.camera}
         facing="front"
         ref={cameraRef}
-      >
-        <View style={styles.cameraOverlay}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Show Your Real Self</Text>
-            <Text style={styles.subtitle}>Take a fresh selfie</Text>
-          </View>
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-              <View style={styles.captureButtonInner} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.galleryButton} onPress={pickFromGallery}>
-              <Text style={styles.galleryButtonText}>Choose from Gallery</Text>
-            </TouchableOpacity>
-          </View>
+      />
+      <View style={styles.cameraOverlay}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Show Your Real Self</Text>
+          <Text style={styles.subtitle}>Take a fresh selfie</Text>
         </View>
-      </CameraView>
+        <View style={styles.actions}>
+          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+            <View style={styles.captureButtonInner} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.galleryButton} onPress={pickFromGallery}>
+            <Text style={styles.galleryButtonText}>Choose from Gallery</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
@@ -147,7 +146,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   cameraOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'transparent',
     justifyContent: 'space-between',
     alignItems: 'center',

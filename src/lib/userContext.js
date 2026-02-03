@@ -67,8 +67,15 @@ export function UserProvider({ children }) {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      // Get current location
-      const location = await getCurrentLocation();
+      // Try to get current location (optional - will be set later if permissions not granted)
+      let location = null;
+      try {
+        location = await getCurrentLocation();
+        console.log('Location obtained during profile creation:', location);
+      } catch (locationError) {
+        console.log('Location not available during profile creation (will request later):', locationError.message);
+        // Continue without location - it will be set on first heartbeat
+      }
 
       // Upload selfie
       const selfieUrl = await uploadSelfie(userId, photoUri);
@@ -117,16 +124,18 @@ export function UserProvider({ children }) {
   };
 
   const updateLocation = async () => {
-    if (!user) return;
+    if (!user) return null;
 
     try {
       const location = await getCurrentLocation();
       await updateUserLocation(user.id, location);
       await saveUser({ ...user, location });
+      console.log('Location updated successfully');
       return location;
     } catch (error) {
-      console.error('Error updating location:', error);
-      throw error;
+      console.log('Could not update location:', error.message);
+      // Don't throw - allow heartbeat to continue without location update
+      return null;
     }
   };
 
