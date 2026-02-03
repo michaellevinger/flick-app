@@ -12,18 +12,21 @@ I'm working on HeyU app (proximity-based social app).
 PROJECT: /Users/michaellevinger/dev/testing
 GITHUB: https://github.com/MikeyLevinger/heyu-app
 
-CURRENT STATUS (2026-02-03):
+CURRENT STATUS (2026-02-03 Evening):
 - ✅ All features coded and complete
-- ✅ Supabase fully configured (database + storage + policies)
+- ✅ Supabase fully configured (database + storage + policies VERIFIED)
 - ✅ Comprehensive test suite created - ALL 6 TESTS PASSED
-- ✅ App loads via USB connection on Android
+- ✅ App loads successfully via QR code scanning
 - ✅ Camera screen works and captures photos
-- 🚧 Testing profile creation with storage upload
-- ⏳ Need to test full user flow
+- ✅ Setup form working
+- ✅ Storage policies confirmed (3 policies exist)
+- 🧪 READY to test profile creation with upload
+- ⏳ Need to test dashboard and remaining features
 
 SETUP REQUIRED:
 - Start Expo: `npx expo start --localhost --clear`
-- Connect Android phone via USB (USB debugging enabled)
+- **Scan QR code** with Expo Go (MOST RELIABLE METHOD)
+- Alternative: Connect via USB and press `a` (less reliable)
 - Or use iOS Simulator (requires Xcode)
 
 WHAT TO DO:
@@ -53,10 +56,11 @@ KEY FILES:
 - User context
 - Location services
 
-### Currently Testing 🚧
-- Profile creation with photo upload to Supabase Storage
-- Dashboard screen loading
+### Currently Testing 🧪
+- **NEXT:** Profile creation with photo upload (storage policies verified!)
+- Dashboard screen loading after profile creation
 - Location tracking activation
+- User data persistence
 
 ### Not Yet Tested ⏳
 - Proximity detection (2 devices)
@@ -68,7 +72,8 @@ KEY FILES:
 
 ### Known Issues 🐛
 - Metro bundler cache aggressive (requires frequent `--clear`)
-- Android Expo Go requires USB connection (WiFi unstable)
+- **QR code scanning most reliable** (USB `a` command sometimes fails to connect)
+- WiFi/tunnel connections unstable
 - expo-camera v17 API changes (now using CameraView)
 
 ---
@@ -105,11 +110,12 @@ git log --oneline -10
 
 ## 💡 Tips for Next Session:
 
-1. **Start with USB connection** - Most reliable for Android
-2. **Clear Metro cache** if you see old errors
+1. **Use QR code scanning** - Most reliable connection method ⭐
+2. **Clear Metro cache** if you see old errors: `--clear --reset-cache`
 3. **Check SESSION_NOTES.md bottom** for latest updates
 4. **Close/reopen Expo Go app** if changes don't appear
 5. **Use test suite** (App.test-suite.js) to isolate issues
+6. **Wait for "Bundled XXXXms"** message before expecting app to load
 
 ---
 

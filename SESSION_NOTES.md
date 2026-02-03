@@ -343,5 +343,54 @@ Created comprehensive testing setup:
 
 ---
 
-**Last Updated:** 2026-02-03 16:15 (App loads, camera works, testing upload fix)
-**Resume From:** Clear cache, restart app, test profile creation
+---
+
+## Session 2026-02-03 (Evening): Final Testing & Storage Policy Verification ✅
+
+### Progress:
+
+#### 1. Connection Method Resolved ✅
+- **Issue:** USB `a` command not establishing proper Metro connection
+- **Solution:** Use QR code scanning instead
+- **Result:** App loads successfully via QR code
+- More reliable than USB auto-connect
+
+#### 2. Storage Policies Verified ✅
+- Confirmed all 3 policies exist in Supabase:
+  - ✅ Allow anonymous uploads (INSERT, public)
+  - ✅ Allow public downloads (SELECT, anon)
+  - ✅ Allow Deletes (DELETE, anon)
+- Policies located in Schema section (storage.objects)
+- Storage paths fixed (no double nesting)
+
+#### 3. Current Status - Ready for Profile Creation ✅
+- ✅ App loads via QR code
+- ✅ Camera screen appears
+- ✅ Photo capture working
+- ✅ Setup form accepts input
+- ✅ Storage policies configured correctly
+- 🧪 **NEXT:** Test profile creation with photo upload
+
+### What Works End-to-End:
+1. ✅ Start Expo with `npx expo start --localhost --clear`
+2. ✅ Scan QR code with Expo Go
+3. ✅ App loads and displays Camera screen
+4. ✅ Take photo successfully
+5. ✅ Setup form loads with name/age inputs
+6. 🧪 Profile creation with upload (ready to test)
+
+### Key Learnings - Connection Methods:
+- **QR Code scanning** = Most reliable (✅ RECOMMENDED)
+- **USB with `a` command** = Sometimes doesn't establish Metro connection
+- **WiFi/Tunnel** = Unreliable with network issues
+
+### Files Status:
+- All code fixes committed and pushed
+- Documentation fully updated
+- Test suite available (App.test-suite.js)
+- Storage policies verified in Supabase
+
+---
+
+**Last Updated:** 2026-02-03 22:58 (Storage policies verified, ready for final test)
+**Resume From:** Test profile creation - scan QR, take photo, create profile
