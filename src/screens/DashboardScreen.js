@@ -134,7 +134,15 @@ export default function DashboardScreen({ navigation }) {
         user.location,
         PROXIMITY_RADIUS
       );
-      setNearbyUsers(users);
+
+      // Filter out current user as safety check (should be handled by SQL, but just in case)
+      const filteredUsers = users.filter(u => u.id !== user.id);
+
+      console.log('Current user ID:', user.id);
+      console.log('Nearby users found:', users.length);
+      console.log('After filtering self:', filteredUsers.length);
+
+      setNearbyUsers(filteredUsers);
     } catch (error) {
       console.error('Error loading nearby users:', error);
     }
