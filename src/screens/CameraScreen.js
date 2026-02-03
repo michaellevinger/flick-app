@@ -90,7 +90,7 @@ export default function CameraScreen({ navigation }) {
     <View style={styles.container}>
       <Camera
         style={styles.camera}
-        type={Camera.Constants.Type.front}
+        type="front"
         ref={cameraRef}
       >
         <View style={styles.cameraOverlay}>
