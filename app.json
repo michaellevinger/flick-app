@@ -27,10 +27,16 @@
         "CAMERA",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "package": "com.michaellevinger123.nudgeapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "71b51e6a-2737-4754-9999-58df330a12b1"
+      }
     }
   }
 }
