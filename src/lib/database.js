@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import * as FileSystem from 'expo-file-system';
 
 /**
  * Normalize user data to ensure correct types
@@ -131,34 +132,53 @@ export async function deleteUser(userId) {
  */
 export async function uploadSelfie(userId, photoUri) {
   try {
-    // Fetch the photo as a blob
-    const response = await fetch(photoUri);
-    const blob = await response.blob();
+    console.log('uploadSelfie: Starting upload for', userId);
+    console.log('uploadSelfie: Photo URI:', photoUri);
 
     // Create a unique filename
     const filename = `${userId}-${Date.now()}.jpg`;
 
+    // Read file as base64
+    const base64 = await FileSystem.readAsStringAsync(photoUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    console.log('uploadSelfie: File read successfully, size:', base64.length);
+
+    // Convert base64 to ArrayBuffer for upload
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    console.log('uploadSelfie: Converted to byte array, size:', byteArray.length);
+    console.log('uploadSelfie: Uploading to Supabase...');
+
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('selfies')
-      .upload(filename, blob, {
+      .upload(filename, byteArray.buffer, {
         contentType: 'image/jpeg',
         upsert: true,
       });
 
     if (error) {
-      console.error('Error uploading selfie:', error);
+      console.error('uploadSelfie: Upload error:', error);
       throw error;
     }
+
+    console.log('uploadSelfie: Upload successful!', data);
 
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('selfies')
       .getPublicUrl(filename);
 
+    console.log('uploadSelfie: Public URL:', urlData.publicUrl);
     return urlData.publicUrl;
   } catch (error) {
-    console.error('Error in uploadSelfie:', error);
+    console.error('uploadSelfie: Error:', error);
     throw error;
   }
 }
