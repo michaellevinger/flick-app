@@ -1,39 +1,69 @@
 # Next Session - Immediate Tasks
 
 **Created:** 2026-02-03 22:59
+**Updated:** 2026-02-03 14:30
 **Priority:** HIGH
 
 ---
 
-## 🎯 First Thing To Do:
+## 🎯 Current Status: PROFILE CREATION WORKING! ✅
 
-### Test Profile Creation (5 minutes)
+### ✅ COMPLETED: Profile Creation Test
 
-**Status:** Everything is ready, just needs testing!
+**Status:** SUCCESS! Profile creation fully working on cellular data!
 
-**Steps:**
-1. Start Expo: `npx expo start --localhost --clear`
-2. **Scan QR code** with Expo Go on phone
-3. Wait for app to load (Camera screen appears)
-4. Take a selfie
-5. Fill in name and age
-6. Press **"Continue"**
+**What Was Tested:**
+1. ✅ Started Expo: `npx expo start --localhost --clear`
+2. ✅ Scanned QR code with Expo Go
+3. ✅ Phone switched to cellular data (office WiFi blocks Supabase)
+4. ✅ Took a selfie
+5. ✅ Filled in name and age
+6. ✅ Pressed "Continue"
 
-**Expected Result:**
-- ✅ Profile uploads successfully to Supabase
-- ✅ Dashboard screen loads
-- ✅ Your photo and name appear
-- ✅ Status toggle shows ON (green glow)
+**Actual Result: SUCCESS!**
+- ✅ Profile uploaded successfully to Supabase
+- ✅ Dashboard screen loaded
+- ✅ Photo and name appear correctly
+- ✅ Status toggle ON (green glow visible)
+- ✅ **BONUS:** Real user detected nearby at 1m distance!
 
-**If It Fails:**
-- Check Supabase Dashboard → Storage → selfies (does file appear?)
-- Check Supabase Dashboard → Table Editor → users (does row exist?)
-- Look at terminal for error logs
-- Screenshot any errors
+**Key Discovery:**
+- ⚠️ Office/corporate WiFi blocks Supabase Storage
+- ✅ Cellular data works perfectly
+- ✅ USB connection maintains Metro bundler
 
 ---
 
-## 🧪 After Profile Creation Works:
+## 🎯 NEXT IMMEDIATE TEST: Nudge System (Real User at 1m!)
+
+### Test Nudge with Real Nearby User
+
+**Status:** Ready to test! Real user detected at 1m distance
+
+**Steps:**
+1. On Dashboard, you should see user card with:
+   - Photo
+   - Name
+   - "1m away"
+   - **"Nudge" button** (now properly positioned!)
+2. Tap the **"Nudge" button**
+3. Button should change to **"Nudged ✓"** (gray, disabled)
+4. On their device, they should see your card with:
+   - Green border
+   - "Wants to meet" label
+   - "Nudge Back" button
+
+**If They Nudge Back:**
+- Both devices should show **Green Light screen** (full green)
+- 3-pulse haptic feedback
+- Display matched user's photo and name
+- "Back to Radar" button to return
+
+**Test This Next!** This is the core feature and you have a perfect test scenario!
+
+---
+
+## 🧪 After Nudge System Works:
 
 ### Test 2: Location & Dashboard (10 minutes)
 
@@ -86,19 +116,21 @@ Copy this for your testing session:
 
 ```
 Profile Creation:
-[ ] Camera loads
-[ ] Photo captured
-[ ] Name and age entered
-[ ] Profile created successfully
-[ ] Dashboard loads
-[ ] Photo displays correctly
-[ ] Name displays correctly
+[✓] Camera loads
+[✓] Photo captured (both camera and gallery work)
+[✓] Name and age entered
+[✓] Profile created successfully
+[✓] Dashboard loads
+[✓] Photo displays correctly
+[✓] Name displays correctly
 
 Dashboard:
-[ ] Status toggle ON by default
-[ ] Status toggle switches OFF
-[ ] Profile photo has green glow when ON
-[ ] Profile photo grayscale when OFF
+[✓] Status toggle ON by default
+[ ] Status toggle switches OFF (not tested yet)
+[✓] Profile photo has green glow when ON
+[ ] Profile photo grayscale when OFF (not tested yet)
+[✓] Nearby users section visible
+[✓] Real user detected at 1m distance!
 
 Location:
 [ ] Location permission granted

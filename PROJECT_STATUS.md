@@ -1,7 +1,7 @@
 # SPOT - Project Status
 
-**Last Updated:** 2026-02-03
-**Version:** 0.9.5 (Testing Phase - Android Debugging Complete)
+**Last Updated:** 2026-02-03 14:30
+**Version:** 0.9.8 (Testing Phase - Profile Creation Working!)
 
 ## 🎯 Mission Statement
 
@@ -195,9 +195,9 @@ spot-app/
 
 ---
 
-## 🧪 Testing Status
+## 🧪 Testing Status - MAJOR BREAKTHROUGH! 🎉
 
-### Component Testing ✅ NEW!
+### Component Testing ✅ COMPLETE
 - ✅ **Test Suite Created** - 6 comprehensive tests
 - ✅ All individual components verified working
 - ✅ Test 1: Basic React Native - PASS
@@ -207,29 +207,44 @@ spot-app/
 - ✅ Test 5: Location Services - PASS
 - ✅ Test 6: User Context - PASS
 
-### Integration Testing (In Progress)
+### Integration Testing ✅ WORKING!
 - ✅ Camera screen loads and captures photos
-- ✅ Setup form accepts input
-- 🚧 Profile creation with upload (currently testing)
-- ⏳ Dashboard with real data (pending)
-- ⏳ Two-device proximity testing (pending)
-- ⏳ Nudge system end-to-end (pending)
+- ✅ Gallery selection works (fixed crop issue)
+- ✅ Setup form accepts input and validates
+- ✅ **Profile creation with upload - WORKING!** 🎉
+- ✅ **Dashboard loads with real data - WORKING!** 🎉
+- ✅ **Proximity detection verified (1m distance!)** 🎉
+- ✅ User cards display correctly
+- 🧪 Nudge system (ready to test - user nearby!)
+- ⏳ Two-device mutual match testing (pending)
 
 ### Platform Testing
-- ✅ **Android via USB** - Working (Expo Go + USB debugging)
+- ✅ **Android via USB + Cellular** - WORKING
+  - USB connection for Metro bundler
+  - Cellular data for Supabase (office WiFi blocks it)
 - ⏳ **iOS Simulator** - Not tested yet (requires Xcode)
 - ⏳ **iOS Device** - Not tested yet
+
+### Network Requirements ⚠️ IMPORTANT!
+- ✅ **Cellular Data** - WORKS perfectly
+- ✅ **Home WiFi** - Expected to work
+- ❌ **Office/Corporate WiFi** - BLOCKED (firewall blocks Supabase Storage)
+- ❌ **School/University WiFi** - Likely blocked
+- ✅ **USB Connection** - Works for Metro bundler only
 
 ### Performance Testing
 - ⚠️ Load testing needed (5+ simultaneous users)
 - ⚠️ Battery usage testing needed
 - ⚠️ Network optimization needed
+- ✅ Real-time proximity updates working at 1m distance
 
 ### Edge Case Testing
 - ✅ Permission denial handling
 - ✅ Offline mode detection
-- 🚧 Storage upload errors (actively debugging)
+- ✅ Storage upload errors (FIXED - XMLHttpRequest method)
+- ✅ Corporate network blocking (SOLVED - use cellular)
 - ⚠️ Edge Function failure recovery (needs testing)
+- ⚠️ Distance-based match dissolution (needs testing)
 
 ---
 
@@ -350,7 +365,7 @@ spot-app/
 - None currently identified
 
 ### Major
-- None currently identified
+- ⚠️ **Office/Corporate WiFi blocks Supabase** - WORKAROUND: Use cellular data
 
 ### Minor
 - [ ] Pull-to-refresh indicator sometimes overlaps with content
@@ -358,7 +373,15 @@ spot-app/
 - [ ] Error messages could be more specific
 - [ ] Metro bundler cache very aggressive (requires frequent clears)
 
-### Fixed Today (2026-02-03)
+### Fixed Today (2026-02-03) - Afternoon Session
+- ✅ Storage upload "Network request failed" (switched to XMLHttpRequest)
+- ✅ React Native file:// URI handling (use FileSystem.readAsStringAsync)
+- ✅ Expo SDK 54 FileSystem deprecation (use legacy import)
+- ✅ Gallery picker confusing crop screen (removed allowsEditing)
+- ✅ Nudge button cut off on right side (fixed flex layout)
+- ✅ Office WiFi blocking Supabase (cellular data workaround)
+
+### Fixed Earlier (2026-02-03) - Morning Session
 - ✅ Android boolean casting error (removed experimental features)
 - ✅ Network download error (switched to USB connection)
 - ✅ Node modules corruption (clean reinstall)

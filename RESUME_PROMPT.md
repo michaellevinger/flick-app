@@ -1,6 +1,6 @@
 # Resume Prompt for Next Session
 
-**Last Updated:** 2026-02-03 16:20
+**Last Updated:** 2026-02-03 14:30
 
 ---
 
@@ -12,22 +12,23 @@ I'm working on HeyU app (proximity-based social app).
 PROJECT: /Users/michaellevinger/dev/testing
 GITHUB: https://github.com/MikeyLevinger/heyu-app
 
-CURRENT STATUS (2026-02-03 Evening):
+CURRENT STATUS (2026-02-03 Afternoon): 🎉 BREAKTHROUGH!
 - ✅ All features coded and complete
-- ✅ Supabase fully configured (database + storage + policies VERIFIED)
-- ✅ Comprehensive test suite created - ALL 6 TESTS PASSED
-- ✅ App loads successfully via QR code scanning
-- ✅ Camera screen works and captures photos
-- ✅ Setup form working
-- ✅ Storage policies confirmed (3 policies exist)
-- 🧪 READY to test profile creation with upload
-- ⏳ Need to test dashboard and remaining features
+- ✅ Supabase fully configured (database + storage + policies)
+- ✅ Comprehensive test suite - ALL 6 TESTS PASSED
+- ✅ Profile creation WORKING (cellular data required)
+- ✅ Dashboard loading with real data
+- ✅ Proximity detection VERIFIED (1m distance!)
+- ✅ User nearby and visible in app!
+- 🧪 READY to test nudge system (real user at 1m)
+- ⏳ Need to test mutual match, haptics, sign out
 
 SETUP REQUIRED:
 - Start Expo: `npx expo start --localhost --clear`
 - **Scan QR code** with Expo Go (MOST RELIABLE METHOD)
-- Alternative: Connect via USB and press `a` (less reliable)
-- Or use iOS Simulator (requires Xcode)
+- **IMPORTANT:** Phone MUST use cellular data (office WiFi blocks Supabase!)
+- USB connection maintains Metro bundler connection
+- Alternative: Test on home WiFi (corporate networks block cloud storage)
 
 WHAT TO DO:
 1. Read SESSION_NOTES.md for complete context (scroll to bottom for latest)
@@ -49,32 +50,46 @@ KEY FILES:
 ### What Works ✅
 - Test suite (all 6 component tests pass)
 - Camera screen with permission handling
-- Photo capture
-- Setup form input
+- Photo capture AND gallery selection
+- Setup form input with validation
+- Profile creation with photo upload
+- Dashboard screen with real data
+- Status toggle (ON by default with green glow)
+- Proximity detection (verified at 1m!)
+- Real-time nearby users display
+- User cards with photo, name, distance
 - Supabase connection
 - Theme and constants
 - User context
 - Location services
 
 ### Currently Testing 🧪
-- **NEXT:** Profile creation with photo upload (storage policies verified!)
-- Dashboard screen loading after profile creation
-- Location tracking activation
-- User data persistence
+- **NEXT:** Nudge system (user nearby at 1m!)
+- Mutual match detection
+- Green Light screen with haptics
+- Status toggle OFF state
+- Pull to refresh
+- Sign out functionality
 
 ### Not Yet Tested ⏳
-- Proximity detection (2 devices)
-- Nudge system
-- Mutual matching
-- Green Light screen
+- Two-device mutual matching
 - Number exchange
-- Auto-wipe functionality
+- Auto-wipe functionality (20min TTL)
+- Distance-based match dissolution
 
 ### Known Issues 🐛
+- ⚠️ **CRITICAL:** Office/corporate WiFi blocks Supabase Storage
+  - **Solution:** Use cellular data on phone
+  - Home WiFi works fine
 - Metro bundler cache aggressive (requires frequent `--clear`)
 - **QR code scanning most reliable** (USB `a` command sometimes fails to connect)
-- WiFi/tunnel connections unstable
 - expo-camera v17 API changes (now using CameraView)
+
+### Recent Fixes ✅
+- Storage upload now uses XMLHttpRequest (more reliable)
+- Gallery picker simplified (no confusing crop screen)
+- Nudge button positioning fixed
+- FileSystem API updated for Expo SDK 54
 
 ---
 

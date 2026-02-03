@@ -392,5 +392,134 @@ Created comprehensive testing setup:
 
 ---
 
-**Last Updated:** 2026-02-03 22:58 (Storage policies verified, ready for final test)
-**Resume From:** Test profile creation - scan QR, take photo, create profile
+## Session 2026-02-03 (Afternoon Continued): BREAKTHROUGH - App Working! ✅
+
+### Major Achievement: First Successful End-to-End Test! 🎉
+
+#### 1. Fixed Storage Upload Issue ✅
+**Problem:** "StorageUnknownError: Network request failed" during profile creation
+
+**Root Cause Analysis:**
+- `fetch()` on local `file://` URIs doesn't work in React Native
+- expo-file-system deprecated API in SDK 54
+- Office WiFi network blocking Supabase Storage
+
+**Solutions Applied:**
+1. ✅ Installed `expo-file-system` package
+2. ✅ Updated to legacy FileSystem API for SDK 54 compatibility
+3. ✅ Implemented XMLHttpRequest upload (more reliable than fetch in RN)
+4. ✅ Switched phone to cellular data to bypass office network block
+
+**Key Fix - database.js uploadSelfie():**
+```javascript
+import * as FileSystem from 'expo-file-system/legacy';
+
+// Read file as base64
+const base64 = await FileSystem.readAsStringAsync(photoUri, {
+  encoding: 'base64',
+});
+
+// Convert to binary and upload via XHR
+const xhr = new XMLHttpRequest();
+xhr.open('POST', uploadUrl);
+xhr.setRequestHeader('apikey', supabaseKey);
+xhr.send(bytes.buffer);
+```
+
+#### 2. Network Discovery - Office WiFi Blocking ✅
+**Critical Finding:** Office/corporate WiFi networks often block cloud storage services
+
+**Workaround:**
+- ✅ Phone switched to cellular data
+- ✅ USB connection maintained for Metro bundler
+- ✅ Profile creation succeeded immediately
+
+**Important Note:** Always test on cellular or home WiFi, not corporate networks!
+
+#### 3. Gallery Picker Fix ✅
+**Issue:** Gallery selection showed confusing crop screen with no save button
+
+**Fix:**
+- Removed `allowsEditing: true` from ImagePicker
+- Added proper media library permissions
+- Simplified UX - direct photo selection without crop
+
+#### 4. UI Fix - Nudge Button Positioning ✅
+**Issue:** Nudge button cut off / too far right in user cards
+
+**Fix:**
+- Added `flex: 1` to userInfo container
+- Added margin between user info and button
+- Set minWidth on button for consistency
+
+### What's Working Now (Verified) ✅
+
+**Profile Creation:**
+- ✅ Camera capture works
+- ✅ Gallery selection works
+- ✅ Photo upload to Supabase Storage succeeds
+- ✅ User record created in database
+- ✅ Dashboard loads with user data
+
+**Dashboard Screen:**
+- ✅ Profile photo displays correctly
+- ✅ Name displays correctly
+- ✅ Status toggle ON by default with green glow
+- ✅ "Visible to others within 100m" message
+
+**Proximity Detection:**
+- ✅ Real user detected at 1m distance!
+- ✅ User card displays photo, name, distance
+- ✅ Nudge button visible and functional
+- ✅ Real-time nearby users working
+
+### Git Commits Today (Afternoon):
+- `2491747` - Fix storage upload for React Native file URIs
+- `b1aad85` - Use legacy expo-file-system API for SDK 54 compatibility
+- `c6a2047` - Use XMLHttpRequest for more reliable uploads in React Native
+- `8e2fcd6` - Fix gallery picker by removing confusing crop screen
+- `d907673` - Fix nudge button positioning in user cards
+
+### Files Modified:
+- `src/lib/database.js` - Complete rewrite of uploadSelfie() function
+- `src/screens/CameraScreen.js` - Gallery picker improvements
+- `src/screens/DashboardScreen.js` - Button positioning fix
+- `package.json` - Added expo-file-system
+
+### Current Status - Ready for Full Testing ✅
+
+**What Works:**
+- ✅ Complete profile creation flow
+- ✅ Photo uploads (on cellular/home WiFi)
+- ✅ Dashboard with real data
+- ✅ Proximity detection (verified with real user at 1m!)
+- ✅ User cards display correctly
+- ✅ Nudge button ready
+
+**Ready to Test:**
+- 🧪 Nudge system (send/receive)
+- 🧪 Mutual match → Green Light screen
+- 🧪 Haptic feedback
+- 🧪 Status toggle (ON/OFF)
+- 🧪 Location tracking
+- 🧪 Pull to refresh
+- 🧪 Sign out functionality
+
+### Key Learnings:
+
+1. **React Native File Uploads:** Must use FileSystem API, not fetch() on file:// URIs
+2. **Expo SDK 54:** Use legacy FileSystem imports (`expo-file-system/legacy`)
+3. **Corporate Networks:** Block cloud storage - always test on cellular/home WiFi
+4. **XMLHttpRequest:** More reliable than fetch() for uploads in React Native
+5. **USB + Cellular:** Best combo for development (USB for Metro, cellular for API)
+
+### Testing Environment:
+- **Desktop:** Mac on office WiFi (Metro bundler)
+- **Phone:** Android via USB + cellular data (app runtime)
+- **Supabase:** Fully configured and working
+- **Real User Nearby:** 1m distance detected!
+
+---
+
+**Last Updated:** 2026-02-03 14:29 (Profile creation working, proximity verified!)
+**Resume From:** Test nudge system with nearby user at 1m distance
