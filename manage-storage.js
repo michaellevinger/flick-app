@@ -61,7 +61,7 @@ async function createBucket() {
 }
 
 async function main() {
-  console.log('🗄️  HeyU Storage Management\n');
+  console.log('🗄️  Nudge Storage Management\n');
   console.log('=====================================\n');
 
   // Check existing buckets

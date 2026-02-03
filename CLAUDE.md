@@ -1,4 +1,4 @@
-# Project HeyU
+# Project Nudge
 **Mission:** Eliminate approach anxiety via a 100m digital "Green Light."
 
 ## 🎯 Project Status

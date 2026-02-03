@@ -171,7 +171,7 @@ git log --oneline -5
 
 ## Context for Next Session
 
-**User's Intent:** Build and test HeyU app end-to-end
+**User's Intent:** Build and test Nudge app end-to-end
 
 **Latest Update (2026-02-02):** User completed all 3 Supabase setup steps!
 

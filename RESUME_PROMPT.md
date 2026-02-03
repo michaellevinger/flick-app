@@ -7,10 +7,10 @@
 ## 🚀 Quick Resume Prompt:
 
 ```
-I'm working on HeyU app (proximity-based social app).
+I'm working on Nudge app (proximity-based social app).
 
 PROJECT: /Users/michaellevinger/dev/testing
-GITHUB: https://github.com/MikeyLevinger/heyu-app
+GITHUB: https://github.com/MikeyLevinger/nudge-app
 
 CURRENT STATUS (2026-02-03 Afternoon): 🎉 BREAKTHROUGH!
 - ✅ All features coded and complete

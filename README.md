@@ -1,4 +1,4 @@
-# HeyU — The Digital "Green Light"
+# Nudge — The Digital "Green Light"
 A proximity-based social catalyst designed to eliminate "approach anxiety" by providing a digital signal for face-to-face interaction. It strips away bios and chat, replacing the digital distraction with a "warm introduction" to the people standing right in front of you.
 
 ## What We've Built So Far
@@ -163,7 +163,7 @@ Storage: selfies bucket (public, auto-delete policies)
 ## Project Structure
 
 ```
-heyu-app/
+nudge-app/
 ├── src/
 │   ├── screens/
 │   │   ├── CameraScreen.js      # Selfie capture with permissions

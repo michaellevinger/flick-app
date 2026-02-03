@@ -1,4 +1,4 @@
-# 🚀 HeyU - Ready to Test!
+# 🚀 Nudge - Ready to Test!
 
 **Date**: 2026-02-03
 **Status**: ✅ 95% Complete - One manual step required

@@ -1,4 +1,4 @@
-# HeyU - End-to-End Testing Checklist
+# Nudge - End-to-End Testing Checklist
 
 **Date**: 2026-02-03
 **Status**: Ready for testing after storage bucket creation

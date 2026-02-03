@@ -17,7 +17,7 @@ export default function CameraScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <Text style={styles.permissionText}>
-          HeyU needs camera access to take your selfie
+          Nudge needs camera access to take your selfie
         </Text>
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Access</Text>
