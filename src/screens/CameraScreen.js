@@ -17,7 +17,7 @@ export default function CameraScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <Text style={styles.permissionText}>
-          Flick needs camera access to take your selfie
+          BLUP needs camera access to take your selfie
         </Text>
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Access</Text>
