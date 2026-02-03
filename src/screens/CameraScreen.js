@@ -1,35 +1,25 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Camera } from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
 export default function CameraScreen({ navigation }) {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState(null);
   const cameraRef = useRef(null);
 
-  React.useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
-
-  if (hasPermission === null) {
+  if (!permission) {
     return <View style={styles.container} />;
   }
 
-  if (hasPermission === false) {
+  if (!permission.granted) {
     return (
       <View style={styles.container}>
         <Text style={styles.permissionText}>
           HeyU needs camera access to take your selfie
         </Text>
-        <TouchableOpacity style={styles.button} onPress={async () => {
-          const { status } = await Camera.requestCameraPermissionsAsync();
-          setHasPermission(status === 'granted');
-        }}>
+        <TouchableOpacity style={styles.button} onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Access</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.skipButton} onPress={pickFromGallery}>
@@ -88,9 +78,9 @@ export default function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Camera
+      <CameraView
         style={styles.camera}
-        type="front"
+        facing="front"
         ref={cameraRef}
       >
         <View style={styles.cameraOverlay}>
@@ -107,7 +97,7 @@ export default function CameraScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </Camera>
+      </CameraView>
     </View>
   );
 }
