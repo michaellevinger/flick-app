@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import * as FileSystem from 'expo-file-system/legacy';
+import Constants from 'expo-constants';
 
 /**
  * Normalize user data to ensure correct types
@@ -154,9 +155,13 @@ export async function uploadSelfie(userId, photoUri) {
 
     console.log('uploadSelfie: Converted to binary, size:', bytes.length);
 
-    // Get Supabase credentials
-    const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+    // Get Supabase credentials (works in both dev and production)
+    const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL;
+    const supabaseKey = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase credentials not configured');
+    }
 
     // Try direct upload using XMLHttpRequest (more reliable than fetch in React Native)
     const uploadUrl = `${supabaseUrl}/storage/v1/object/selfies/${filename}`;
@@ -178,19 +183,19 @@ export async function uploadSelfie(userId, photoUri) {
 
       xhr.onerror = () => {
         console.error('uploadSelfie: XHR error');
-        reject(new Error('Network request failed'));
+        reject(new Error('Network error - please check your internet connection'));
       };
 
       xhr.ontimeout = () => {
         console.error('uploadSelfie: XHR timeout');
-        reject(new Error('Request timeout'));
+        reject(new Error('Upload timeout - please try again'));
       };
 
       xhr.open('POST', uploadUrl);
       xhr.setRequestHeader('apikey', supabaseKey);
       xhr.setRequestHeader('Authorization', `Bearer ${supabaseKey}`);
       xhr.setRequestHeader('Content-Type', 'image/jpeg');
-      xhr.timeout = 30000; // 30 second timeout
+      xhr.timeout = 60000; // 60 second timeout (increased for mobile data)
 
       xhr.send(bytes.buffer);
     });

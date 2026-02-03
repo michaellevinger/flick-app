@@ -39,9 +39,13 @@ export default function SetupScreen({ route, navigation }) {
       navigation.navigate('Dashboard');
     } catch (error) {
       console.error('Error creating user:', error);
+
+      // Show specific error message if available
+      const errorMessage = error.message || 'Failed to create your profile. Please check your internet connection and try again.';
+
       Alert.alert(
         'Error',
-        'Failed to create your profile. Please check your internet connection and try again.'
+        errorMessage
       );
     } finally {
       setIsCreating(false);
