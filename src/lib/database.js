@@ -128,7 +128,7 @@ export async function deleteUser(userId) {
 }
 
 /**
- * Upload selfie to Supabase Storage
+ * Upload selfie to Supabase Storage using direct HTTP upload
  */
 export async function uploadSelfie(userId, photoUri) {
   try {
@@ -145,28 +145,57 @@ export async function uploadSelfie(userId, photoUri) {
     });
     console.log('uploadSelfie: File read successfully, size:', base64.length);
 
-    // Convert base64 string to blob using fetch data URI
-    const dataUri = `data:image/jpeg;base64,${base64}`;
-    const response = await fetch(dataUri);
-    const blob = await response.blob();
-
-    console.log('uploadSelfie: Converted to blob, size:', blob.size);
-    console.log('uploadSelfie: Uploading to Supabase...');
-
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from('selfies')
-      .upload(filename, blob, {
-        contentType: 'image/jpeg',
-        upsert: true,
-      });
-
-    if (error) {
-      console.error('uploadSelfie: Upload error:', error);
-      throw error;
+    // Convert base64 to binary
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
     }
 
-    console.log('uploadSelfie: Upload successful!', data);
+    console.log('uploadSelfie: Converted to binary, size:', bytes.length);
+
+    // Get Supabase credentials
+    const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+    // Try direct upload using XMLHttpRequest (more reliable than fetch in React Native)
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/selfies/${filename}`;
+
+    console.log('uploadSelfie: Upload URL:', uploadUrl);
+    console.log('uploadSelfie: Uploading via XHR...');
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.onload = () => {
+        console.log('uploadSelfie: XHR complete, status:', xhr.status);
+        if (xhr.status === 200 || xhr.status === 201) {
+          resolve(JSON.parse(xhr.responseText));
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status} - ${xhr.responseText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        console.error('uploadSelfie: XHR error');
+        reject(new Error('Network request failed'));
+      };
+
+      xhr.ontimeout = () => {
+        console.error('uploadSelfie: XHR timeout');
+        reject(new Error('Request timeout'));
+      };
+
+      xhr.open('POST', uploadUrl);
+      xhr.setRequestHeader('apikey', supabaseKey);
+      xhr.setRequestHeader('Authorization', `Bearer ${supabaseKey}`);
+      xhr.setRequestHeader('Content-Type', 'image/jpeg');
+      xhr.timeout = 30000; // 30 second timeout
+
+      xhr.send(bytes.buffer);
+    });
+
+    console.log('uploadSelfie: Upload successful!', uploadResult);
 
     // Get public URL
     const { data: urlData } = supabase.storage
