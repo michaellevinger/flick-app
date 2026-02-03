@@ -1,65 +1,116 @@
 # Resume Prompt for Next Session
 
-Copy and paste this prompt when you return:
+**Last Updated:** 2026-02-03 16:20
 
 ---
 
-## Prompt to Use:
+## 🚀 Quick Resume Prompt:
 
 ```
-I'm working on the HeyU app - a proximity-based social app (formerly called SPOT).
+I'm working on HeyU app (proximity-based social app).
 
-PROJECT LOCATION: /Users/michaellevinger/dev/spot-app/spot-app
-GITHUB REPO: https://github.com/MikeyLevinger/heyu-app
+PROJECT: /Users/michaellevinger/dev/testing
+GITHUB: https://github.com/MikeyLevinger/heyu-app
 
-CURRENT STATUS:
-- ✅ All features are coded and complete (camera onboarding, proximity radar, visual nudges, mutual matching, number exchange with 15-min TTL)
-- ✅ Supabase fully configured (database schema, storage bucket, PostGIS)
-- ✅ Ready for end-to-end testing!
+CURRENT STATUS (2026-02-03):
+- ✅ All features coded and complete
+- ✅ Supabase fully configured (database + storage + policies)
+- ✅ Comprehensive test suite created - ALL 6 TESTS PASSED
+- ✅ App loads via USB connection on Android
+- ✅ Camera screen works and captures photos
+- 🚧 Testing profile creation with storage upload
+- ⏳ Need to test full user flow
 
-WHAT I NEED HELP WITH:
-1. Read SESSION_NOTES.md to understand the full context
-2. Help me test the app end-to-end
-3. Fix any bugs we discover
-4. Move to polish & optimization (Task #10)
+SETUP REQUIRED:
+- Start Expo: `npx expo start --localhost --clear`
+- Connect Android phone via USB (USB debugging enabled)
+- Or use iOS Simulator (requires Xcode)
 
-KEY DOCUMENTATION:
-- SESSION_NOTES.md - Complete context and testing checklist
-- CLAUDE.md - Main project documentation
+WHAT TO DO:
+1. Read SESSION_NOTES.md for complete context (scroll to bottom for latest)
+2. Help test profile creation and storage upload
+3. Test dashboard, location, proximity features
+4. Continue Task #10: Polish & Testing
 
-Please read SESSION_NOTES.md first, then help me test all features to make sure everything works together.
+KEY FILES:
+- SESSION_NOTES.md - Complete session history
+- PROJECT_STATUS.md - Current project status
+- TEST_SUITE_README.md - Test suite documentation
+- TESTING_CHECKLIST.md - Full testing scenarios
 ```
 
 ---
 
-## Alternative Shorter Prompt:
+## 📋 Context Summary:
 
-If you want something more concise:
+### What Works ✅
+- Test suite (all 6 component tests pass)
+- Camera screen with permission handling
+- Photo capture
+- Setup form input
+- Supabase connection
+- Theme and constants
+- User context
+- Location services
 
+### Currently Testing 🚧
+- Profile creation with photo upload to Supabase Storage
+- Dashboard screen loading
+- Location tracking activation
+
+### Not Yet Tested ⏳
+- Proximity detection (2 devices)
+- Nudge system
+- Mutual matching
+- Green Light screen
+- Number exchange
+- Auto-wipe functionality
+
+### Known Issues 🐛
+- Metro bundler cache aggressive (requires frequent `--clear`)
+- Android Expo Go requires USB connection (WiFi unstable)
+- expo-camera v17 API changes (now using CameraView)
+
+---
+
+## 🛠 Quick Commands:
+
+```bash
+# Start development server
+cd /Users/michaellevinger/dev/testing
+npx expo start --localhost --clear
+
+# Clear everything and restart
+rm -rf .expo node_modules/.cache
+npx expo start --localhost --clear --reset-cache
+
+# Run test suite instead of full app
+# (swap App.js with App.test-suite.js)
+
+# Check git status
+git status
+git log --oneline -10
 ```
-I'm working on HeyU app (proximity social app). Read SESSION_NOTES.md to see where we left off. Supabase is complete - ready for end-to-end testing! Project is at: /Users/michaellevinger/dev/spot-app/spot-app
-```
 
 ---
 
-## Tips for Next Session:
+## 🔗 Important Links:
 
-1. **Start with the prompt above** - It gives Claude all the context needed
-2. **Claude will read SESSION_NOTES.md** - That file has everything documented
-3. **Have 2 devices ready for testing** - Need to test proximity features
-4. **Supabase dashboard open** - https://supabase.com/dashboard/project/oithyuuztrmohcbfglrh (to verify data)
-
----
-
-## Expected Flow:
-
-1. You paste the prompt
-2. Claude reads SESSION_NOTES.md and CLAUDE.md
-3. You start the app with `npx expo start`
-4. Claude helps you test all features end-to-end
-5. We fix any bugs discovered
-6. Move to Task #10 (Polish & Optimization)
+- **Supabase Dashboard**: https://supabase.com/dashboard/project/oithyuuztrmohcbfglrh
+- **Storage Bucket**: https://supabase.com/dashboard/project/oithyuuztrmohcbfglrh/storage/buckets
+- **Database Tables**: https://supabase.com/dashboard/project/oithyuuztrmohcbfglrh/editor
+- **GitHub Repo**: https://github.com/MikeyLevinger/heyu-app
 
 ---
 
-**Bookmark this file!** It's your quick-start guide for the next session.
+## 💡 Tips for Next Session:
+
+1. **Start with USB connection** - Most reliable for Android
+2. **Clear Metro cache** if you see old errors
+3. **Check SESSION_NOTES.md bottom** for latest updates
+4. **Close/reopen Expo Go app** if changes don't appear
+5. **Use test suite** (App.test-suite.js) to isolate issues
+
+---
+
+**Bookmark this file!** Everything you need to resume development quickly.

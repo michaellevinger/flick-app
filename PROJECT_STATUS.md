@@ -1,7 +1,7 @@
 # SPOT - Project Status
 
-**Last Updated:** 2026-02-01
-**Version:** 0.9.0 (Release Candidate)
+**Last Updated:** 2026-02-03
+**Version:** 0.9.5 (Testing Phase - Android Debugging Complete)
 
 ## 🎯 Mission Statement
 
@@ -78,10 +78,10 @@ Eliminate approach anxiety via a 100m digital "Green Light."
 
 ---
 
-## 🚧 Remaining Task (1/10)
+## 🚧 Current Task (1/10)
 
-### Task #10: Polish & Testing 🔜
-**Status:** Ready to start
+### Task #10: Polish & Testing 🚧
+**Status:** IN PROGRESS - Active Testing Phase
 
 **Focus Areas:**
 - Loading states and error boundaries
@@ -197,13 +197,28 @@ spot-app/
 
 ## 🧪 Testing Status
 
-### Unit Testing
-- ⚠️ Not implemented (future enhancement)
+### Component Testing ✅ NEW!
+- ✅ **Test Suite Created** - 6 comprehensive tests
+- ✅ All individual components verified working
+- ✅ Test 1: Basic React Native - PASS
+- ✅ Test 2: Theme & Constants - PASS
+- ✅ Test 3: Supabase Connection - PASS
+- ✅ Test 4: Camera Permissions - PASS
+- ✅ Test 5: Location Services - PASS
+- ✅ Test 6: User Context - PASS
 
-### Integration Testing
-- ✅ Manual testing completed for all flows
-- ✅ Two-device testing verified
-- ⚠️ Automated tests not implemented
+### Integration Testing (In Progress)
+- ✅ Camera screen loads and captures photos
+- ✅ Setup form accepts input
+- 🚧 Profile creation with upload (currently testing)
+- ⏳ Dashboard with real data (pending)
+- ⏳ Two-device proximity testing (pending)
+- ⏳ Nudge system end-to-end (pending)
+
+### Platform Testing
+- ✅ **Android via USB** - Working (Expo Go + USB debugging)
+- ⏳ **iOS Simulator** - Not tested yet (requires Xcode)
+- ⏳ **iOS Device** - Not tested yet
 
 ### Performance Testing
 - ⚠️ Load testing needed (5+ simultaneous users)
@@ -213,7 +228,7 @@ spot-app/
 ### Edge Case Testing
 - ✅ Permission denial handling
 - ✅ Offline mode detection
-- ⚠️ Poor connection handling (needs improvement)
+- 🚧 Storage upload errors (actively debugging)
 - ⚠️ Edge Function failure recovery (needs testing)
 
 ---
@@ -221,9 +236,12 @@ spot-app/
 ## 🚀 Deployment Status
 
 ### Development
-- ✅ Local development working
+- ✅ Local development working via USB
 - ✅ Expo development server running
 - ✅ Supabase development project configured
+- ✅ Comprehensive test suite created
+- 🚧 Android testing in progress (USB connection)
+- ⏳ iOS testing pending (requires Xcode)
 
 ### Staging
 - ⚠️ Not set up yet
@@ -338,6 +356,14 @@ spot-app/
 - [ ] Pull-to-refresh indicator sometimes overlaps with content
 - [ ] Location permission request could be more user-friendly
 - [ ] Error messages could be more specific
+- [ ] Metro bundler cache very aggressive (requires frequent clears)
+
+### Fixed Today (2026-02-03)
+- ✅ Android boolean casting error (removed experimental features)
+- ✅ Network download error (switched to USB connection)
+- ✅ Node modules corruption (clean reinstall)
+- ✅ Camera component API mismatch (updated to CameraView)
+- ✅ Storage upload path error (fixed nested paths)
 
 ### Enhancement Requests
 - [ ] Add sound effects for matches

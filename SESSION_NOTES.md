@@ -1,4 +1,4 @@
-# Session Notes - 2026-02-03
+# Session Notes - 2026-02-03 (Updated)
 
 ## What We Accomplished Today
 
@@ -256,5 +256,92 @@ Created comprehensive testing setup:
 
 ---
 
-**Last Updated:** 2026-02-03 (Android bug fixed, storage configured)
-**Resume From:** Reload app - Error should be fixed, ready for onboarding test
+---
+
+## Session 2026-02-03 (Afternoon): Debugging & Testing Marathon ✅
+
+### Major Progress:
+
+#### 1. Comprehensive Test Suite Created ✅
+- Built App.test-suite.js with 6 progressive tests
+- ALL TESTS PASSED via USB connection:
+  - ✅ Test 1: Basic React Native components
+  - ✅ Test 2: Theme & constants import
+  - ✅ Test 3: Supabase connection
+  - ✅ Test 4: Camera permissions
+  - ✅ Test 5: Location services
+  - ✅ Test 6: User context
+- Proved all individual components work correctly
+
+#### 2. Fixed Multiple Critical Issues ✅
+**Issue 1: Network Download Error**
+- **Solution:** Used USB connection instead of WiFi/tunnel
+- Command: `npx expo start --localhost`
+- Android phone connected via USB with USB Debugging enabled
+
+**Issue 2: Node Modules Corruption**
+- **Error:** `Got unexpected undefined: nullthrows.js`
+- **Solution:** `rm -rf node_modules package-lock.json && npm install`
+- Added missing `ora` package
+
+**Issue 3: Camera Component API Mismatch**
+- **Error:** `TypeError: Cannot read property 'Type' of undefined`
+- **Solution:** Updated to expo-camera v17 API:
+  - Changed `Camera` → `CameraView`
+  - Changed `Camera.Constants.Type.front` → `"front"` string
+  - Updated to `useCameraPermissions()` hook
+  - Changed `type` prop → `facing` prop
+
+**Issue 4: Storage Upload Path Error**
+- **Error:** "Failed to create profile - Storage unknown error"
+- **Root cause:** Double-nested path `selfies/selfies/filename.jpg`
+- **Solution:** Fixed uploadSelfie() to use filename directly (not `selfies/${filename}`)
+
+#### 3. Current Status ✅
+- ✅ App loads successfully via USB
+- ✅ Camera screen appears and works
+- ✅ Photo capture working
+- ✅ Setup form loads
+- ⚠️ Storage upload needs verification (just fixed)
+- ⚠️ Metro cache issues (clearing needed)
+
+### Files Modified Today:
+- `App.js` → Switched to JS Stack Navigator with enableScreens(false)
+- `app.json` → Removed experimental features (newArchEnabled, edgeToEdgeEnabled)
+- `src/screens/CameraScreen.js` → Updated to CameraView API
+- `src/lib/database.js` → Fixed storage upload paths
+- `package.json` → Added ora, updated react-native-screens
+- Created `App.test-suite.js` → Comprehensive component testing
+- Created `TEST_SUITE_README.md` → Testing documentation
+
+### Key Learnings:
+1. **Expo SDK 54 + Android Expo Go** = Compatibility issues
+2. **USB connection** more reliable than WiFi/tunnel for development
+3. **Test suite approach** excellent for isolating issues
+4. **Metro cache** very aggressive - requires full clears
+5. **expo-camera v17** has breaking API changes from v16
+
+### Git Commits Today:
+- `6c9e82a` - Fix Android boolean casting error and complete Supabase setup
+- `9111e6e` - Update SESSION_NOTES with storage setup and Android bug fix
+- `a7ee1dd` - Disable experimental Android features
+- `2c18b00` - Switch from CameraView to Camera API
+- `c327542` - Simplify navigation options
+- `2fec71b` - Add comprehensive test suite
+- `6d0d139` - All test suite tests passed
+- `e03ce09` - Fix Camera type prop
+- `31193c9` - Update to expo-camera v17 API (CameraView)
+- `10cf68e` - Fix storage file paths
+
+### Next Steps:
+1. Clear Metro cache completely
+2. Close and reopen Expo Go app
+3. Test profile creation with photo upload
+4. Verify dashboard loads with user data
+5. Test location tracking
+6. Test proximity features (requires 2nd device)
+
+---
+
+**Last Updated:** 2026-02-03 16:15 (App loads, camera works, testing upload fix)
+**Resume From:** Clear cache, restart app, test profile creation
