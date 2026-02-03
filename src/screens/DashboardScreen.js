@@ -506,6 +506,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.md,
+    flex: 1,
+    marginRight: SPACING.md,
   },
   userPhoto: {
     width: 60,
@@ -561,6 +563,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.sm,
     borderRadius: 20,
+    minWidth: 90,
+    alignItems: 'center',
   },
   nudgeButtonInterested: {
     backgroundColor: COLORS.green,
