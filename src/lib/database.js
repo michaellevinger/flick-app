@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 /**
  * Normalize user data to ensure correct types
@@ -139,26 +139,24 @@ export async function uploadSelfie(userId, photoUri) {
     const filename = `${userId}-${Date.now()}.jpg`;
 
     // Read file as base64
+    console.log('uploadSelfie: Reading file...');
     const base64 = await FileSystem.readAsStringAsync(photoUri, {
-      encoding: FileSystem.EncodingType.Base64,
+      encoding: 'base64',
     });
     console.log('uploadSelfie: File read successfully, size:', base64.length);
 
-    // Convert base64 to ArrayBuffer for upload
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
+    // Convert base64 string to blob using fetch data URI
+    const dataUri = `data:image/jpeg;base64,${base64}`;
+    const response = await fetch(dataUri);
+    const blob = await response.blob();
 
-    console.log('uploadSelfie: Converted to byte array, size:', byteArray.length);
+    console.log('uploadSelfie: Converted to blob, size:', blob.size);
     console.log('uploadSelfie: Uploading to Supabase...');
 
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('selfies')
-      .upload(filename, byteArray.buffer, {
+      .upload(filename, blob, {
         contentType: 'image/jpeg',
         upsert: true,
       });
