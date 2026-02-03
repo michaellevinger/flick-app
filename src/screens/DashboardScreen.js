@@ -179,7 +179,7 @@ export default function DashboardScreen({ navigation }) {
       const result = await sendNudge(user.id, targetUser.id);
 
       if (result.alreadyNudged) {
-        Alert.alert('Already Nudged', `You've already nudged ${targetUser.name}!`);
+        Alert.alert('Already Waved', `You've already waved at them!`);
         return;
       }
 
@@ -199,8 +199,8 @@ export default function DashboardScreen({ navigation }) {
           const matchedUser = await getMatchedUserInfo(targetUser.id);
           navigation.navigate('GreenLight', { matchedUser });
         } else {
-          // Just a one-way nudge
-          Alert.alert('Nudge Sent', `${targetUser.name} will see you're interested!`);
+          // Just a one-way wave
+          Alert.alert('Wave Sent', `They'll see you're interested!`);
         }
       }
     } catch (error) {
@@ -369,10 +369,10 @@ export default function DashboardScreen({ navigation }) {
                         ]}
                       >
                         {iNudgedThem
-                          ? 'Nudged ✓'
+                          ? 'Waved ✓'
                           : theyNudgedMe
-                          ? 'Nudge Back'
-                          : 'Nudge'}
+                          ? 'Wave Back'
+                          : 'Wave'}
                       </Text>
                     </TouchableOpacity>
                   </View>
