@@ -137,12 +137,11 @@ export async function uploadSelfie(userId, photoUri) {
 
     // Create a unique filename
     const filename = `${userId}-${Date.now()}.jpg`;
-    const filepath = `selfies/${filename}`;
 
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('selfies')
-      .upload(filepath, blob, {
+      .upload(filename, blob, {
         contentType: 'image/jpeg',
         upsert: true,
       });
@@ -155,7 +154,7 @@ export async function uploadSelfie(userId, photoUri) {
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('selfies')
-      .getPublicUrl(filepath);
+      .getPublicUrl(filename);
 
     return urlData.publicUrl;
   } catch (error) {
@@ -169,13 +168,13 @@ export async function uploadSelfie(userId, photoUri) {
  */
 export async function deleteSelfie(selfieUrl) {
   try {
-    // Extract filepath from URL
+    // Extract filename from URL
     const urlParts = selfieUrl.split('/selfies/');
     if (urlParts.length < 2) return;
 
-    const filepath = `selfies/${urlParts[1]}`;
+    const filename = urlParts[1];
 
-    const { error } = await supabase.storage.from('selfies').remove([filepath]);
+    const { error } = await supabase.storage.from('selfies').remove([filename]);
 
     if (error) {
       console.error('Error deleting selfie:', error);
