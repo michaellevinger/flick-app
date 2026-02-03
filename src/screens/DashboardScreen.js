@@ -332,14 +332,12 @@ export default function DashboardScreen({ navigation }) {
                             theyNudgedMe && styles.userPhotoInterestedPlaceholder,
                           ]}
                         >
-                          <Text style={styles.userInitial}>
-                            {nearbyUser.name[0]}
-                          </Text>
+                          <Text style={styles.userInitial}>?</Text>
                         </View>
                       )}
                       <View style={styles.userDetails}>
                         <View style={styles.userNameRow}>
-                          <Text style={styles.userName}>{nearbyUser.name}</Text>
+                          <Text style={styles.userName}>{nearbyUser.age} years old</Text>
                           {theyNudgedMe && (
                             <Text style={styles.waveEmoji}>👋</Text>
                           )}
