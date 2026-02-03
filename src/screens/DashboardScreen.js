@@ -87,7 +87,7 @@ export default function DashboardScreen({ navigation }) {
     if (!user) return;
 
     nudgeSubscriptionRef.current = subscribeToNudges(user.id, async (nudge) => {
-      // Someone nudged us! Reload received nudges to update UI
+      // Someone flicked us! Reload received flicks to update UI
       await loadNudgesReceived();
 
       // Check if it's a mutual match
@@ -175,18 +175,18 @@ export default function DashboardScreen({ navigation }) {
     const theyNudgedMe = usersWhoNudgedMe.has(targetUser.id);
 
     try {
-      // Send the nudge
+      // Send the flick
       const result = await sendNudge(user.id, targetUser.id);
 
       if (result.alreadyNudged) {
-        Alert.alert('Already Waved', `You've already waved at them!`);
+        Alert.alert('Already Flicked', `You've already flicked them!`);
         return;
       }
 
       // Update local state
       setNudgedUsers((prev) => new Set([...prev, targetUser.id]));
 
-      // If they already nudged us, this is an instant match!
+      // If they already flicked us, this is an instant match!
       if (theyNudgedMe) {
         const matchedUser = await getMatchedUserInfo(targetUser.id);
         navigation.navigate('GreenLight', { matchedUser });
@@ -199,13 +199,13 @@ export default function DashboardScreen({ navigation }) {
           const matchedUser = await getMatchedUserInfo(targetUser.id);
           navigation.navigate('GreenLight', { matchedUser });
         } else {
-          // Just a one-way wave
-          Alert.alert('Wave Sent', `They'll see you're interested!`);
+          // Just a one-way flick
+          Alert.alert('Flick Sent', `They'll see you're interested!`);
         }
       }
     } catch (error) {
-      console.error('Error sending nudge:', error);
-      Alert.alert('Error', 'Failed to send nudge. Please try again.');
+      console.error('Error sending flick:', error);
+      Alert.alert('Error', 'Failed to send flick. Please try again.');
     }
   };
 
@@ -369,10 +369,10 @@ export default function DashboardScreen({ navigation }) {
                         ]}
                       >
                         {iNudgedThem
-                          ? 'Waved ✓'
+                          ? 'Flicked ✓'
                           : theyNudgedMe
-                          ? 'Wave Back'
-                          : 'Wave'}
+                          ? 'Flick Back'
+                          : 'Flick'}
                       </Text>
                     </TouchableOpacity>
                   </View>

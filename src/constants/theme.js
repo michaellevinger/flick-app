@@ -1,10 +1,10 @@
-// SPOT Design System: Black, White, and "Go" Green
+// Flick Design System: Electric Lime on Near-Black
 
 export const COLORS = {
-  black: '#000000',
+  black: '#0B0F0E', // Near-black background
   white: '#FFFFFF',
-  green: '#00FF00', // Bright "Go" green
-  greenGlow: '#00FF0033', // 20% opacity for glow effect
+  green: '#2EFF4D', // Electric Lime
+  greenGlow: '#2EFF4D33', // 20% opacity for glow effect
   gray: '#808080',
   grayLight: '#F5F5F5',
 };
