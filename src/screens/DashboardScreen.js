@@ -608,6 +608,7 @@ const styles = StyleSheet.create({
   nudgeButtonText: {
     fontFamily: 'Oswald_400Regular_Italic',
     fontSize: 16,
+    fontWeight: 'bold',
     fontStyle: 'italic',
     letterSpacing: 0.5,
     color: '#0b0f0e',

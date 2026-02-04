@@ -21,12 +21,13 @@ import { UserProvider } from './src/lib/userContext';
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Oswald_400Regular,
     Oswald_400Regular_Italic,
   });
 
-  if (!fontsLoaded) {
+  // Don't block the app if fonts fail to load - just use system font as fallback
+  if (!fontsLoaded && !fontError) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.black }}>
         <ActivityIndicator size="large" color={COLORS.green} />
