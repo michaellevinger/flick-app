@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  Animated,
 } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 import { COLORS, SPACING, TYPOGRAPHY, PROXIMITY_RADIUS } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 import { findNearbyUsers, subscribeToNearbyUsers } from '../lib/database';
@@ -29,6 +31,7 @@ export default function DashboardScreen({ navigation }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [nudgedUsers, setNudgedUsers] = useState(new Set());
   const [usersWhoNudgedMe, setUsersWhoNudgedMe] = useState(new Set());
+  const [hiddenUsers, setHiddenUsers] = useState(new Set());
   const subscriptionRef = useRef(null);
   const nudgeSubscriptionRef = useRef(null);
 
@@ -209,6 +212,21 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
+  const handleHideUser = (userId) => {
+    setHiddenUsers((prev) => new Set([...prev, userId]));
+  };
+
+  const renderRightActions = (userId) => {
+    return (
+      <TouchableOpacity
+        style={styles.hideButton}
+        onPress={() => handleHideUser(userId)}
+      >
+        <Text style={styles.hideButtonText}>Hide</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const handleLogout = () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
       { text: 'Cancel', style: 'cancel' },
@@ -304,18 +322,24 @@ export default function DashboardScreen({ navigation }) {
                 </Text>
               </View>
             ) : (
-              nearbyUsers.map((nearbyUser) => {
-                const theyNudgedMe = usersWhoNudgedMe.has(nearbyUser.id);
-                const iNudgedThem = nudgedUsers.has(nearbyUser.id);
+              nearbyUsers
+                .filter((u) => !hiddenUsers.has(u.id))
+                .map((nearbyUser) => {
+                  const theyNudgedMe = usersWhoNudgedMe.has(nearbyUser.id);
+                  const iNudgedThem = nudgedUsers.has(nearbyUser.id);
 
-                return (
-                  <View
-                    key={nearbyUser.id}
-                    style={[
-                      styles.userCard,
-                      theyNudgedMe && styles.userCardInterested,
-                    ]}
-                  >
+                  return (
+                    <Swipeable
+                      key={nearbyUser.id}
+                      renderRightActions={() => renderRightActions(nearbyUser.id)}
+                      overshootRight={false}
+                    >
+                      <View
+                        style={[
+                          styles.userCard,
+                          theyNudgedMe && styles.userCardInterested,
+                        ]}
+                      >
                     <View style={styles.userInfo}>
                       {nearbyUser.selfie_url ? (
                         <Image
@@ -376,8 +400,9 @@ export default function DashboardScreen({ navigation }) {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                );
-              })
+                </Swipeable>
+              );
+            })
             )}
           </ScrollView>
         </>
@@ -587,5 +612,18 @@ const styles = StyleSheet.create({
   },
   nudgeButtonTextDisabled: {
     color: COLORS.white,
+  },
+  hideButton: {
+    backgroundColor: '#FF3B30',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    marginVertical: SPACING.sm,
+    borderRadius: 8,
+  },
+  hideButtonText: {
+    color: COLORS.white,
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });

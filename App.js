@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { enableScreens } from 'react-native-screens';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // WORKAROUND: Disable native screens for Expo SDK 54 compatibility
 enableScreens(false);
@@ -19,9 +20,10 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <UserProvider>
-      <StatusBar style="dark" />
-      <NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <UserProvider>
+        <StatusBar style="dark" />
+        <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Camera"
           screenOptions={{
@@ -36,5 +38,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
+    </GestureHandlerRootView>
   );
 }
