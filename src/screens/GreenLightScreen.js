@@ -527,6 +527,7 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   modalButtonConfirm: {
     flex: 1,
@@ -534,11 +535,13 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   modalButtonText: {
     ...TYPOGRAPHY.body,
     fontWeight: 'bold',
     color: COLORS.black,
+    textAlign: 'center',
   },
   closeButton: {
     backgroundColor: COLORS.black,
