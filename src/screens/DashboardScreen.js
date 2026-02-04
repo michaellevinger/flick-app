@@ -639,13 +639,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF3B30',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 80,
+    width: 100,
+    height: 70,
     marginVertical: SPACING.sm,
     borderRadius: 8,
   },
   hideButtonText: {
     color: COLORS.white,
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
   },
 });
