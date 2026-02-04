@@ -457,16 +457,16 @@ const styles = StyleSheet.create({
   },
   toggleLabelContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'baseline',
     gap: SPACING.md,
   },
   toggleLabel: {
     ...TYPOGRAPHY.subtitle,
   },
   toggleStatus: {
-    ...TYPOGRAPHY.body,
+    fontSize: 20,
+    fontWeight: '600',
     color: COLORS.gray,
-    fontWeight: 'bold',
   },
   statusMessage: {
     flexDirection: 'row',
