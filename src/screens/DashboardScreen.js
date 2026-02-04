@@ -393,10 +393,10 @@ export default function DashboardScreen({ navigation }) {
                         ]}
                       >
                         {iNudgedThem
-                          ? 'Flicked ✓'
+                          ? 'FLICKED ✓'
                           : theyNudgedMe
-                          ? 'Flick Back'
-                          : 'Flick'}
+                          ? 'FLICK BACK'
+                          : 'FLICK'}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -606,8 +606,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gray,
   },
   nudgeButtonText: {
-    ...TYPOGRAPHY.body,
-    fontWeight: 'bold',
+    fontFamily: 'Oswald_400Regular_Italic',
+    fontSize: 16,
+    fontStyle: 'italic',
+    letterSpacing: 0.5,
     color: COLORS.black,
   },
   nudgeButtonTextDisabled: {
