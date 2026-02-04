@@ -201,10 +201,8 @@ export default function DashboardScreen({ navigation }) {
           // It's a match! Navigate to Green Light screen
           const matchedUser = await getMatchedUserInfo(targetUser.id);
           navigation.navigate('GreenLight', { matchedUser });
-        } else {
-          // Just a one-way flick
-          Alert.alert('Flick Sent', `They'll see you're interested!`);
         }
+        // No alert for one-way flick - just silent action
       }
     } catch (error) {
       console.error('Error sending flick:', error);
@@ -362,9 +360,6 @@ export default function DashboardScreen({ navigation }) {
                       <View style={styles.userDetails}>
                         <View style={styles.userNameRow}>
                           <Text style={styles.userName}>{nearbyUser.age} years old</Text>
-                          {theyNudgedMe && (
-                            <Text style={styles.waveEmoji}>👋</Text>
-                          )}
                         </View>
                         {theyNudgedMe ? (
                           <Text style={styles.interestedLabel}>
