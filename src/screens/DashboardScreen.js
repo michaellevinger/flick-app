@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontStyle: 'italic',
     letterSpacing: 0.5,
-    color: COLORS.black,
+    color: '#0b0f0e',
   },
   nudgeButtonTextDisabled: {
     color: COLORS.white,
