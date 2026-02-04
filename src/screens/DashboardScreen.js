@@ -233,14 +233,22 @@ export default function DashboardScreen({ navigation }) {
     setHiddenUsers((prev) => new Set([...prev, userId]));
   };
 
-  const renderRightActions = (userId) => {
+  const renderRightActions = (userId, progress, dragX) => {
+    const opacity = dragX.interpolate({
+      inputRange: [-80, -40, 0],
+      outputRange: [1, 0.5, 0],
+      extrapolate: 'clamp',
+    });
+
     return (
-      <TouchableOpacity
-        style={styles.hideButton}
-        onPress={() => handleHideUser(userId)}
-      >
-        <Text style={styles.hideButtonText}>Hide</Text>
-      </TouchableOpacity>
+      <Animated.View style={{ opacity }}>
+        <TouchableOpacity
+          style={styles.hideButton}
+          onPress={() => handleHideUser(userId)}
+        >
+          <Text style={styles.hideButtonText}>Hide</Text>
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
@@ -348,8 +356,10 @@ export default function DashboardScreen({ navigation }) {
                   return (
                     <Swipeable
                       key={nearbyUser.id}
-                      renderRightActions={() => renderRightActions(nearbyUser.id)}
+                      renderRightActions={(progress, dragX) => renderRightActions(nearbyUser.id, progress, dragX)}
                       overshootRight={false}
+                      friction={2}
+                      rightThreshold={40}
                     >
                       <View
                         style={[
