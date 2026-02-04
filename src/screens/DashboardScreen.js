@@ -23,6 +23,7 @@ import {
   getMatchedUserInfo,
   getNudgesSentByUser,
   getNudgesForUser,
+  deleteNudge,
 } from '../lib/nudges';
 
 export default function DashboardScreen({ navigation }) {
@@ -175,7 +176,25 @@ export default function DashboardScreen({ navigation }) {
   const handleNudge = async (targetUser) => {
     if (!user) return;
 
+    const iNudgedThem = nudgedUsers.has(targetUser.id);
     const theyNudgedMe = usersWhoNudgedMe.has(targetUser.id);
+
+    // If already flicked, allow unflick
+    if (iNudgedThem) {
+      try {
+        await deleteNudge(user.id, targetUser.id);
+        // Update local state to remove the flick
+        setNudgedUsers((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(targetUser.id);
+          return newSet;
+        });
+      } catch (error) {
+        console.error('Error unflicking:', error);
+        Alert.alert('Error', 'Failed to unflick. Please try again.');
+      }
+      return;
+    }
 
     try {
       // Send the flick
@@ -379,7 +398,6 @@ export default function DashboardScreen({ navigation }) {
                         iNudgedThem && styles.nudgeButtonDisabled,
                       ]}
                       onPress={() => handleNudge(nearbyUser)}
-                      disabled={iNudgedThem}
                     >
                       <Text
                         style={[
@@ -594,8 +612,6 @@ const styles = StyleSheet.create({
   },
   nudgeButtonInterested: {
     backgroundColor: COLORS.green,
-    borderWidth: 2,
-    borderColor: COLORS.black,
   },
   nudgeButtonDisabled: {
     backgroundColor: COLORS.gray,
