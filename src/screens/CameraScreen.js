@@ -91,7 +91,7 @@ export default function CameraScreen({ navigation }) {
       />
       <View style={styles.cameraOverlay}>
         <View style={styles.header}>
-          <Text style={styles.title}>Show Your Real Self</Text>
+          <Text style={styles.title}>You are beautiful!</Text>
           <Text style={styles.subtitle}>Take a fresh selfie</Text>
         </View>
         <View style={styles.actions}>

@@ -586,10 +586,10 @@ const styles = StyleSheet.create({
   },
   nudgeButton: {
     backgroundColor: COLORS.green,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: 20,
-    minWidth: 90,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 6,
+    borderRadius: 16,
+    minWidth: 80,
     alignItems: 'center',
   },
   nudgeButtonInterested: {
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
   },
   nudgeButtonText: {
     fontFamily: 'Inter_900Black',
-    fontSize: 16,
+    fontSize: 14,
     letterSpacing: 1.5,
     color: '#0b0f0e',
   },
