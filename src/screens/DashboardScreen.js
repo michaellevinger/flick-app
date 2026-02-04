@@ -606,11 +606,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gray,
   },
   nudgeButtonText: {
-    fontFamily: 'Oswald_400Regular_Italic',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '800',
     fontStyle: 'italic',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
     color: '#0b0f0e',
   },
   nudgeButtonTextDisabled: {
