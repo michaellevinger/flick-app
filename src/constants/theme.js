@@ -1,4 +1,4 @@
-// BLUP Design System: Electric Lime on Near-Black
+// Flick Design System: Electric Lime on Near-Black
 
 export const COLORS = {
   black: '#0B0F0E', // Near-black background

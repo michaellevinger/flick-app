@@ -87,7 +87,7 @@ export default function DashboardScreen({ navigation }) {
     if (!user) return;
 
     nudgeSubscriptionRef.current = subscribeToNudges(user.id, async (nudge) => {
-      // Someone BLUPed us! Reload received BLUPs to update UI
+      // Someone flicked us! Reload received flicks to update UI
       await loadNudgesReceived();
 
       // Check if it's a mutual match
@@ -175,18 +175,18 @@ export default function DashboardScreen({ navigation }) {
     const theyNudgedMe = usersWhoNudgedMe.has(targetUser.id);
 
     try {
-      // Send the BLUP
+      // Send the flick
       const result = await sendNudge(user.id, targetUser.id);
 
       if (result.alreadyNudged) {
-        Alert.alert('Already BLUPed', `You've already BLUPed them!`);
+        Alert.alert('Already Flicked', `You've already flicked them!`);
         return;
       }
 
       // Update local state
       setNudgedUsers((prev) => new Set([...prev, targetUser.id]));
 
-      // If they already BLUPed us, this is an instant match!
+      // If they already flicked us, this is an instant match!
       if (theyNudgedMe) {
         const matchedUser = await getMatchedUserInfo(targetUser.id);
         navigation.navigate('GreenLight', { matchedUser });
@@ -199,13 +199,13 @@ export default function DashboardScreen({ navigation }) {
           const matchedUser = await getMatchedUserInfo(targetUser.id);
           navigation.navigate('GreenLight', { matchedUser });
         } else {
-          // Just a one-way BLUP
-          Alert.alert('BLUP Sent', `They'll see you're interested!`);
+          // Just a one-way flick
+          Alert.alert('Flick Sent', `They'll see you're interested!`);
         }
       }
     } catch (error) {
-      console.error('Error sending BLUP:', error);
-      Alert.alert('Error', 'Failed to send BLUP. Please try again.');
+      console.error('Error sending flick:', error);
+      Alert.alert('Error', 'Failed to send flick. Please try again.');
     }
   };
 
@@ -369,10 +369,10 @@ export default function DashboardScreen({ navigation }) {
                         ]}
                       >
                         {iNudgedThem
-                          ? 'BLUPed ✓'
+                          ? 'Flicked ✓'
                           : theyNudgedMe
-                          ? 'BLUP Back'
-                          : 'BLUP'}
+                          ? 'Flick Back'
+                          : 'Flick'}
                       </Text>
                     </TouchableOpacity>
                   </View>

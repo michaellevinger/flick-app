@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "BLUP",
+    "name": "Flick",
     "slug": "nudge-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,8 +14,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "BLUP needs access to your camera to take a fresh check-in selfie.",
-        "NSLocationWhenInUseUsageDescription": "BLUP uses your location to show you people nearby within 100m."
+        "NSCameraUsageDescription": "Flick needs access to your camera to take a fresh check-in selfie.",
+        "NSLocationWhenInUseUsageDescription": "Flick uses your location to show you people nearby within 100m."
       }
     },
     "android": {
