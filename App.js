@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { enableScreens } from 'react-native-screens';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
+import { View, ActivityIndicator } from 'react-native';
 
 // WORKAROUND: Disable native screens for Expo SDK 54 compatibility
 enableScreens(false);
@@ -19,6 +21,19 @@ import { UserProvider } from './src/lib/userContext';
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_900Black,
+  });
+
+  // Continue with system font if Inter fails to load
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0B0F0E' }}>
+        <ActivityIndicator size="large" color="#2EFF4D" />
+      </View>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <UserProvider>
