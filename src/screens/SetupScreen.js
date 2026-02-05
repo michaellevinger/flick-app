@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'flex-start',
-    paddingTop: SPACING.xxl * 2,
+    paddingTop: SPACING.xxl * 3,
     paddingHorizontal: SPACING.xl,
   },
   title: {
