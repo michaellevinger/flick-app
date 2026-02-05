@@ -9,6 +9,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
@@ -61,7 +62,11 @@ export default function SetupScreen({ route, navigation }) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.title}>Almost There</Text>
         <Text style={styles.subtitle}>Just the basics</Text>
 
@@ -186,7 +191,7 @@ export default function SetupScreen({ route, navigation }) {
         <Text style={styles.notice}>
           No bios. No chat. Proximity only.
         </Text>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -196,11 +201,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.white,
   },
-  content: {
+  scrollView: {
     flex: 1,
-    justifyContent: 'flex-start',
-    paddingTop: SPACING.xxl * 3,
+  },
+  scrollContent: {
+    paddingTop: SPACING.xxl * 2,
     paddingHorizontal: SPACING.xl,
+    paddingBottom: SPACING.xl,
   },
   title: {
     ...TYPOGRAPHY.title,
@@ -214,8 +221,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxl,
   },
   form: {
-    gap: SPACING.lg,
-    marginBottom: SPACING.xl,
+    gap: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   inputGroup: {
     gap: SPACING.sm,
@@ -272,7 +279,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.black,
     borderRadius: 8,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.sm,
     alignItems: 'center',
     backgroundColor: COLORS.white,
   },
