@@ -1,11 +1,11 @@
-# SPOT - Project Status
+# Flick - Project Status
 
-**Last Updated:** 2026-02-03 14:30
-**Version:** 0.9.8 (Testing Phase - Profile Creation Working!)
+**Last Updated:** 2026-02-05 14:00
+**Version:** 1.0.0 (Polish & Testing Phase)
 
 ## 🎯 Mission Statement
 
-Eliminate approach anxiety via a 100m digital "Green Light."
+Eliminate approach anxiety via a 500m digital "Green Light."
 
 ---
 
@@ -46,7 +46,7 @@ Eliminate approach anxiety via a 100m digital "Green Light."
 - GPS permissions
 - 60-second heartbeat
 - Location updates to Supabase
-- PostGIS proximity queries (100m)
+- PostGIS proximity queries (500m)
 
 ### Task #7: Radar Feed UI ✅
 - Vertical scroll list
@@ -57,7 +57,10 @@ Eliminate approach anxiety via a 100m digital "Green Light."
 
 ### Task #8: Nudge & Match System ✅
 - Send nudge button
-- Visual feedback ("Nudged ✓")
+- Visual feedback ("FLICKED ✓")
+- Tap to unflick feature
+- Swipe left to hide users
+- Full-screen photo viewer (tap any photo)
 - Mutual match detection
 - Green Light screen
 - 3-pulse haptic feedback
@@ -73,8 +76,15 @@ Eliminate approach anxiety via a 100m digital "Green Light."
 - **Distance-Based Dissolution:**
   - Runs during heartbeat (every 60s)
   - Checks distance to all matches
-  - Auto-deletes nudges when >100m apart
+  - Auto-deletes nudges when >500m apart
   - Integrated into userContext
+- **Number Exchange:**
+  - Secure phone number exchange
+  - 15-minute TTL with countdown
+  - Proximity wipe if >500m apart
+  - Request/Accept flow
+  - Vault screen with quick actions
+  - RLS policy fixed for anonymous users
 
 ---
 
@@ -98,12 +108,14 @@ Eliminate approach anxiety via a 100m digital "Green Light."
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Fresh-Start Profile | ✅ 100% | Camera, name, age |
-| 100M Radar | ✅ 100% | PostGIS proximity |
+| 500M Radar | ✅ 100% | PostGIS proximity |
 | Location Tracking | ✅ 100% | 60s heartbeat |
 | Nudge System | ✅ 100% | Send, receive, mutual match |
+| Interactive UI | ✅ 100% | Swipe to hide, tap to unflick, full-screen photos |
 | Green Light | ✅ 100% | Full screen, haptics, animation |
+| Number Exchange | ✅ 100% | 15-min TTL, proximity wipe, RLS fixed |
 | Auto-Wipe | ✅ 100% | 20min TTL via Edge Function |
-| Distance Dissolution | ✅ 100% | Matches end when >100m |
+| Distance Dissolution | ✅ 100% | Matches end when >500m |
 | Sign Out | ✅ 100% | Complete data deletion |
 | Real-time Sync | ✅ 100% | Supabase subscriptions |
 
@@ -153,7 +165,7 @@ Eliminate approach anxiety via a 100m digital "Green Light."
 ## 📁 File Structure
 
 ```
-spot-app/
+flick-app/
 ├── src/
 │   ├── screens/
 │   │   ├── CameraScreen.js          ✅
@@ -322,7 +334,7 @@ spot-app/
 
 ### Expected Usage (100 active users)
 - Edge Function calls: 8,640/month (1.7% of limit)
-- Database size: <100MB
+- Database size: <500MB
 - Storage turnover: High (auto-delete)
 - Bandwidth: Moderate
 
@@ -418,4 +430,4 @@ spot-app/
 
 **Ready for final polish and testing!** 🚀
 
-Only Task #10 remains before SPOT is ready to eliminate approach anxiety worldwide.
+Only Task #10 remains before Flick is ready to eliminate approach anxiety worldwide.

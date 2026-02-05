@@ -7,10 +7,10 @@
 ## 🚀 Quick Resume Prompt:
 
 ```
-I'm working on Nudge app (proximity-based social app).
+I'm working on Flick app (proximity-based social app).
 
 PROJECT: /Users/michaellevinger/dev/testing
-GITHUB: https://github.com/MikeyLevinger/nudge-app
+GITHUB: https://github.com/MikeyLevinger/flick-app
 
 CURRENT STATUS (2026-02-03 Afternoon): 🎉 BREAKTHROUGH!
 - ✅ All features coded and complete
@@ -64,7 +64,7 @@ KEY FILES:
 - Location services
 
 ### Currently Testing 🧪
-- **NEXT:** Nudge system (user nearby at 1m!)
+- **NEXT:** Flick system (user nearby at 1m!)
 - Mutual match detection
 - Green Light screen with haptics
 - Status toggle OFF state
@@ -88,7 +88,7 @@ KEY FILES:
 ### Recent Fixes ✅
 - Storage upload now uses XMLHttpRequest (more reliable)
 - Gallery picker simplified (no confusing crop screen)
-- Nudge button positioning fixed
+- Flick button positioning fixed
 - FileSystem API updated for Expo SDK 54
 
 ---

@@ -16,26 +16,29 @@ A proximity-based social catalyst designed to eliminate "approach anxiety" by pr
 - **Photo Upload**: Selfies automatically upload to Supabase Storage
 - **User Management**: Full create/update/delete with UserContext
 - **Location Tracking**: Automatic 60-second heartbeat with location updates
-- **Proximity Queries**: Find users within 100m using PostGIS ST_DWithin
+- **Proximity Queries**: Find users within 500m using PostGIS ST_DWithin
 - **Real-time Updates**: Subscribe to nearby users changes
 - **Auto-Wipe Logic**: Database function to delete inactive users (20min TTL)
 
-### Phase 3: Nudge & Match System ✅
+### Phase 3: Flick & Match System ✅
 
 - **Visible Interest Signals**: Users who nudged you show with green border + "Wants to meet" label
-- **Nudge Button**: Send one-way interest signal to nearby users
-- **Visual Indicators**: Green card border, wave emoji (👋), and "Nudge Back" button for interested users
-- **Instant Matching**: One tap on "Nudge Back" triggers immediate Green Light
+- **Flick Button**: Send one-way interest signal to nearby users
+- **Visual Indicators**: Green card border and "Flick Back" button for interested users
+- **Instant Matching**: One tap on "Flick Back" triggers immediate Green Light
 - **Green Light Screen**: Full-screen green with pulse animation
 - **Haptic Feedback**: 3-pulse vibration sequence on match
 - **Real-time Updates**: Interest signals update within 1 second
-- **Cleanup**: Nudges deleted on sign out
+- **Tap to Unflick**: Tap "FLICKED ✓" button to undo your flick
+- **Swipe to Hide**: Swipe left on any profile to hide them from your feed
+- **Full-Screen Photos**: Tap any profile photo to view it full-screen
+- **Cleanup**: Flicks deleted on sign out
 
 ### Phase 4: Self-Destruct & Safety ✅
 
 - **Time-Based Auto-Wipe**: Users deleted after 20 minutes of inactivity
 - **Supabase Edge Function**: Automated cleanup every 5 minutes
-- **Distance Dissolution**: Matches auto-delete when users move >100m apart
+- **Distance Dissolution**: Matches auto-delete when users move >500m apart
 - **Heartbeat Integration**: Distance checks run every 60 seconds
 - **Complete Cleanup**: Selfies, nudges, and user data all removed
 
@@ -43,11 +46,12 @@ A proximity-based social catalyst designed to eliminate "approach anxiety" by pr
 
 - **Secure Phone Exchange**: After matching, users can optionally exchange phone numbers
 - **15-Minute TTL**: Numbers self-destruct after 15 minutes with countdown timer
-- **Proximity Wipe**: Exchange auto-deletes if users move >100m apart
+- **Proximity Wipe**: Exchange auto-deletes if users move >500m apart
 - **Request/Accept Flow**: Both users must consent before numbers are revealed
 - **Vault Screen**: Displays both numbers with quick actions (Call, Text, Save)
 - **Privacy First**: No history kept after expiration, complete data deletion
 - **Optional Feature**: Phone number is optional during profile setup
+- **RLS Policy Fixed**: Row-level security now works with anonymous user IDs
 
 ## Tech Stack
 
@@ -94,7 +98,7 @@ Follow the detailed guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) to:
 
 1. **Camera Screen**: Grant camera permission → Take selfie → Confirm
 2. **Setup Screen**: Enter your first name and age (18+) → Continue (uploads to Supabase)
-3. **Dashboard**: Toggle availability ON/OFF, see REAL nearby users within 100m
+3. **Dashboard**: Toggle availability ON/OFF, see REAL nearby users within 500m
 4. **Pull to Refresh**: Update your location and fetch nearby users
 
 ## How It Works
@@ -105,7 +109,7 @@ Follow the detailed guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) to:
 2. **Profile**: Enter your first name and age
 3. **Go Live**: Your profile is created in Supabase and status is set to ON
 4. **Location Updates**: Every 60 seconds, your location updates automatically
-5. **Radar Feed**: See people within 100m in real-time
+5. **Radar Feed**: See people within 500m in real-time
 6. **Heartbeat**: Background process prevents auto-wipe
 7. **Sign Out**: Deletes your data and selfie completely
 
@@ -143,27 +147,28 @@ Storage: selfies bucket (public, auto-delete policies)
 
 ### Key Features Implemented
 
-✅ **Camera-First**: Fresh selfies only, no gallery access
+✅ **Camera-First**: Fresh selfies only, gallery available as fallback
 ✅ **Minimalist Profile**: Name + Age, no bios or chat
-✅ **100m Proximity**: PostGIS geospatial queries with Earth's curvature
+✅ **500m Proximity**: PostGIS geospatial queries with Earth's curvature
 ✅ **60s Heartbeat**: Automatic location updates when status is ON
 ✅ **Real-time Sync**: Supabase subscriptions for live updates
 ✅ **Auto-Wipe**: 20-minute inactivity timeout (database function ready)
 ✅ **Pull-to-Refresh**: Manual location/radar updates
 ✅ **Sign Out**: Complete data deletion (selfie + user record)
+✅ **Interactive UI**: Swipe to hide, tap to unflick, tap photos to view full-screen
 
 ## Design Philosophy
 
 - **Minimalist UI**: Black, white, and "Go" green only
 - **No Bios**: Just name, age, and a fresh selfie
-- **No Chat**: Nudge system for mutual interest only
-- **Proximity First**: 100m radius, live location updates every 60s
+- **No Chat**: Flick system for mutual interest only
+- **Proximity First**: 500m radius, live location updates every 60s
 - **Auto-Wipe**: Data self-destructs after 20 minutes of inactivity
 
 ## Project Structure
 
 ```
-nudge-app/
+flick-app/
 ├── src/
 │   ├── screens/
 │   │   ├── CameraScreen.js      # Selfie capture with permissions
@@ -176,7 +181,7 @@ nudge-app/
 │   │   ├── database.js          # DB queries and functions
 │   │   ├── location.js          # Location utilities
 │   │   ├── userContext.js       # User state management + heartbeat
-│   │   ├── nudges.js            # Nudge operations
+│   │   ├── nudges.js            # Flick operations
 │   │   ├── vault.js             # Number exchange operations
 │   │   └── matchCleanup.js      # Distance-based dissolution
 │   └── constants/
@@ -209,7 +214,7 @@ All core features are now complete! Next steps:
 
 - **Green Light Screen**: Full-screen green with haptic buzz when matched
 - **Match History**: Temporary log of recent matches (also self-destructs)
-- **Radius Adjustment**: Let users choose 50m / 100m / 200m
+- **Radius Adjustment**: Let users choose 50m / 500m / 200m
 - **Do Not Disturb**: Schedule when you want to be invisible
 - **Sound Design**: Subtle audio cues for matches
 - **Onboarding**: Quick tutorial for first-time users
@@ -218,7 +223,7 @@ All core features are now complete! Next steps:
 
 ### Testing Proximity Locally
 
-Since you probably don't have friends within 100m while developing:
+Since you probably don't have friends within 500m while developing:
 
 1. **Modify the radius temporarily**:
    - In `src/constants/theme.js`, change `PROXIMITY_RADIUS` to `100000` (100km)

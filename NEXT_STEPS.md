@@ -1,42 +1,36 @@
 # Next Session - Immediate Tasks
 
 **Created:** 2026-02-03 22:59
-**Updated:** 2026-02-03 14:30
+**Updated:** 2026-02-05 14:00
 **Priority:** HIGH
 
 ---
 
-## 🎯 Current Status: PROFILE CREATION WORKING! ✅
+## 🎯 Current Status: ALL FEATURES COMPLETE! ✅
 
-### ✅ COMPLETED: Profile Creation Test
+### ✅ COMPLETED: All Core Features
 
-**Status:** SUCCESS! Profile creation fully working on cellular data!
+**Status:** SUCCESS! All features implemented and working!
 
-**What Was Tested:**
-1. ✅ Started Expo: `npx expo start --localhost --clear`
-2. ✅ Scanned QR code with Expo Go
-3. ✅ Phone switched to cellular data (office WiFi blocks Supabase)
-4. ✅ Took a selfie
-5. ✅ Filled in name and age
-6. ✅ Pressed "Continue"
+**Latest Features Implemented (2026-02-05):**
+1. ✅ Changed proximity radius from 100m to 500m
+2. ✅ Full-screen photo viewer (tap any photo)
+3. ✅ Swipe left to hide users
+4. ✅ Tap to unflick (tap "FLICKED ✓" to undo)
+5. ✅ Number exchange RLS policy fixed
+6. ✅ App icon updated
+7. ✅ UI polish (Inter Black font, clean buttons)
 
-**Actual Result: SUCCESS!**
-- ✅ Profile uploaded successfully to Supabase
-- ✅ Dashboard screen loaded
-- ✅ Photo and name appear correctly
-- ✅ Status toggle ON (green glow visible)
-- ✅ **BONUS:** Real user detected nearby at 1m distance!
-
-**Key Discovery:**
-- ⚠️ Office/corporate WiFi blocks Supabase Storage
-- ✅ Cellular data works perfectly
-- ✅ USB connection maintains Metro bundler
+**Current Build:**
+- Latest APK ready for testing
+- Build ID: a06aa4ca-942b-4c01-9ad3-0c82d220580a (in progress)
+- All features included
 
 ---
 
-## 🎯 NEXT IMMEDIATE TEST: Nudge System (Real User at 1m!)
+## 🎯 NEXT IMMEDIATE TEST: Flick System (Real User at 1m!)
 
-### Test Nudge with Real Nearby User
+### Test Flick with Real Nearby User
 
 **Status:** Ready to test! Real user detected at 1m distance
 
@@ -45,15 +39,15 @@
    - Photo
    - Name
    - "1m away"
-   - **"Nudge" button** (now properly positioned!)
-2. Tap the **"Nudge" button**
-3. Button should change to **"Nudged ✓"** (gray, disabled)
+   - **"Flick" button** (now properly positioned!)
+2. Tap the **"Flick" button**
+3. Button should change to **"Flickd ✓"** (gray, disabled)
 4. On their device, they should see your card with:
    - Green border
    - "Wants to meet" label
-   - "Nudge Back" button
+   - "Flick Back" button
 
-**If They Nudge Back:**
+**If They Flick Back:**
 - Both devices should show **Green Light screen** (full green)
 - 3-pulse haptic feedback
 - Display matched user's photo and name
@@ -63,7 +57,7 @@
 
 ---
 
-## 🧪 After Nudge System Works:
+## 🧪 After Flick System Works:
 
 ### Test 2: Location & Dashboard (10 minutes)
 
@@ -98,14 +92,14 @@
 
 ---
 
-### Test 4: Nudge System (10 minutes)
+### Test 4: Flick System (10 minutes)
 
 **Requires:** 2 devices seeing each other
 
-1. Device A: Tap "Nudge" on Device B's card
+1. Device A: Tap "Flick" on Device B's card
 2. Device B: Pull to refresh
 3. **Expected:** Device B sees Device A with green border + "Wants to meet"
-4. Device B: Tap "Nudge Back"
+4. Device B: Tap "Flick Back"
 5. **Expected:** Both devices show Green Light screen with haptics!
 
 ---
@@ -144,7 +138,7 @@ Two Devices (if available):
 [ ] Distance shown correctly
 [ ] Real-time updates work
 
-Nudge System (if 2 devices):
+Flick System (if 2 devices):
 [ ] Send nudge works
 [ ] Receive nudge shows green border
 [ ] Mutual match triggers Green Light
