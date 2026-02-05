@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import * as FileSystem from 'expo-file-system/legacy';
 import Constants from 'expo-constants';
+import { PROXIMITY_RADIUS } from '../constants/theme';
 
 /**
  * Normalize user data to ensure correct types
@@ -98,7 +99,7 @@ export async function updateUserLocation(userId, location) {
  * Find users within a given radius (in meters) of a location
  * Uses PostGIS ST_DWithin for efficient geospatial queries
  */
-export async function findNearbyUsers(userId, location, radiusMeters = 100) {
+export async function findNearbyUsers(userId, location, radiusMeters = PROXIMITY_RADIUS) {
   // Use PostGIS to find users within radius
   // ST_DWithin uses geography type which handles Earth's curvature
   const { data, error } = await supabase.rpc('find_nearby_users', {

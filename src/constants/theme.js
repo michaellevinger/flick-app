@@ -41,6 +41,6 @@ export const TYPOGRAPHY = {
   },
 };
 
-export const PROXIMITY_RADIUS = 100; // meters
+export const PROXIMITY_RADIUS = 500; // meters
 export const HEARTBEAT_INTERVAL = 60000; // 60 seconds
 export const AUTO_WIPE_TIMEOUT = 1200000; // 20 minutes

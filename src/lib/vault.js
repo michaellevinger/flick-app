@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { PROXIMITY_RADIUS } from '../constants/theme';
 
 /**
  * Request to exchange numbers with another user
@@ -169,7 +170,7 @@ export function subscribeToExchanges(userId, onUpdate) {
 }
 
 /**
- * Check if distance exceeds 100m for an exchange (proximity wipe)
+ * Check if distance exceeds PROXIMITY_RADIUS for an exchange (proximity wipe)
  */
 export async function checkExchangeProximity(userId, currentLocation, exchangeId) {
   try {
@@ -209,9 +210,9 @@ export async function checkExchangeProximity(userId, currentLocation, exchangeId
       otherLocation.longitude
     );
 
-    // If distance > 100m, should wipe
+    // If distance > PROXIMITY_RADIUS, should wipe
     return {
-      shouldWipe: distance > 100,
+      shouldWipe: distance > PROXIMITY_RADIUS,
       distance,
     };
   } catch (error) {

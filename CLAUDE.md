@@ -1,12 +1,12 @@
 # Project Nudge
-**Mission:** Eliminate approach anxiety via a 100m digital "Green Light."
+**Mission:** Eliminate approach anxiety via a 500m digital "Green Light."
 
 ## 🎯 Project Status
 
 ### ✅ Completed Features
 - [x] Fresh-Start Profile (Camera + Name + Age + Optional Phone)
 - [x] Supabase backend integration (PostGIS + Storage)
-- [x] 100M Radar with real-time proximity detection
+- [x] 500M Radar with real-time proximity detection
 - [x] Location tracking with 60s heartbeat
 - [x] Auto-activation (status defaults to ON)
 - [x] Pull-to-refresh for radar updates
@@ -72,14 +72,14 @@
 
 ---
 
-### 2. The 100M Radar ✅ COMPLETE
+### 2. The 500M Radar ✅ COMPLETE
 **Status:** Implemented in `src/screens/DashboardScreen.js`
 
 - **Privacy First:** No maps. No GPS coordinates shown to users.
   - Only distance in meters (e.g., "45m away")
   - No exact locations visible to users
 
-- **Logic:** Fetch users where distance $d \le 100m$
+- **Logic:** Fetch users where distance $d \le 500m$
   - PostGIS `ST_DWithin` for efficient geospatial queries
   - Accounts for Earth's curvature (GEOGRAPHY type)
   - Function: `find_nearby_users()` in `supabase-setup.sql`
@@ -203,11 +203,11 @@ See [TESTING_NUDGE_SYSTEM.md](./TESTING_NUDGE_SYSTEM.md) for complete test scena
   - Scheduled via pg_cron: Every 5 minutes ✅
   - Deletes users where `last_heartbeat < NOW() - INTERVAL '20 minutes'`
 
-- **Distance Exit:** If user moves >100m from a match, the match dissolves
+- **Distance Exit:** If user moves >500m from a match, the match dissolves
   - Implemented in `src/lib/matchCleanup.js` ✅
   - Runs during every heartbeat (60 seconds) ✅
   - Checks distance to all mutual matches ✅
-  - Auto-deletes nudges when distance > 100m ✅
+  - Auto-deletes nudges when distance > 500m ✅
 
 **Implementation Complete:**
 
@@ -221,7 +221,7 @@ See [TESTING_NUDGE_SYSTEM.md](./TESTING_NUDGE_SYSTEM.md) for complete test scena
    - `cleanupDistantMatches()` - Check and delete distant matches
    - Integrated into heartbeat in `userContext.js`
    - Calculates distance to all mutual matches
-   - Deletes both directions of nudge if > 100m
+   - Deletes both directions of nudge if > 500m
 
 **Setup Guide:**
 See [AUTO_WIPE_SETUP.md](./AUTO_WIPE_SETUP.md) for complete deployment instructions.

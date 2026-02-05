@@ -93,7 +93,7 @@ export default function VaultScreen({ route, navigation }) {
   };
 
   const startProximityCheck = () => {
-    // Check every 30 seconds if users are still within 100m
+    // Check every 30 seconds if users are still within proximity radius
     proximityCheckInterval.current = setInterval(async () => {
       await checkProximity();
     }, 30000); // 30 seconds
@@ -246,7 +246,7 @@ export default function VaultScreen({ route, navigation }) {
           </Text>
           <Text style={styles.privacyBullet}>• Timer reaches 00:00</Text>
           <Text style={styles.privacyBullet}>
-            • Either person moves &gt;100m away
+            • Either person moves &gt;500m away
           </Text>
           <Text style={styles.privacyBullet}>• You close this screen</Text>
         </View>
