@@ -222,7 +222,7 @@ export default function DashboardScreen({ navigation }) {
       // Send the flick
       const result = await sendFlick(user.id, targetUser.id);
 
-      if (result.alreadyFlickd) {
+      if (result.alreadyFlicked) {
         Alert.alert('Already Flicked', `You've already flicked them!`);
         return;
       }

@@ -15,10 +15,10 @@ function normalizeUserData(user) {
 /**
  * Send a flick from one user to another
  */
-export async function sendNudge(fromUserId, toUserId) {
+export async function sendFlick(fromUserId, toUserId) {
   try {
     const { data, error } = await supabase
-      .from('flicks')
+      .from('nudges')
       .insert({
         from_user_id: fromUserId,
         to_user_id: toUserId,
@@ -27,10 +27,10 @@ export async function sendNudge(fromUserId, toUserId) {
       .single();
 
     if (error) {
-      // If error is due to duplicate (already flickd), that's okay
+      // If error is due to duplicate (already flicked), that's okay
       if (error.code === '23505') {
-        console.log('Already flickd this user');
-        return { alreadyNudged: true };
+        console.log('Already flicked this user');
+        return { alreadyFlicked: true };
       }
       throw error;
     }
@@ -45,10 +45,10 @@ export async function sendNudge(fromUserId, toUserId) {
 /**
  * Get all flicks received by a user
  */
-export async function getNudgesForUser(userId) {
+export async function getFlicksForUser(userId) {
   try {
     const { data, error } = await supabase
-      .from('flicks')
+      .from('nudges')
       .select('from_user_id, created_at')
       .eq('to_user_id', userId);
 
@@ -64,10 +64,10 @@ export async function getNudgesForUser(userId) {
 /**
  * Get all flicks sent by a user
  */
-export async function getNudgesSentByUser(userId) {
+export async function getFlicksSentByUser(userId) {
   try {
     const { data, error } = await supabase
-      .from('flicks')
+      .from('nudges')
       .select('to_user_id, created_at')
       .eq('from_user_id', userId);
 
@@ -85,7 +85,7 @@ export async function getNudgesSentByUser(userId) {
  */
 export async function checkMutualMatch(userAId, userBId) {
   try {
-    const { data, error } = await supabase.rpc('check_mutual_flick', {
+    const { data, error } = await supabase.rpc('check_mutual_nudge', {
       user_a: userAId,
       user_b: userBId,
     });
@@ -102,10 +102,10 @@ export async function checkMutualMatch(userAId, userBId) {
 /**
  * Delete a flick (for cleanup when users move apart)
  */
-export async function deleteNudge(fromUserId, toUserId) {
+export async function deleteFlick(fromUserId, toUserId) {
   try {
     const { error } = await supabase
-      .from('flicks')
+      .from('nudges')
       .delete()
       .eq('from_user_id', fromUserId)
       .eq('to_user_id', toUserId);
@@ -120,15 +120,15 @@ export async function deleteNudge(fromUserId, toUserId) {
 /**
  * Delete all flicks for a user (cleanup on signout)
  */
-export async function deleteAllNudgesForUser(userId) {
+export async function deleteAllFlicksForUser(userId) {
   try {
     const { error: error1 } = await supabase
-      .from('flicks')
+      .from('nudges')
       .delete()
       .eq('from_user_id', userId);
 
     const { error: error2 } = await supabase
-      .from('flicks')
+      .from('nudges')
       .delete()
       .eq('to_user_id', userId);
 
@@ -143,7 +143,7 @@ export async function deleteAllNudgesForUser(userId) {
  * Subscribe to flicks in real-time
  * Callback receives payload with eventType and new flick data
  */
-export function subscribeToNudges(userId, onNudgeReceived) {
+export function subscribeToFlicks(userId, onFlickReceived) {
   const subscription = supabase
     .channel(`flicks_${userId}`)
     .on(
@@ -151,12 +151,12 @@ export function subscribeToNudges(userId, onNudgeReceived) {
       {
         event: 'INSERT',
         schema: 'public',
-        table: 'flicks',
+        table: 'nudges',
         filter: `to_user_id=eq.${userId}`,
       },
       (payload) => {
         console.log('New flick received:', payload);
-        onNudgeReceived(payload.new);
+        onFlickReceived(payload.new);
       }
     )
     .subscribe();
