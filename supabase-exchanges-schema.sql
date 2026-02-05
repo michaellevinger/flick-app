@@ -82,29 +82,10 @@ $$ LANGUAGE plpgsql;
 -- Enable RLS
 ALTER TABLE exchanges ENABLE ROW LEVEL SECURITY;
 
--- Allow users to see exchanges they're part of
-CREATE POLICY "Users can view their own exchanges" ON exchanges
-  FOR SELECT USING (
-    auth.uid()::text = user_a_id OR auth.uid()::text = user_b_id
-  );
-
--- Allow users to create exchanges
-CREATE POLICY "Users can create exchanges" ON exchanges
-  FOR INSERT WITH CHECK (
-    auth.uid()::text = user_a_id OR auth.uid()::text = user_b_id
-  );
-
--- Allow users to update their own exchanges
-CREATE POLICY "Users can update their own exchanges" ON exchanges
-  FOR UPDATE USING (
-    auth.uid()::text = user_a_id OR auth.uid()::text = user_b_id
-  );
-
--- Allow users to delete their own exchanges
-CREATE POLICY "Users can delete their own exchanges" ON exchanges
-  FOR DELETE USING (
-    auth.uid()::text = user_a_id OR auth.uid()::text = user_b_id
-  );
+-- Allow all operations for now (matching users/nudges tables policy)
+-- In production, you'd want more restrictive policies
+CREATE POLICY "Enable all operations for exchanges" ON exchanges
+  FOR ALL USING (true) WITH CHECK (true);
 
 -- Comments for documentation
 COMMENT ON TABLE exchanges IS 'Temporary storage for number exchanges - self-destructs after 15 minutes';

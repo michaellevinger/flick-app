@@ -10,6 +10,7 @@ import {
   Alert,
   RefreshControl,
   Animated,
+  Modal,
 } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { COLORS, SPACING, TYPOGRAPHY, PROXIMITY_RADIUS } from '../constants/theme';
@@ -33,6 +34,7 @@ export default function DashboardScreen({ navigation }) {
   const [nudgedUsers, setNudgedUsers] = useState(new Set());
   const [usersWhoNudgedMe, setUsersWhoNudgedMe] = useState(new Set());
   const [hiddenUsers, setHiddenUsers] = useState(new Set());
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
   const subscriptionRef = useRef(null);
   const nudgeSubscriptionRef = useRef(null);
 
@@ -369,13 +371,15 @@ export default function DashboardScreen({ navigation }) {
                       >
                     <View style={styles.userInfo}>
                       {nearbyUser.selfie_url ? (
-                        <Image
-                          source={{ uri: nearbyUser.selfie_url }}
-                          style={[
-                            styles.userPhoto,
-                            theyNudgedMe && styles.userPhotoInterested,
-                          ]}
-                        />
+                        <TouchableOpacity onPress={() => setSelectedPhoto(nearbyUser.selfie_url)}>
+                          <Image
+                            source={{ uri: nearbyUser.selfie_url }}
+                            style={[
+                              styles.userPhoto,
+                              theyNudgedMe && styles.userPhotoInterested,
+                            ]}
+                          />
+                        </TouchableOpacity>
                       ) : (
                         <View
                           style={[
@@ -430,6 +434,26 @@ export default function DashboardScreen({ navigation }) {
           </ScrollView>
         </>
       )}
+
+      {/* Full-Screen Photo Modal */}
+      <Modal
+        visible={selectedPhoto !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedPhoto(null)}
+      >
+        <TouchableOpacity
+          style={styles.photoModalOverlay}
+          activeOpacity={1}
+          onPress={() => setSelectedPhoto(null)}
+        >
+          <Image
+            source={{ uri: selectedPhoto }}
+            style={styles.photoModalImage}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -648,5 +672,15 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  photoModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  photoModalImage: {
+    width: '100%',
+    height: '100%',
   },
 });
