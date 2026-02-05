@@ -9,7 +9,6 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
-  ScrollView,
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
@@ -62,11 +61,7 @@ export default function SetupScreen({ route, navigation }) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View style={styles.content}>
         <Text style={styles.title}>Almost There</Text>
         <Text style={styles.subtitle}>Just the basics</Text>
 
@@ -191,7 +186,7 @@ export default function SetupScreen({ route, navigation }) {
         <Text style={styles.notice}>
           No bios. No chat. Proximity only.
         </Text>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -201,31 +196,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.white,
   },
-  scrollView: {
+  content: {
     flex: 1,
-  },
-  scrollContent: {
-    paddingTop: SPACING.xxl * 2,
+    justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xl,
+    paddingVertical: SPACING.lg,
   },
   title: {
     ...TYPOGRAPHY.title,
+    fontSize: 28,
     textAlign: 'center',
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.xs,
   },
   subtitle: {
     ...TYPOGRAPHY.body,
     textAlign: 'center',
     color: COLORS.gray,
-    marginBottom: SPACING.xxl,
-  },
-  form: {
-    gap: SPACING.md,
     marginBottom: SPACING.lg,
   },
-  inputGroup: {
+  form: {
     gap: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  inputGroup: {
+    gap: SPACING.xs,
   },
   label: {
     ...TYPOGRAPHY.body,
@@ -243,19 +237,20 @@ const styles = StyleSheet.create({
   },
   input: {
     ...TYPOGRAPHY.subtitle,
+    fontSize: 20,
     borderWidth: 2,
     borderColor: COLORS.black,
     borderRadius: 8,
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.sm,
     backgroundColor: COLORS.white,
   },
   button: {
     backgroundColor: COLORS.green,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.sm,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.sm,
   },
   buttonDisabled: {
     backgroundColor: COLORS.gray,
@@ -279,7 +274,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.black,
     borderRadius: 8,
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.xs,
     alignItems: 'center',
     backgroundColor: COLORS.white,
   },
