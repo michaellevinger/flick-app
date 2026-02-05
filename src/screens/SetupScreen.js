@@ -205,6 +205,7 @@ const styles = StyleSheet.create({
   title: {
     ...TYPOGRAPHY.title,
     textAlign: 'center',
+    marginTop: SPACING.xl,
     marginBottom: SPACING.sm,
   },
   subtitle: {
