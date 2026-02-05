@@ -18,25 +18,25 @@ import { useUser } from '../lib/userContext';
 import { findNearbyUsers, subscribeToNearbyUsers } from '../lib/database';
 import { requestLocationPermission, formatDistance } from '../lib/location';
 import {
-  sendNudge,
+  sendFlick,
   checkMutualMatch,
-  subscribeToNudges,
+  subscribeToFlicks,
   getMatchedUserInfo,
-  getNudgesSentByUser,
-  getNudgesForUser,
-  deleteNudge,
-} from '../lib/nudges';
+  getFlicksSentByUser,
+  getFlicksForUser,
+  deleteFlick,
+} from '../lib/flicks';
 
 export default function DashboardScreen({ navigation }) {
   const { user, toggleStatus, updateLocation, logout } = useUser();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [nudgedUsers, setNudgedUsers] = useState(new Set());
-  const [usersWhoNudgedMe, setUsersWhoNudgedMe] = useState(new Set());
+  const [flickedUsers, setFlickdUsers] = useState(new Set());
+  const [usersWhoFlickedMe, setUsersWhoFlickdMe] = useState(new Set());
   const [hiddenUsers, setHiddenUsers] = useState(new Set());
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const subscriptionRef = useRef(null);
-  const nudgeSubscriptionRef = useRef(null);
+  const flickSubscriptionRef = useRef(null);
 
   useEffect(() => {
     if (!user) {
@@ -46,16 +46,16 @@ export default function DashboardScreen({ navigation }) {
 
     initializeLocation();
     setupRealtimeSubscription();
-    setupNudgeSubscription();
-    loadNudgesSent();
-    loadNudgesReceived();
+    setupFlickSubscription();
+    loadFlicksSent();
+    loadFlicksReceived();
 
     return () => {
       if (subscriptionRef.current) {
         subscriptionRef.current.unsubscribe();
       }
-      if (nudgeSubscriptionRef.current) {
-        nudgeSubscriptionRef.current.unsubscribe();
+      if (flickSubscriptionRef.current) {
+        flickSubscriptionRef.current.unsubscribe();
       }
     };
   }, [user]);
@@ -89,45 +89,45 @@ export default function DashboardScreen({ navigation }) {
     });
   };
 
-  const setupNudgeSubscription = () => {
+  const setupFlickSubscription = () => {
     if (!user) return;
 
-    nudgeSubscriptionRef.current = subscribeToNudges(user.id, async (nudge) => {
+    flickSubscriptionRef.current = subscribeToFlicks(user.id, async (flick) => {
       // Someone flicked us! Reload received flicks to update UI
-      await loadNudgesReceived();
+      await loadFlicksReceived();
 
       // Check if it's a mutual match
-      const isMutual = await checkMutualMatch(user.id, nudge.from_user_id);
+      const isMutual = await checkMutualMatch(user.id, flick.from_user_id);
 
       if (isMutual) {
         // It's a match! Navigate to Green Light screen
-        const matchedUser = await getMatchedUserInfo(nudge.from_user_id);
+        const matchedUser = await getMatchedUserInfo(flick.from_user_id);
         navigation.navigate('GreenLight', { matchedUser });
       }
     });
   };
 
-  const loadNudgesSent = async () => {
+  const loadFlicksSent = async () => {
     if (!user) return;
 
     try {
-      const sentNudges = await getNudgesSentByUser(user.id);
-      const nudgedUserIds = new Set(sentNudges.map((n) => n.to_user_id));
-      setNudgedUsers(nudgedUserIds);
+      const sentFlicks = await getFlicksSentByUser(user.id);
+      const flickdUserIds = new Set(sentFlicks.map((n) => n.to_user_id));
+      setFlickdUsers(flickdUserIds);
     } catch (error) {
-      console.error('Error loading sent nudges:', error);
+      console.error('Error loading sent flicks:', error);
     }
   };
 
-  const loadNudgesReceived = async () => {
+  const loadFlicksReceived = async () => {
     if (!user) return;
 
     try {
-      const receivedNudges = await getNudgesForUser(user.id);
-      const userIdsWhoNudgedMe = new Set(receivedNudges.map((n) => n.from_user_id));
-      setUsersWhoNudgedMe(userIdsWhoNudgedMe);
+      const receivedFlicks = await getFlicksForUser(user.id);
+      const userIdsWhoFlickdMe = new Set(receivedFlicks.map((n) => n.from_user_id));
+      setUsersWhoFlickdMe(userIdsWhoFlickdMe);
     } catch (error) {
-      console.error('Error loading received nudges:', error);
+      console.error('Error loading received flicks:', error);
     }
   };
 
@@ -169,7 +169,7 @@ export default function DashboardScreen({ navigation }) {
     try {
       await updateLocation();
       await loadNearbyUsers();
-      await loadNudgesReceived();
+      await loadFlicksReceived();
     } catch (error) {
       console.error('Error refreshing:', error);
     } finally {
@@ -177,11 +177,11 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const handleNudge = async (targetUser) => {
+  const handleFlick = async (targetUser) => {
     if (!user) return;
 
-    const iNudgedThem = nudgedUsers.has(targetUser.id);
-    const theyNudgedMe = usersWhoNudgedMe.has(targetUser.id);
+    const iFlickdThem = flickedUsers.has(targetUser.id);
+    const theyFlickdMe = usersWhoFlickedMe.has(targetUser.id);
 
     // Check if user can initiate first flick based on gender rules
     // Males looking for females cannot initiate first flick
@@ -189,11 +189,11 @@ export default function DashboardScreen({ navigation }) {
       user.gender === 'male' &&
       user.lookingFor === 'female' &&
       targetUser.gender === 'female' &&
-      !theyNudgedMe // Unless they already flicked us
+      !theyFlickdMe // Unless they already flicked us
     );
 
     // If can't initiate and they haven't flicked us, show alert
-    if (!canInitiateFlick && !iNudgedThem) {
+    if (!canInitiateFlick && !iFlickdThem) {
       Alert.alert(
         'Cannot Initiate',
         'Based on your preferences, you cannot send the first flick. Wait for them to flick you first.'
@@ -202,11 +202,11 @@ export default function DashboardScreen({ navigation }) {
     }
 
     // If already flicked, allow unflick
-    if (iNudgedThem) {
+    if (iFlickdThem) {
       try {
-        await deleteNudge(user.id, targetUser.id);
+        await deleteFlick(user.id, targetUser.id);
         // Update local state to remove the flick
-        setNudgedUsers((prev) => {
+        setFlickdUsers((prev) => {
           const newSet = new Set(prev);
           newSet.delete(targetUser.id);
           return newSet;
@@ -220,18 +220,18 @@ export default function DashboardScreen({ navigation }) {
 
     try {
       // Send the flick
-      const result = await sendNudge(user.id, targetUser.id);
+      const result = await sendFlick(user.id, targetUser.id);
 
-      if (result.alreadyNudged) {
+      if (result.alreadyFlickd) {
         Alert.alert('Already Flicked', `You've already flicked them!`);
         return;
       }
 
       // Update local state
-      setNudgedUsers((prev) => new Set([...prev, targetUser.id]));
+      setFlickdUsers((prev) => new Set([...prev, targetUser.id]));
 
       // If they already flicked us, this is an instant match!
-      if (theyNudgedMe) {
+      if (theyFlickdMe) {
         const matchedUser = await getMatchedUserInfo(targetUser.id);
         navigation.navigate('GreenLight', { matchedUser });
       } else {
@@ -372,15 +372,15 @@ export default function DashboardScreen({ navigation }) {
               nearbyUsers
                 .filter((u) => !hiddenUsers.has(u.id))
                 .map((nearbyUser) => {
-                  const theyNudgedMe = usersWhoNudgedMe.has(nearbyUser.id);
-                  const iNudgedThem = nudgedUsers.has(nearbyUser.id);
+                  const theyFlickdMe = usersWhoFlickedMe.has(nearbyUser.id);
+                  const iFlickdThem = flickedUsers.has(nearbyUser.id);
 
                   // Check if user can initiate flick (males looking for females cannot)
                   const canInitiate = !(
                     user.gender === 'male' &&
                     user.lookingFor === 'female' &&
                     nearbyUser.gender === 'female' &&
-                    !theyNudgedMe
+                    !theyFlickdMe
                   );
 
                   return (
@@ -394,7 +394,7 @@ export default function DashboardScreen({ navigation }) {
                       <View
                         style={[
                           styles.userCard,
-                          theyNudgedMe && styles.userCardInterested,
+                          theyFlickdMe && styles.userCardInterested,
                         ]}
                       >
                     <View style={styles.userInfo}>
@@ -404,7 +404,7 @@ export default function DashboardScreen({ navigation }) {
                             source={{ uri: nearbyUser.selfie_url }}
                             style={[
                               styles.userPhoto,
-                              theyNudgedMe && styles.userPhotoInterested,
+                              theyFlickdMe && styles.userPhotoInterested,
                             ]}
                           />
                         </TouchableOpacity>
@@ -412,7 +412,7 @@ export default function DashboardScreen({ navigation }) {
                         <View
                           style={[
                             styles.userPhotoPlaceholder,
-                            theyNudgedMe && styles.userPhotoInterestedPlaceholder,
+                            theyFlickdMe && styles.userPhotoInterestedPlaceholder,
                           ]}
                         >
                           <Text style={styles.userInitial}>?</Text>
@@ -422,7 +422,7 @@ export default function DashboardScreen({ navigation }) {
                         <View style={styles.userNameRow}>
                           <Text style={styles.userName}>{nearbyUser.age} years old</Text>
                         </View>
-                        {theyNudgedMe ? (
+                        {theyFlickdMe ? (
                           <Text style={styles.interestedLabel}>
                             Wants to meet
                           </Text>
@@ -435,23 +435,23 @@ export default function DashboardScreen({ navigation }) {
                     </View>
                     <TouchableOpacity
                       style={[
-                        styles.nudgeButton,
-                        theyNudgedMe && styles.nudgeButtonInterested,
-                        iNudgedThem && styles.nudgeButtonDisabled,
-                        !canInitiate && !iNudgedThem && styles.nudgeButtonDisabled,
+                        styles.flickButton,
+                        theyFlickdMe && styles.flickButtonInterested,
+                        iFlickdThem && styles.flickButtonDisabled,
+                        !canInitiate && !iFlickdThem && styles.flickButtonDisabled,
                       ]}
-                      onPress={() => handleNudge(nearbyUser)}
-                      disabled={!canInitiate && !iNudgedThem && !theyNudgedMe}
+                      onPress={() => handleFlick(nearbyUser)}
+                      disabled={!canInitiate && !iFlickdThem && !theyFlickdMe}
                     >
                       <Text
                         style={[
-                          styles.nudgeButtonText,
-                          (iNudgedThem || (!canInitiate && !theyNudgedMe)) && styles.nudgeButtonTextDisabled,
+                          styles.flickButtonText,
+                          (iFlickdThem || (!canInitiate && !theyFlickdMe)) && styles.flickButtonTextDisabled,
                         ]}
                       >
-                        {iNudgedThem
+                        {iFlickdThem
                           ? 'FLICKED ✓'
-                          : theyNudgedMe
+                          : theyFlickdMe
                           ? 'FLICK BACK'
                           : !canInitiate
                           ? 'WAIT'
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     color: COLORS.gray,
   },
-  nudgeButton: {
+  flickButton: {
     backgroundColor: COLORS.green,
     paddingHorizontal: SPACING.md,
     paddingVertical: 6,
@@ -676,19 +676,19 @@ const styles = StyleSheet.create({
     minWidth: 80,
     alignItems: 'center',
   },
-  nudgeButtonInterested: {
+  flickButtonInterested: {
     backgroundColor: COLORS.green,
   },
-  nudgeButtonDisabled: {
+  flickButtonDisabled: {
     backgroundColor: COLORS.gray,
   },
-  nudgeButtonText: {
+  flickButtonText: {
     fontFamily: 'Inter_900Black',
     fontSize: 14,
     letterSpacing: 1.5,
     color: '#0b0f0e',
   },
-  nudgeButtonTextDisabled: {
+  flickButtonTextDisabled: {
     color: COLORS.white,
   },
   hideButton: {

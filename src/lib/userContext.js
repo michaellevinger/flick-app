@@ -11,7 +11,7 @@ import {
   deleteUser,
 } from './database';
 import { getCurrentLocation } from './location';
-import { deleteAllNudgesForUser } from './nudges';
+import { deleteAllFlicksForUser } from './flicks';
 import { cleanupDistantMatches } from './matchCleanup';
 
 const UserContext = createContext(null);
@@ -183,8 +183,8 @@ export function UserProvider({ children }) {
         // Stop heartbeat
         stopHeartbeat();
 
-        // Delete all nudges (sent and received)
-        await deleteAllNudgesForUser(user.id);
+        // Delete all flicks (sent and received)
+        await deleteAllFlicksForUser(user.id);
 
         // Delete selfie from storage
         if (user.selfieUrl) {

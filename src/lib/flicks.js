@@ -13,12 +13,12 @@ function normalizeUserData(user) {
 }
 
 /**
- * Send a nudge from one user to another
+ * Send a flick from one user to another
  */
 export async function sendNudge(fromUserId, toUserId) {
   try {
     const { data, error } = await supabase
-      .from('nudges')
+      .from('flicks')
       .insert({
         from_user_id: fromUserId,
         to_user_id: toUserId,
@@ -27,28 +27,28 @@ export async function sendNudge(fromUserId, toUserId) {
       .single();
 
     if (error) {
-      // If error is due to duplicate (already nudged), that's okay
+      // If error is due to duplicate (already flickd), that's okay
       if (error.code === '23505') {
-        console.log('Already nudged this user');
+        console.log('Already flickd this user');
         return { alreadyNudged: true };
       }
       throw error;
     }
 
-    return { success: true, nudge: data };
+    return { success: true, flick: data };
   } catch (error) {
-    console.error('Error sending nudge:', error);
+    console.error('Error sending flick:', error);
     throw error;
   }
 }
 
 /**
- * Get all nudges received by a user
+ * Get all flicks received by a user
  */
 export async function getNudgesForUser(userId) {
   try {
     const { data, error } = await supabase
-      .from('nudges')
+      .from('flicks')
       .select('from_user_id, created_at')
       .eq('to_user_id', userId);
 
@@ -56,18 +56,18 @@ export async function getNudgesForUser(userId) {
 
     return data || [];
   } catch (error) {
-    console.error('Error fetching nudges:', error);
+    console.error('Error fetching flicks:', error);
     throw error;
   }
 }
 
 /**
- * Get all nudges sent by a user
+ * Get all flicks sent by a user
  */
 export async function getNudgesSentByUser(userId) {
   try {
     const { data, error } = await supabase
-      .from('nudges')
+      .from('flicks')
       .select('to_user_id, created_at')
       .eq('from_user_id', userId);
 
@@ -75,7 +75,7 @@ export async function getNudgesSentByUser(userId) {
 
     return data || [];
   } catch (error) {
-    console.error('Error fetching sent nudges:', error);
+    console.error('Error fetching sent flicks:', error);
     throw error;
   }
 }
@@ -85,7 +85,7 @@ export async function getNudgesSentByUser(userId) {
  */
 export async function checkMutualMatch(userAId, userBId) {
   try {
-    const { data, error } = await supabase.rpc('check_mutual_nudge', {
+    const { data, error } = await supabase.rpc('check_mutual_flick', {
       user_a: userAId,
       user_b: userBId,
     });
@@ -100,62 +100,62 @@ export async function checkMutualMatch(userAId, userBId) {
 }
 
 /**
- * Delete a nudge (for cleanup when users move apart)
+ * Delete a flick (for cleanup when users move apart)
  */
 export async function deleteNudge(fromUserId, toUserId) {
   try {
     const { error } = await supabase
-      .from('nudges')
+      .from('flicks')
       .delete()
       .eq('from_user_id', fromUserId)
       .eq('to_user_id', toUserId);
 
     if (error) throw error;
   } catch (error) {
-    console.error('Error deleting nudge:', error);
+    console.error('Error deleting flick:', error);
     throw error;
   }
 }
 
 /**
- * Delete all nudges for a user (cleanup on signout)
+ * Delete all flicks for a user (cleanup on signout)
  */
 export async function deleteAllNudgesForUser(userId) {
   try {
     const { error: error1 } = await supabase
-      .from('nudges')
+      .from('flicks')
       .delete()
       .eq('from_user_id', userId);
 
     const { error: error2 } = await supabase
-      .from('nudges')
+      .from('flicks')
       .delete()
       .eq('to_user_id', userId);
 
     if (error1 || error2) throw error1 || error2;
   } catch (error) {
-    console.error('Error deleting all nudges:', error);
+    console.error('Error deleting all flicks:', error);
     throw error;
   }
 }
 
 /**
- * Subscribe to nudges in real-time
- * Callback receives payload with eventType and new nudge data
+ * Subscribe to flicks in real-time
+ * Callback receives payload with eventType and new flick data
  */
 export function subscribeToNudges(userId, onNudgeReceived) {
   const subscription = supabase
-    .channel(`nudges_${userId}`)
+    .channel(`flicks_${userId}`)
     .on(
       'postgres_changes',
       {
         event: 'INSERT',
         schema: 'public',
-        table: 'nudges',
+        table: 'flicks',
         filter: `to_user_id=eq.${userId}`,
       },
       (payload) => {
-        console.log('New nudge received:', payload);
+        console.log('New flick received:', payload);
         onNudgeReceived(payload.new);
       }
     )
