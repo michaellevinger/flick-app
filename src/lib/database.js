@@ -18,7 +18,7 @@ function normalizeUserData(user) {
 /**
  * Create or update a user in the database
  */
-export async function upsertUser({ id, name, age, selfieUrl, status, location, phoneNumber }) {
+export async function upsertUser({ id, name, age, selfieUrl, status, location, phoneNumber, gender, lookingFor }) {
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -30,6 +30,8 @@ export async function upsertUser({ id, name, age, selfieUrl, status, location, p
         status,
         location: location ? `POINT(${location.longitude} ${location.latitude})` : null,
         phone_number: phoneNumber || null,
+        gender: gender || null,
+        looking_for: lookingFor || null,
         last_heartbeat: new Date().toISOString(),
       },
       {
@@ -99,7 +101,7 @@ export async function updateUserLocation(userId, location) {
  * Find users within a given radius (in meters) of a location
  * Uses PostGIS ST_DWithin for efficient geospatial queries
  */
-export async function findNearbyUsers(userId, location, radiusMeters = PROXIMITY_RADIUS) {
+export async function findNearbyUsers(userId, location, gender, lookingFor, radiusMeters = PROXIMITY_RADIUS) {
   // Use PostGIS to find users within radius
   // ST_DWithin uses geography type which handles Earth's curvature
   const { data, error } = await supabase.rpc('find_nearby_users', {
@@ -107,6 +109,8 @@ export async function findNearbyUsers(userId, location, radiusMeters = PROXIMITY
     user_lng: location.longitude,
     radius_meters: radiusMeters,
     current_user_id: userId,
+    current_user_gender: gender,
+    current_user_looking_for: lookingFor,
   });
 
   if (error) {

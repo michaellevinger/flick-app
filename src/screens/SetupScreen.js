@@ -18,10 +18,12 @@ export default function SetupScreen({ route, navigation }) {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [gender, setGender] = useState(''); // 'male', 'female', 'other'
+  const [lookingFor, setLookingFor] = useState(''); // 'male', 'female', 'both'
   const [isCreating, setIsCreating] = useState(false);
   const { createUser } = useUser();
 
-  const isValid = name.trim().length > 0 && age.length > 0 && parseInt(age) >= 18;
+  const isValid = name.trim().length > 0 && age.length > 0 && parseInt(age) >= 18 && gender && lookingFor;
 
   const handleContinue = async () => {
     if (!isValid || isCreating) return;
@@ -34,6 +36,8 @@ export default function SetupScreen({ route, navigation }) {
         age: parseInt(age),
         photoUri,
         phoneNumber: phoneNumber.trim() || null,
+        gender,
+        lookingFor,
       });
 
       navigation.navigate('Dashboard');
@@ -73,6 +77,66 @@ export default function SetupScreen({ route, navigation }) {
               autoCapitalize="words"
               maxLength={20}
             />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>I am</Text>
+            <View style={styles.optionButtons}>
+              <TouchableOpacity
+                style={[styles.optionButton, gender === 'male' && styles.optionButtonSelected]}
+                onPress={() => setGender('male')}
+              >
+                <Text style={[styles.optionButtonText, gender === 'male' && styles.optionButtonTextSelected]}>
+                  Male
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.optionButton, gender === 'female' && styles.optionButtonSelected]}
+                onPress={() => setGender('female')}
+              >
+                <Text style={[styles.optionButtonText, gender === 'female' && styles.optionButtonTextSelected]}>
+                  Female
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.optionButton, gender === 'other' && styles.optionButtonSelected]}
+                onPress={() => setGender('other')}
+              >
+                <Text style={[styles.optionButtonText, gender === 'other' && styles.optionButtonTextSelected]}>
+                  Other
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Looking for</Text>
+            <View style={styles.optionButtons}>
+              <TouchableOpacity
+                style={[styles.optionButton, lookingFor === 'male' && styles.optionButtonSelected]}
+                onPress={() => setLookingFor('male')}
+              >
+                <Text style={[styles.optionButtonText, lookingFor === 'male' && styles.optionButtonTextSelected]}>
+                  Male
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.optionButton, lookingFor === 'female' && styles.optionButtonSelected]}
+                onPress={() => setLookingFor('female')}
+              >
+                <Text style={[styles.optionButtonText, lookingFor === 'female' && styles.optionButtonTextSelected]}>
+                  Female
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.optionButton, lookingFor === 'both' && styles.optionButtonSelected]}
+                onPress={() => setLookingFor('both')}
+              >
+                <Text style={[styles.optionButtonText, lookingFor === 'both' && styles.optionButtonTextSelected]}>
+                  Both
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
@@ -197,5 +261,29 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     textAlign: 'center',
     color: COLORS.gray,
+  },
+  optionButtons: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+  },
+  optionButton: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: COLORS.black,
+    borderRadius: 8,
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+  },
+  optionButtonSelected: {
+    backgroundColor: COLORS.green,
+  },
+  optionButtonText: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+    color: COLORS.gray,
+  },
+  optionButtonTextSelected: {
+    color: COLORS.black,
   },
 });

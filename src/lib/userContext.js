@@ -62,7 +62,7 @@ export function UserProvider({ children }) {
     }
   };
 
-  const createUser = async ({ name, age, photoUri, phoneNumber }) => {
+  const createUser = async ({ name, age, photoUri, phoneNumber, gender, lookingFor }) => {
     try {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -89,6 +89,8 @@ export function UserProvider({ children }) {
         status: true, // Default to ON
         location,
         phoneNumber,
+        gender,
+        lookingFor,
       });
 
       // Save to local storage
@@ -100,6 +102,8 @@ export function UserProvider({ children }) {
         status: true,
         location,
         phoneNumber,
+        gender,
+        lookingFor,
       };
 
       await saveUser(userToSave);

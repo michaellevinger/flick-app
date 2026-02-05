@@ -138,6 +138,8 @@ export default function DashboardScreen({ navigation }) {
       const users = await findNearbyUsers(
         user.id,
         user.location,
+        user.gender,
+        user.lookingFor,
         PROXIMITY_RADIUS
       );
 
@@ -180,6 +182,24 @@ export default function DashboardScreen({ navigation }) {
 
     const iNudgedThem = nudgedUsers.has(targetUser.id);
     const theyNudgedMe = usersWhoNudgedMe.has(targetUser.id);
+
+    // Check if user can initiate first flick based on gender rules
+    // Males looking for females cannot initiate first flick
+    const canInitiateFlick = !(
+      user.gender === 'male' &&
+      user.lookingFor === 'female' &&
+      targetUser.gender === 'female' &&
+      !theyNudgedMe // Unless they already flicked us
+    );
+
+    // If can't initiate and they haven't flicked us, show alert
+    if (!canInitiateFlick && !iNudgedThem) {
+      Alert.alert(
+        'Cannot Initiate',
+        'Based on your preferences, you cannot send the first flick. Wait for them to flick you first.'
+      );
+      return;
+    }
 
     // If already flicked, allow unflick
     if (iNudgedThem) {
@@ -355,6 +375,14 @@ export default function DashboardScreen({ navigation }) {
                   const theyNudgedMe = usersWhoNudgedMe.has(nearbyUser.id);
                   const iNudgedThem = nudgedUsers.has(nearbyUser.id);
 
+                  // Check if user can initiate flick (males looking for females cannot)
+                  const canInitiate = !(
+                    user.gender === 'male' &&
+                    user.lookingFor === 'female' &&
+                    nearbyUser.gender === 'female' &&
+                    !theyNudgedMe
+                  );
+
                   return (
                     <Swipeable
                       key={nearbyUser.id}
@@ -410,19 +438,23 @@ export default function DashboardScreen({ navigation }) {
                         styles.nudgeButton,
                         theyNudgedMe && styles.nudgeButtonInterested,
                         iNudgedThem && styles.nudgeButtonDisabled,
+                        !canInitiate && !iNudgedThem && styles.nudgeButtonDisabled,
                       ]}
                       onPress={() => handleNudge(nearbyUser)}
+                      disabled={!canInitiate && !iNudgedThem && !theyNudgedMe}
                     >
                       <Text
                         style={[
                           styles.nudgeButtonText,
-                          iNudgedThem && styles.nudgeButtonTextDisabled,
+                          (iNudgedThem || (!canInitiate && !theyNudgedMe)) && styles.nudgeButtonTextDisabled,
                         ]}
                       >
                         {iNudgedThem
                           ? 'FLICKED ✓'
                           : theyNudgedMe
                           ? 'FLICK BACK'
+                          : !canInitiate
+                          ? 'WAIT'
                           : 'FLICK'}
                       </Text>
                     </TouchableOpacity>
