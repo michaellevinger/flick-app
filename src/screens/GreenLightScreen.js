@@ -193,10 +193,7 @@ export default function GreenLightScreen({ route, navigation }) {
       if (result.alreadyExists) {
         Alert.alert('Request Pending', 'You already sent a request to this person.');
       } else {
-        Alert.alert(
-          'Request Sent',
-          `${matchedUser.name} will be asked to accept the exchange.`
-        );
+        // Request sent silently - no alert needed
         setExchangeRequest(result.exchange);
       }
     } catch (error) {
