@@ -1,14 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { useUser } from '../lib/userContext';
 
 export default function CameraScreen({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState(null);
   const cameraRef = useRef(null);
+  const { user, isLoading } = useUser();
+
+  // Check if user exists and navigate to Dashboard
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigation.replace('Dashboard');
+    }
+  }, [user, isLoading, navigation]);
 
   // Reset state when screen comes into focus (e.g., after logout)
   useFocusEffect(
@@ -17,8 +26,13 @@ export default function CameraScreen({ navigation }) {
     }, [])
   );
 
-  if (!permission) {
-    return <View style={styles.container} />;
+  // Show loading while checking user or permissions
+  if (isLoading || !permission) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={COLORS.green} />
+      </View>
+    );
   }
 
   if (!permission.granted) {
