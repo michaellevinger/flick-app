@@ -164,6 +164,8 @@ export default function SetupScreen({ route, navigation }) {
                 placeholderTextColor={COLORS.gray}
                 keyboardType="number-pad"
                 maxLength={3}
+                autoComplete="off"
+                textContentType="none"
               />
             </View>
           </View>
