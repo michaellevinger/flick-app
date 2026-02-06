@@ -288,34 +288,11 @@ export default function DashboardScreen({ navigation }) {
       {
         text: 'Take New Selfie',
         onPress: () => {
-          // Sign out to force new profile creation with new selfie
-          Alert.alert(
-            'Take New Selfie',
-            'This will sign you out so you can create a fresh profile with a new selfie. Continue?',
-            [
-              { text: 'Cancel', style: 'cancel' },
-              {
-                text: 'Continue',
-                onPress: async () => {
-                  try {
-                    // First navigate away, then logout
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
-                    });
-
-                    // Logout after navigation to ensure clean state
-                    setTimeout(async () => {
-                      await logout();
-                    }, 100);
-                  } catch (error) {
-                    console.error('Error during logout:', error);
-                    Alert.alert('Error', 'Failed to sign out. Please try again.');
-                  }
-                },
-              },
-            ]
-          );
+          // Navigate to camera to take new selfie (without logging out)
+          navigation.navigate('Camera', {
+            updatePhoto: true,
+            forceReset: Date.now()
+          });
         },
       },
       {

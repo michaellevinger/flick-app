@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -7,12 +7,14 @@ import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 
 export default function CameraScreen({ navigation, route }) {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, updateSelfie } = useUser();
   const forceReset = route?.params?.forceReset;
+  const updatePhoto = route?.params?.updatePhoto;
 
   // Initialize photo state - if forceReset is present, start with null
   const [photo, setPhoto] = useState(forceReset ? null : null);
   const [key, setKey] = useState(Date.now()); // Unique key for camera remount
+  const [isUpdating, setIsUpdating] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
   const hasResetRef = useRef(false);
@@ -30,14 +32,14 @@ export default function CameraScreen({ navigation, route }) {
     }
   }, [forceReset, navigation]);
 
-  // Check if user exists and navigate to Dashboard
+  // Check if user exists and navigate to Dashboard (unless we're updating photo)
   useEffect(() => {
-    if (!isLoading && user) {
+    if (!isLoading && user && !updatePhoto) {
       // Clear photo before navigating to Dashboard
       setPhoto(null);
       navigation.replace('Dashboard');
     }
-  }, [user, isLoading, navigation]);
+  }, [user, isLoading, navigation, updatePhoto]);
 
   // Reset on screen focus
   useFocusEffect(
@@ -95,8 +97,35 @@ export default function CameraScreen({ navigation, route }) {
     setPhoto(null);
   };
 
-  const confirmPicture = () => {
-    navigation.navigate('Setup', { photoUri: photo.uri });
+  const confirmPicture = async () => {
+    // If updating existing photo, upload and update immediately
+    if (updatePhoto && user) {
+      setIsUpdating(true);
+      try {
+        const { uploadSelfie, deleteSelfie } = require('../lib/database');
+
+        // Delete old selfie
+        if (user.selfieUrl) {
+          await deleteSelfie(user.selfieUrl);
+        }
+
+        // Upload new selfie
+        const newSelfieUrl = await uploadSelfie(user.id, photo.uri);
+
+        // Update user using context
+        await updateSelfie(newSelfieUrl);
+
+        // Navigate back to Dashboard
+        navigation.navigate('Dashboard');
+      } catch (error) {
+        console.error('Error updating photo:', error);
+        Alert.alert('Error', 'Failed to update photo. Please try again.');
+        setIsUpdating(false);
+      }
+    } else {
+      // New profile creation flow
+      navigation.navigate('Setup', { photoUri: photo.uri });
+    }
   };
 
   const pickFromGallery = async () => {
@@ -119,19 +148,31 @@ export default function CameraScreen({ navigation, route }) {
   };
 
   // Don't show photo preview if we're in force reset mode or if reset has been triggered
-  // Only show preview if we have a photo AND we're not resetting AND user doesn't exist (new profile flow)
-  const shouldShowPreview = photo && !forceReset && !hasResetRef.current && !user;
+  // Show preview if: we have a photo AND not resetting AND (no user OR updating existing photo)
+  const shouldShowPreview = photo && !forceReset && !hasResetRef.current && (!user || updatePhoto);
 
   if (shouldShowPreview) {
     return (
       <View style={styles.container}>
         <Image source={{ uri: photo.uri }} style={styles.preview} />
         <View style={styles.previewActions}>
-          <TouchableOpacity style={styles.retakeButton} onPress={retakePicture}>
+          <TouchableOpacity
+            style={styles.retakeButton}
+            onPress={retakePicture}
+            disabled={isUpdating}
+          >
             <Text style={styles.buttonText}>Retake</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.confirmButton} onPress={confirmPicture}>
-            <Text style={styles.buttonText}>Looks Good</Text>
+          <TouchableOpacity
+            style={[styles.confirmButton, isUpdating && { opacity: 0.6 }]}
+            onPress={confirmPicture}
+            disabled={isUpdating}
+          >
+            {isUpdating ? (
+              <ActivityIndicator color={COLORS.black} />
+            ) : (
+              <Text style={styles.buttonText}>Looks Good</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
