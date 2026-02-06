@@ -20,27 +20,21 @@ export default function CameraScreen({ navigation, route }) {
     }
   }, [user, isLoading, navigation]);
 
-  // Reset state when screen comes into focus (e.g., after logout)
+  // Reset state when screen comes into focus ONLY if coming back from logout
   useFocusEffect(
     React.useCallback(() => {
-      // Always reset photo when returning to this screen
-      console.log('CameraScreen focused - resetting photo state');
-      setPhoto(null);
+      // Only reset photo if we have forceReset param (coming from logout)
+      if (forceReset) {
+        console.log('CameraScreen focused after logout - resetting photo state');
+        setPhoto(null);
 
-      // Clear any params to prevent re-triggering
-      if (navigation.setParams) {
-        navigation.setParams({ forceReset: undefined });
+        // Clear the param
+        if (navigation.setParams) {
+          navigation.setParams({ forceReset: undefined });
+        }
       }
-    }, [navigation])
+    }, [forceReset, navigation])
   );
-
-  // Ensure photo is cleared when no user exists - run on every render
-  useEffect(() => {
-    if (!isLoading && !user && photo) {
-      console.log('No user detected - clearing photo state');
-      setPhoto(null);
-    }
-  }, [user, photo, isLoading]);
 
   // Show loading while checking user or permissions
   if (isLoading || !permission) {
