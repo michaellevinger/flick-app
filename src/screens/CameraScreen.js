@@ -7,48 +7,51 @@ import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 
 export default function CameraScreen({ navigation, route }) {
-  const [permission, requestPermission] = useCameraPermissions();
-  const [photo, setPhoto] = useState(null);
-  const [key, setKey] = useState(0); // Force camera remount
-  const cameraRef = useRef(null);
   const { user, isLoading } = useUser();
   const forceReset = route?.params?.forceReset;
 
-  // Immediately clear photo on mount if forceReset is present
+  // Initialize photo state - if forceReset is present, start with null
+  const [photo, setPhoto] = useState(forceReset ? null : null);
+  const [key, setKey] = useState(Date.now()); // Unique key for camera remount
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef(null);
+  const hasResetRef = useRef(false);
+
+  // Immediate synchronous reset on forceReset - runs before any render
+  if (forceReset && !hasResetRef.current) {
+    hasResetRef.current = true;
+    console.log('Force reset detected - preventing photo display');
+  }
+
+  // Clear forceReset param immediately
   useEffect(() => {
-    if (forceReset) {
-      console.log('CameraScreen mounted with forceReset - clearing photo immediately');
-      setPhoto(null);
-      setKey(prev => prev + 1); // Force camera remount
-
-      // Clear the param after a short delay
-      const timer = setTimeout(() => {
-        if (navigation.setParams) {
-          navigation.setParams({ forceReset: undefined });
-        }
-      }, 100);
-
-      return () => clearTimeout(timer);
+    if (forceReset && navigation.setParams) {
+      navigation.setParams({ forceReset: undefined });
     }
   }, [forceReset, navigation]);
 
   // Check if user exists and navigate to Dashboard
   useEffect(() => {
     if (!isLoading && user) {
+      // Clear photo before navigating to Dashboard
+      setPhoto(null);
       navigation.replace('Dashboard');
     }
   }, [user, isLoading, navigation]);
 
-  // Reset state when screen comes into focus ONLY if coming back from logout
+  // Reset on screen focus
   useFocusEffect(
     React.useCallback(() => {
-      // Only reset photo if we have forceReset param (coming from logout)
-      if (forceReset) {
-        console.log('CameraScreen focused after logout - resetting photo state');
+      // Reset ref when screen comes into focus
+      hasResetRef.current = false;
+
+      // If we just came from logout, ensure photo is cleared
+      if (route?.params?.forceReset) {
+        console.log('Focus effect - force clearing photo');
         setPhoto(null);
-        setKey(prev => prev + 1); // Force camera remount
+        setKey(Date.now());
       }
-    }, [forceReset])
+    }, [route?.params?.forceReset])
   );
 
   // Show loading while checking user or permissions
@@ -82,11 +85,13 @@ export default function CameraScreen({ navigation, route }) {
         quality: 0.7,
         base64: false,
       });
+      hasResetRef.current = false; // Clear reset flag when taking new photo
       setPhoto(photo);
     }
   };
 
   const retakePicture = () => {
+    hasResetRef.current = false; // Clear reset flag when retaking
     setPhoto(null);
   };
 
@@ -113,8 +118,11 @@ export default function CameraScreen({ navigation, route }) {
     }
   };
 
-  // Don't show photo preview if we're in force reset mode (coming from logout)
-  if (photo && !forceReset) {
+  // Don't show photo preview if we're in force reset mode or if reset has been triggered
+  // Only show preview if we have a photo AND we're not resetting AND user doesn't exist (new profile flow)
+  const shouldShowPreview = photo && !forceReset && !hasResetRef.current && !user;
+
+  if (shouldShowPreview) {
     return (
       <View style={styles.container}>
         <Image source={{ uri: photo.uri }} style={styles.preview} />

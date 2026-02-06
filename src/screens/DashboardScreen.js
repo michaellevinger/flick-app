@@ -298,14 +298,16 @@ export default function DashboardScreen({ navigation }) {
                 text: 'Continue',
                 onPress: async () => {
                   try {
-                    await logout();
-                    // Use a small delay to ensure logout completes and state propagates
-                    setTimeout(() => {
-                      navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
-                      });
-                    }, 200);
+                    // First navigate away, then logout
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
+                    });
+
+                    // Logout after navigation to ensure clean state
+                    setTimeout(async () => {
+                      await logout();
+                    }, 100);
                   } catch (error) {
                     console.error('Error during logout:', error);
                     Alert.alert('Error', 'Failed to sign out. Please try again.');
@@ -365,14 +367,16 @@ export default function DashboardScreen({ navigation }) {
         style: 'destructive',
         onPress: async () => {
           try {
-            await logout();
-            // Use a small delay to ensure logout completes and state propagates
-            setTimeout(() => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
-              });
-            }, 200);
+            // First navigate away, then logout
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
+            });
+
+            // Logout after navigation to ensure clean state
+            setTimeout(async () => {
+              await logout();
+            }, 100);
           } catch (error) {
             console.error('Error during logout:', error);
             Alert.alert('Error', 'Failed to sign out. Please try again.');
