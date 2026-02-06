@@ -179,6 +179,33 @@ export function UserProvider({ children }) {
     }
   };
 
+  const updateSelfie = async (newSelfieUrl) => {
+    if (!user) return;
+
+    try {
+      // Update user in database
+      await upsertUser({
+        id: user.id,
+        name: user.name,
+        age: user.age,
+        height: user.height,
+        selfieUrl: newSelfieUrl,
+        status: user.status,
+        location: user.location,
+        phoneNumber: user.phoneNumber,
+        gender: user.gender,
+        lookingFor: user.lookingFor,
+      });
+
+      // Update local state and storage
+      const updatedUser = { ...user, selfieUrl: newSelfieUrl };
+      await saveUser(updatedUser);
+    } catch (error) {
+      console.error('Error updating selfie:', error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       if (user) {
@@ -214,6 +241,7 @@ export function UserProvider({ children }) {
         createUser,
         toggleStatus,
         updateLocation,
+        updateSelfie,
         logout,
       }}
     >

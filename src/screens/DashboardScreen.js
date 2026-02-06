@@ -11,11 +11,13 @@ import {
   RefreshControl,
   Animated,
   Modal,
+  ActionSheet,
 } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, TYPOGRAPHY, PROXIMITY_RADIUS } from '../constants/theme';
 import { useUser } from '../lib/userContext';
-import { findNearbyUsers, subscribeToNearbyUsers } from '../lib/database';
+import { findNearbyUsers, subscribeToNearbyUsers, uploadSelfie, deleteSelfie } from '../lib/database';
 import { requestLocationPermission, formatDistance } from '../lib/location';
 import {
   sendFlick,
@@ -28,7 +30,7 @@ import {
 } from '../lib/flicks';
 
 export default function DashboardScreen({ navigation }) {
-  const { user, toggleStatus, updateLocation, logout } = useUser();
+  const { user, toggleStatus, updateLocation, updateSelfie, logout } = useUser();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [flickedUsers, setFlickdUsers] = useState(new Set());
@@ -274,6 +276,73 @@ export default function DashboardScreen({ navigation }) {
     );
   };
 
+  const handleChangePhoto = () => {
+    Alert.alert('Update Profile Photo', 'Choose an option', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Take New Selfie',
+        onPress: () => {
+          // Sign out to force new profile creation with new selfie
+          Alert.alert(
+            'Take New Selfie',
+            'This will sign you out so you can create a fresh profile with a new selfie. Continue?',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Continue',
+                onPress: async () => {
+                  await logout();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Camera' }],
+                  });
+                },
+              },
+            ]
+          );
+        },
+      },
+      {
+        text: 'Choose from Gallery',
+        onPress: async () => {
+          try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permission Required', 'We need camera roll permissions to select photos.');
+              return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ['images'],
+              allowsEditing: false,
+              quality: 0.7,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+              const newPhotoUri = result.assets[0].uri;
+
+              // Delete old selfie from storage
+              if (user.selfieUrl) {
+                await deleteSelfie(user.selfieUrl);
+              }
+
+              // Upload new selfie
+              const newSelfieUrl = await uploadSelfie(user.id, newPhotoUri);
+
+              // Update user using context
+              await updateSelfie(newSelfieUrl);
+
+              Alert.alert('Success', 'Profile photo updated!');
+            }
+          } catch (error) {
+            console.error('Error updating photo:', error);
+            Alert.alert('Error', 'Failed to update photo. Please try again.');
+          }
+        },
+      },
+    ]);
+  };
+
   const handleLogout = () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
       { text: 'Cancel', style: 'cancel' },
@@ -304,7 +373,9 @@ export default function DashboardScreen({ navigation }) {
     <View style={[styles.container, !user.status && styles.containerOff]}>
       {/* User Profile Header */}
       <View style={styles.header}>
-        <Image source={{ uri: user.selfieUrl }} style={styles.profilePhoto} />
+        <TouchableOpacity onPress={handleChangePhoto}>
+          <Image source={{ uri: user.selfieUrl }} style={styles.profilePhoto} />
+        </TouchableOpacity>
         <Text style={styles.name}>
           {user.name}, {user.age}
         </Text>
