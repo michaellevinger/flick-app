@@ -62,7 +62,7 @@ export function UserProvider({ children }) {
     }
   };
 
-  const createUser = async ({ name, age, photoUri, phoneNumber, gender, lookingFor }) => {
+  const createUser = async ({ name, age, height, photoUri, phoneNumber, gender, lookingFor }) => {
     try {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -85,6 +85,7 @@ export function UserProvider({ children }) {
         id: userId,
         name,
         age,
+        height,
         selfieUrl,
         status: true, // Default to ON
         location,
@@ -98,6 +99,7 @@ export function UserProvider({ children }) {
         id: userId,
         name,
         age,
+        height,
         selfieUrl,
         status: true,
         location,

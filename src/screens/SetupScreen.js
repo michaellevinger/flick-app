@@ -17,13 +17,14 @@ export default function SetupScreen({ route, navigation }) {
   const { photoUri } = route.params;
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
+  const [height, setHeight] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [gender, setGender] = useState(''); // 'male', 'female', 'other'
   const [lookingFor, setLookingFor] = useState(''); // 'male', 'female', 'both'
   const [isCreating, setIsCreating] = useState(false);
   const { createUser } = useUser();
 
-  const isValid = name.trim().length > 0 && age.length > 0 && parseInt(age) >= 18 && gender && lookingFor;
+  const isValid = name.trim().length > 0 && age.length > 0 && parseInt(age) >= 18 && height.length > 0 && gender && lookingFor;
 
   const handleContinue = async () => {
     if (!isValid || isCreating) return;
@@ -34,6 +35,7 @@ export default function SetupScreen({ route, navigation }) {
       await createUser({
         name: name.trim(),
         age: parseInt(age),
+        height: parseInt(height),
         photoUri,
         phoneNumber: phoneNumber.trim() || null,
         gender,
@@ -139,17 +141,31 @@ export default function SetupScreen({ route, navigation }) {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Age</Text>
-            <TextInput
-              style={styles.input}
-              value={age}
-              onChangeText={setAge}
-              placeholder="25"
-              placeholderTextColor={COLORS.gray}
-              keyboardType="number-pad"
-              maxLength={2}
-            />
+          <View style={styles.inputRow}>
+            <View style={styles.inputGroupHalf}>
+              <Text style={styles.label}>Age</Text>
+              <TextInput
+                style={styles.input}
+                value={age}
+                onChangeText={setAge}
+                placeholder="25"
+                placeholderTextColor={COLORS.gray}
+                keyboardType="number-pad"
+                maxLength={2}
+              />
+            </View>
+            <View style={styles.inputGroupHalf}>
+              <Text style={styles.label}>Height (cm)</Text>
+              <TextInput
+                style={styles.input}
+                value={height}
+                onChangeText={setHeight}
+                placeholder="170"
+                placeholderTextColor={COLORS.gray}
+                keyboardType="number-pad"
+                maxLength={3}
+              />
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
@@ -219,6 +235,14 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   inputGroup: {
+    gap: SPACING.sm,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    gap: SPACING.md,
+  },
+  inputGroupHalf: {
+    flex: 1,
     gap: SPACING.sm,
   },
   label: {

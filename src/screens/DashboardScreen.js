@@ -420,7 +420,9 @@ export default function DashboardScreen({ navigation }) {
                       )}
                       <View style={styles.userDetails}>
                         <View style={styles.userNameRow}>
-                          <Text style={styles.userName}>{nearbyUser.age} years old</Text>
+                          <Text style={styles.userName}>
+                            {nearbyUser.age} years old{nearbyUser.height ? ` • ${nearbyUser.height}cm` : ''}
+                          </Text>
                         </View>
                         {theyFlickdMe ? (
                           <Text style={styles.interestedLabel}>

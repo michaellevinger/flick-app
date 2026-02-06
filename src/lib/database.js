@@ -18,7 +18,7 @@ function normalizeUserData(user) {
 /**
  * Create or update a user in the database
  */
-export async function upsertUser({ id, name, age, selfieUrl, status, location, phoneNumber, gender, lookingFor }) {
+export async function upsertUser({ id, name, age, height, selfieUrl, status, location, phoneNumber, gender, lookingFor }) {
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -26,6 +26,7 @@ export async function upsertUser({ id, name, age, selfieUrl, status, location, p
         id,
         name,
         age,
+        height: height || null,
         selfie_url: selfieUrl,
         status,
         location: location ? `POINT(${location.longitude} ${location.latitude})` : null,
