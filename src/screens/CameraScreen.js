@@ -64,7 +64,7 @@ export default function CameraScreen({ navigation }) {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: false, // Skip crop screen for simpler UX
       quality: 0.7,
     });
