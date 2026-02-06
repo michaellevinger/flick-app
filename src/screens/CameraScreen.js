@@ -6,11 +6,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 
-export default function CameraScreen({ navigation }) {
+export default function CameraScreen({ navigation, route }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState(null);
   const cameraRef = useRef(null);
   const { user, isLoading } = useUser();
+  const forceReset = route?.params?.forceReset;
 
   // Check if user exists and navigate to Dashboard
   useEffect(() => {
@@ -22,9 +23,24 @@ export default function CameraScreen({ navigation }) {
   // Reset state when screen comes into focus (e.g., after logout)
   useFocusEffect(
     React.useCallback(() => {
+      // Always reset photo when returning to this screen
+      console.log('CameraScreen focused - resetting photo state');
       setPhoto(null);
-    }, [])
+
+      // Clear any params to prevent re-triggering
+      if (navigation.setParams) {
+        navigation.setParams({ forceReset: undefined });
+      }
+    }, [navigation])
   );
+
+  // Ensure photo is cleared when no user exists - run on every render
+  useEffect(() => {
+    if (!isLoading && !user && photo) {
+      console.log('No user detected - clearing photo state');
+      setPhoto(null);
+    }
+  }, [user, photo, isLoading]);
 
   // Show loading while checking user or permissions
   if (isLoading || !permission) {

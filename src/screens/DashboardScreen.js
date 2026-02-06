@@ -277,8 +277,14 @@ export default function DashboardScreen({ navigation }) {
   };
 
   const handleChangePhoto = () => {
-    Alert.alert('Update Profile Photo', 'Choose an option', [
+    Alert.alert('Profile Photo', 'Choose an option', [
       { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'View Photo',
+        onPress: () => {
+          setSelectedPhoto(user.selfieUrl);
+        },
+      },
       {
         text: 'Take New Selfie',
         onPress: () => {
@@ -291,11 +297,19 @@ export default function DashboardScreen({ navigation }) {
               {
                 text: 'Continue',
                 onPress: async () => {
-                  await logout();
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Camera' }],
-                  });
+                  try {
+                    await logout();
+                    // Use a small delay to ensure logout completes and state propagates
+                    setTimeout(() => {
+                      navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
+                      });
+                    }, 200);
+                  } catch (error) {
+                    console.error('Error during logout:', error);
+                    Alert.alert('Error', 'Failed to sign out. Please try again.');
+                  }
                 },
               },
             ]
@@ -352,12 +366,15 @@ export default function DashboardScreen({ navigation }) {
         onPress: async () => {
           try {
             await logout();
-            // Reset navigation stack completely to Camera screen
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Camera' }],
-            });
+            // Use a small delay to ensure logout completes and state propagates
+            setTimeout(() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
+              });
+            }, 200);
           } catch (error) {
+            console.error('Error during logout:', error);
             Alert.alert('Error', 'Failed to sign out. Please try again.');
           }
         },
