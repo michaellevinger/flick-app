@@ -283,7 +283,11 @@ export default function DashboardScreen({ navigation }) {
         onPress: async () => {
           try {
             await logout();
-            navigation.replace('Camera');
+            // Reset navigation stack completely to Camera screen
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Camera' }],
+            });
           } catch (error) {
             Alert.alert('Error', 'Failed to sign out. Please try again.');
           }
