@@ -9,9 +9,28 @@ import { useUser } from '../lib/userContext';
 export default function CameraScreen({ navigation, route }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState(null);
+  const [key, setKey] = useState(0); // Force camera remount
   const cameraRef = useRef(null);
   const { user, isLoading } = useUser();
   const forceReset = route?.params?.forceReset;
+
+  // Immediately clear photo on mount if forceReset is present
+  useEffect(() => {
+    if (forceReset) {
+      console.log('CameraScreen mounted with forceReset - clearing photo immediately');
+      setPhoto(null);
+      setKey(prev => prev + 1); // Force camera remount
+
+      // Clear the param after a short delay
+      const timer = setTimeout(() => {
+        if (navigation.setParams) {
+          navigation.setParams({ forceReset: undefined });
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [forceReset, navigation]);
 
   // Check if user exists and navigate to Dashboard
   useEffect(() => {
@@ -27,13 +46,9 @@ export default function CameraScreen({ navigation, route }) {
       if (forceReset) {
         console.log('CameraScreen focused after logout - resetting photo state');
         setPhoto(null);
-
-        // Clear the param
-        if (navigation.setParams) {
-          navigation.setParams({ forceReset: undefined });
-        }
+        setKey(prev => prev + 1); // Force camera remount
       }
-    }, [forceReset, navigation])
+    }, [forceReset])
   );
 
   // Show loading while checking user or permissions
@@ -98,7 +113,8 @@ export default function CameraScreen({ navigation, route }) {
     }
   };
 
-  if (photo) {
+  // Don't show photo preview if we're in force reset mode (coming from logout)
+  if (photo && !forceReset) {
     return (
       <View style={styles.container}>
         <Image source={{ uri: photo.uri }} style={styles.preview} />
@@ -117,6 +133,7 @@ export default function CameraScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <CameraView
+        key={key}
         style={styles.camera}
         facing="front"
         ref={cameraRef}
