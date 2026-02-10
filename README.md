@@ -1,5 +1,10 @@
-# FLICK — Show the world that you are single
-A proximity-based social catalyst designed to eliminate "approach anxiety" by providing a digital signal for face-to-face interaction. It strips away bios and chat, replacing the digital distraction with a "warm introduction" to the people standing right in front of you.
+# flick — Turn a Look into Hello
+A Social Catalyst for High-Density Events. Built for real-world hellos—not swipes.
+
+## Project Structure
+- `/src` - React Native app (Expo)
+- `/website` - Landing page for sponsors and users
+- `/original-images` - Original design assets and screenshots
 
 ## What We've Built So Far
 
@@ -20,19 +25,19 @@ A proximity-based social catalyst designed to eliminate "approach anxiety" by pr
 - **Real-time Updates**: Subscribe to nearby users changes
 - **Auto-Wipe Logic**: Database function to delete inactive users (20min TTL)
 
-### Phase 3: Flick & Match System ✅
+### Phase 3: Match System ✅
 
-- **Visible Interest Signals**: Users who nudged you show with green border + "Wants to meet" label
-- **Flick Button**: Send one-way interest signal to nearby users
+- **Visible Interest Signals**: Users who liked you show with green border + "Wants to meet" label
+- **Flick Button**: Send one-way interest signal to nearby users (tap gesture)
 - **Visual Indicators**: Green card border and "Flick Back" button for interested users
 - **Instant Matching**: One tap on "Flick Back" triggers immediate Green Light
 - **Green Light Screen**: Full-screen green with pulse animation
 - **Haptic Feedback**: 3-pulse vibration sequence on match
 - **Real-time Updates**: Interest signals update within 1 second
-- **Tap to Unflick**: Tap "FLICKED ✓" button to undo your flick
+- **Tap to Undo**: Tap "FLICKED ✓" button to undo your flick
 - **Swipe to Hide**: Swipe left on any profile to hide them from your feed
 - **Full-Screen Photos**: Tap any profile photo to view it full-screen
-- **Cleanup**: Flicks deleted on sign out
+- **Cleanup**: Matches deleted on sign out
 
 ### Phase 4: Self-Destruct & Safety ✅
 
@@ -40,7 +45,7 @@ A proximity-based social catalyst designed to eliminate "approach anxiety" by pr
 - **Supabase Edge Function**: Automated cleanup every 5 minutes
 - **Distance Dissolution**: Matches auto-delete when users move >500m apart
 - **Heartbeat Integration**: Distance checks run every 60 seconds
-- **Complete Cleanup**: Selfies, nudges, and user data all removed
+- **Complete Cleanup**: Selfies, matches, and user data all removed
 
 ### Phase 5: Number Exchange "The Off-Ramp" ✅
 
@@ -126,7 +131,7 @@ users table (PostGIS-enabled)
 ├── location (GEOGRAPHY) - Lat/long point
 └── last_heartbeat (TIMESTAMP) - For auto-wipe
 
-nudges table
+flicks table
 ├── from_user_id → users(id)
 ├── to_user_id → users(id)
 └── created_at
@@ -155,13 +160,13 @@ Storage: selfies bucket (public, auto-delete policies)
 ✅ **Auto-Wipe**: 20-minute inactivity timeout (database function ready)
 ✅ **Pull-to-Refresh**: Manual location/radar updates
 ✅ **Sign Out**: Complete data deletion (selfie + user record)
-✅ **Interactive UI**: Swipe to hide, tap to unflick, tap photos to view full-screen
+✅ **Interactive UI**: Swipe to hide, tap to undo flick, tap photos to view full-screen
 
 ## Design Philosophy
 
-- **Minimalist UI**: Black, white, and "Go" green only
+- **Minimalist UI**: Black, white, and signature green only
 - **No Bios**: Just name, age, and a fresh selfie
-- **No Chat**: Flick system for mutual interest only
+- **No Chat**: Tap-to-flick for mutual interest only
 - **Proximity First**: 500m radius, live location updates every 60s
 - **Auto-Wipe**: Data self-destructs after 20 minutes of inactivity
 
@@ -181,7 +186,7 @@ flick-app/
 │   │   ├── database.js          # DB queries and functions
 │   │   ├── location.js          # Location utilities
 │   │   ├── userContext.js       # User state management + heartbeat
-│   │   ├── nudges.js            # Flick operations
+│   │   ├── flicks.js            # Match operations
 │   │   ├── vault.js             # Number exchange operations
 │   │   └── matchCleanup.js      # Distance-based dissolution
 │   └── constants/
