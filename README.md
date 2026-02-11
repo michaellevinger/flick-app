@@ -1,62 +1,79 @@
 # flick — Turn a Look into Hello
-A Social Catalyst for High-Density Events. Built for real-world hellos—not swipes.
+A Social Catalyst for Festivals & Events. Built for real-world hellos—not swipes.
+
+**B2B Model:** QR code "rooms" for festival sponsors. Users scan to enter isolated pools. Direct attribution, measurable ROI.
 
 ## Project Structure
 - `/src` - React Native app (Expo)
-- `/website` - Landing page for sponsors and users
-- `/original-images` - Original design assets and screenshots
+- `/website` - B2B landing page for sponsors
+- `/supabase` - Database schema & Edge Functions
 
-## What We've Built So Far
+## What We've Built
 
-### Phase 1: Minimum Viable Interaction ✅
+### QR-First Festival Room System ✅
 
-- **Camera Check-in Screen**: Take a fresh selfie (camera encouraged, gallery available)
-- **Setup Form**: Collect Name + Age only (no bios)
-- **Main Dashboard**: Toggle ON/OFF for availability with visual feedback
-- **Radar Feed UI**: Shows nearby users with distance and nudge capability
+**The Flow:**
+1. **Download App** → Opens to QR Scanner screen
+2. **Scan Festival QR** → Validates and joins festival (e.g., `coachella2024`)
+3. **Take Selfie** → Fresh selfie with camera or gallery
+4. **Create Profile** → Name + Age + Gender + Preferences
+5. **Enter Festival Room** → See ONLY users who scanned same QR code
+
+**Key Features:**
+- ✅ **Isolated User Pools:** Coachella users only see Coachella users
+- ✅ **No Switching:** Users locked into scanned festival
+- ✅ **Sponsor Branding:** "Coachella 2024 - Sponsored by Heineken"
+- ✅ **Direct Attribution:** Track exact matches per festival
+- ✅ **QR Distribution:** Print on posters, wristbands, booth displays
+
+### Phase 1: Fresh-Start Profile ✅
+
+- **QR Scanner Screen**: First thing users see—scan festival QR code
+- **Camera Check-in**: Take a fresh selfie (camera encouraged, gallery available)
+- **Setup Form**: Name + Age + Gender + Looking For preferences
+- **Main Dashboard**: Toggle ON/OFF for availability with festival banner
+- **Gender Filtering**: Only see users matching your preferences
 
 ### Phase 2: Supabase Integration ✅
 
-- **Database Schema**: Users table with PostGIS geospatial support
+- **Festival Database**: `festivals` table with sponsor info and expiry dates
+- **User-Festival Link**: Each user tied to one festival via `festival_id`
 - **Photo Upload**: Selfies automatically upload to Supabase Storage
-- **User Management**: Full create/update/delete with UserContext
-- **Location Tracking**: Automatic 60-second heartbeat with location updates
-- **Proximity Queries**: Find users within 500m using PostGIS ST_DWithin
-- **Real-time Updates**: Subscribe to nearby users changes
-- **Auto-Wipe Logic**: Database function to delete inactive users (20min TTL)
+- **Festival Queries**: `find_users_in_festival()` SQL function
+- **Location Tracking**: Automatic 60-second heartbeat (for future features)
+- **Real-time Updates**: Subscribe to festival room changes
+- **Auto-Wipe Logic**: Delete inactive users after 20 minutes
 
-### Phase 3: Match System ✅
+### Phase 3: Match System (Flicks) ✅
 
-- **Visible Interest Signals**: Users who liked you show with green border + "Wants to meet" label
-- **Flick Button**: Send one-way interest signal to nearby users (tap gesture)
-- **Visual Indicators**: Green card border and "Flick Back" button for interested users
-- **Instant Matching**: One tap on "Flick Back" triggers immediate Green Light
-- **Green Light Screen**: Full-screen green with pulse animation
-- **Haptic Feedback**: 3-pulse vibration sequence on match
+- **Visible Interest Signals**: Users who flicked you show green border + "Wants to meet"
+- **Flick Button**: Send one-way interest signal to users in same festival
+- **Visual Indicators**: Green card border and "Flick Back" button
+- **Instant Matching**: Flick back triggers immediate Green Light
+- **Green Light Screen**: Full-screen green with pulse animation + haptic feedback
 - **Real-time Updates**: Interest signals update within 1 second
-- **Tap to Undo**: Tap "FLICKED ✓" button to undo your flick
-- **Swipe to Hide**: Swipe left on any profile to hide them from your feed
-- **Full-Screen Photos**: Tap any profile photo to view it full-screen
-- **Cleanup**: Matches deleted on sign out
+- **Tap to Undo**: Tap "FLICKED ✓" to undo your flick
+- **Swipe to Hide**: Swipe left to hide profiles
+- **Full-Screen Photos**: Tap photos to view full-screen
+- **Festival Isolation**: Matches only within same festival
 
 ### Phase 4: Self-Destruct & Safety ✅
 
 - **Time-Based Auto-Wipe**: Users deleted after 20 minutes of inactivity
 - **Supabase Edge Function**: Automated cleanup every 5 minutes
-- **Distance Dissolution**: Matches auto-delete when users move >500m apart
+- **Distance Dissolution**: Matches auto-delete when users move >100m apart
 - **Heartbeat Integration**: Distance checks run every 60 seconds
 - **Complete Cleanup**: Selfies, matches, and user data all removed
 
 ### Phase 5: Number Exchange "The Off-Ramp" ✅
 
-- **Secure Phone Exchange**: After matching, users can optionally exchange phone numbers
-- **15-Minute TTL**: Numbers self-destruct after 15 minutes with countdown timer
-- **Proximity Wipe**: Exchange auto-deletes if users move >500m apart
-- **Request/Accept Flow**: Both users must consent before numbers are revealed
+- **Secure Phone Exchange**: After matching, exchange phone numbers
+- **15-Minute TTL**: Numbers self-destruct after 15 minutes with countdown
+- **Proximity Wipe**: Auto-deletes if users move >100m apart
+- **Request/Accept Flow**: Both users must consent
 - **Vault Screen**: Displays both numbers with quick actions (Call, Text, Save)
-- **Privacy First**: No history kept after expiration, complete data deletion
-- **Optional Feature**: Phone number is optional during profile setup
-- **RLS Policy Fixed**: Row-level security now works with anonymous user IDs
+- **Privacy First**: No history kept after expiration
+- **Optional Feature**: Phone number optional during setup
 
 ## Tech Stack
 
@@ -65,6 +82,7 @@ A Social Catalyst for High-Density Events. Built for real-world hellos—not swi
 - **Backend**: Supabase (PostgreSQL + PostGIS + Storage)
 - **Real-time**: Supabase Subscriptions
 - **Permissions**: Camera + Location
+- **B2B Model**: QR code festival rooms
 
 ## Getting Started
 
@@ -76,6 +94,7 @@ Already done! Dependencies installed:
 - react-navigation
 - @supabase/supabase-js
 - expo-haptics
+- @react-native-async-storage/async-storage
 
 ### 2. Run the App
 
@@ -96,40 +115,64 @@ npx expo start
 Follow the detailed guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) to:
 - Create a Supabase project
 - Set up the database schema
+- Add festivals table and functions
 - Configure storage for selfies
 - Update your API credentials
 
+Then run the festival rooms migration:
+```sql
+-- See supabase-festival-rooms-safe.sql
+```
+
 ### 4. Test the Flow
 
-1. **Camera Screen**: Grant camera permission → Take selfie → Confirm
-2. **Setup Screen**: Enter your first name and age (18+) → Continue (uploads to Supabase)
-3. **Dashboard**: Toggle availability ON/OFF, see REAL nearby users within 500m
-4. **Pull to Refresh**: Update your location and fetch nearby users
+1. **QR Scanner**: Tap "Skip (Dev Only)" to join `coachella2024` test festival
+2. **Camera Screen**: Grant camera permission → Take selfie → Confirm
+3. **Setup Screen**: Enter name, age, gender, preferences → Continue
+4. **Dashboard**: See festival banner "Coachella 2024 - Sponsored by Heineken"
+5. **Pull to Refresh**: Update your location and fetch festival users
 
 ## How It Works
 
-### The Flow
+### The QR-First Flow
 
-1. **Check-in**: Take a fresh selfie (camera encouraged, gallery available)
-2. **Profile**: Enter your first name and age
-3. **Go Live**: Your profile is created in Supabase and status is set to ON
-4. **Location Updates**: Every 60 seconds, your location updates automatically
-5. **Radar Feed**: See people within 500m in real-time
-6. **Heartbeat**: Background process prevents auto-wipe
-7. **Sign Out**: Deletes your data and selfie completely
+1. **Download App**: Opens directly to QR Scanner
+2. **Scan Festival QR**: Point camera at festival's unique QR code
+   - Example: `coachella2024`, `tomorrowland2024`, `lollapalooza2024`
+   - Validates festival is active and not expired
+   - Stores festival ID in app
+3. **Create Profile**: Take selfie → Enter info
+4. **Join Festival Room**: Profile includes `festival_id` in database
+5. **See Festival Users**: Dashboard shows only users with same `festival_id`
+6. **Flick to Match**: Send interest signals to festival users
+7. **Exchange Numbers**: Optional after matching
+8. **Auto-Cleanup**: Profile deleted after 20 minutes of inactivity
 
 ### Database Architecture
 
 ```
+festivals table
+├── id (TEXT, primary key) - e.g., 'coachella2024'
+├── name (TEXT) - 'Coachella 2024'
+├── description (TEXT)
+├── sponsor_name (TEXT) - 'Heineken'
+├── is_active (BOOLEAN)
+├── created_at (TIMESTAMP)
+├── expires_at (TIMESTAMP)
+└── max_participants (INTEGER)
+
 users table (PostGIS-enabled)
 ├── id (TEXT, primary key)
 ├── name (TEXT)
 ├── age (INTEGER)
 ├── selfie_url (TEXT)
-├── phone_number (TEXT) - Optional, for number exchange
+├── phone_number (TEXT) - Optional
+├── gender (TEXT) - 'male', 'female', 'other'
+├── looking_for (TEXT) - 'male', 'female', 'both'
+├── festival_id (TEXT) → festivals(id) - KEY FIELD!
 ├── status (BOOLEAN) - ON/OFF
 ├── location (GEOGRAPHY) - Lat/long point
-└── last_heartbeat (TIMESTAMP) - For auto-wipe
+└── last_heartbeat (TIMESTAMP)
 
 flicks table
 ├── from_user_id → users(id)
@@ -145,29 +188,77 @@ exchanges table (15-minute TTL)
 ├── status (TEXT) - pending/accepted
 ├── requested_by (TEXT)
 ├── created_at (TIMESTAMP)
-└── expires_at (TIMESTAMP) - NOW() + 15 minutes
+└── expires_at (TIMESTAMP)
 
 Storage: selfies bucket (public, auto-delete policies)
 ```
 
+### SQL Functions
+
+```sql
+-- Find users in same festival
+find_users_in_festival(user_festival_id TEXT, current_user_id TEXT)
+
+-- Validate festival code
+get_festival_info(festival_code TEXT)
+
+-- Auto-wipe inactive users
+auto_wipe_inactive_users()
+
+-- Check mutual flicks
+check_mutual_flick(user_a TEXT, user_b TEXT)
+```
+
 ### Key Features Implemented
 
-✅ **Camera-First**: Fresh selfies only, gallery available as fallback
-✅ **Minimalist Profile**: Name + Age, no bios or chat
-✅ **500m Proximity**: PostGIS geospatial queries with Earth's curvature
-✅ **60s Heartbeat**: Automatic location updates when status is ON
+✅ **QR-First Onboarding**: Scan festival code before creating profile
+✅ **Festival Rooms**: Isolated user pools per festival
+✅ **Camera-First**: Fresh selfies only, gallery fallback
+✅ **Minimalist Profile**: Name + Age + Gender + Preferences
+✅ **Gender Filtering**: Only see users matching preferences
+✅ **Festival Banner**: Shows festival name + sponsor
+✅ **No Switching**: Users locked into scanned festival
+✅ **60s Heartbeat**: Automatic location updates when ON
 ✅ **Real-time Sync**: Supabase subscriptions for live updates
-✅ **Auto-Wipe**: 20-minute inactivity timeout (database function ready)
+✅ **Auto-Wipe**: 20-minute inactivity timeout
 ✅ **Pull-to-Refresh**: Manual location/radar updates
 ✅ **Sign Out**: Complete data deletion (selfie + user record)
-✅ **Interactive UI**: Swipe to hide, tap to undo flick, tap photos to view full-screen
+✅ **Interactive UI**: Swipe to hide, tap to undo flick, full-screen photos
+
+## B2B Model
+
+### For Festival Sponsors
+
+**Value Proposition:**
+- ✅ **Direct Attribution**: Know exactly which matches came from YOUR festival
+- ✅ **Isolated Pools**: Users only see attendees of your event
+- ✅ **Brand Association**: "Sponsored by Heineken" on every match
+- ✅ **Booth Traffic**: Number exchange drives foot traffic to sponsor booth
+- ✅ **Real-time Metrics**: Dashboard shows active users, matches made, booth visits
+
+**Distribution:**
+- Print QR codes on: Posters, wristbands, tent cards, festival maps
+- Display at: Entrance, main stage, food courts, bathrooms, bars
+- Digital: Festival app, push notifications, social media, email
+- Sponsor booth: Large QR code display, "Scan to meet people"
+
+**Example Festivals:**
+```
+coachella2024    → Coachella 2024 (Sponsored by Heineken)
+tomorrowland2024 → Tomorrowland 2024 (Sponsored by Red Bull)
+lollapalooza2024 → Lollapalooza 2024 (Sponsored by Spotify)
+```
+
+See [QR_B2B_MODEL.md](./QR_B2B_MODEL.md) for complete B2B documentation.
 
 ## Design Philosophy
 
+- **QR-First**: Scan festival code before profile creation
 - **Minimalist UI**: Black, white, and signature green only
-- **No Bios**: Just name, age, and a fresh selfie
+- **No Bios**: Just name, age, gender, and a fresh selfie
 - **No Chat**: Tap-to-flick for mutual interest only
-- **Proximity First**: 500m radius, live location updates every 60s
+- **Festival Rooms**: Isolated user pools per QR code
+- **Sponsor Branding**: Festival name + sponsor on every screen
 - **Auto-Wipe**: Data self-destructs after 20 minutes of inactivity
 
 ## Project Structure
@@ -176,109 +267,128 @@ Storage: selfies bucket (public, auto-delete policies)
 flick-app/
 ├── src/
 │   ├── screens/
-│   │   ├── CameraScreen.js      # Selfie capture with permissions
-│   │   ├── SetupScreen.js       # Name + Age + Phone (optional)
-│   │   ├── DashboardScreen.js   # Main app with real data
-│   │   ├── GreenLightScreen.js  # Match screen with number exchange
-│   │   └── VaultScreen.js       # Number exchange with 15-min timer
+│   │   ├── QRScannerScreen.js   # FIRST SCREEN - Scan festival QR
+│   │   ├── CameraScreen.js      # Selfie capture
+│   │   ├── SetupScreen.js       # Name + Age + Gender + Preferences
+│   │   ├── DashboardScreen.js   # Festival room with banner
+│   │   ├── GreenLightScreen.js  # Match screen
+│   │   └── VaultScreen.js       # Number exchange
 │   ├── lib/
 │   │   ├── supabase.js          # Supabase client config
-│   │   ├── database.js          # DB queries and functions
+│   │   ├── database.js          # DB queries
+│   │   ├── festivals.js         # Festival operations (NEW!)
 │   │   ├── location.js          # Location utilities
-│   │   ├── userContext.js       # User state management + heartbeat
+│   │   ├── userContext.js       # User state + heartbeat
 │   │   ├── flicks.js            # Match operations
-│   │   ├── vault.js             # Number exchange operations
+│   │   ├── vault.js             # Number exchange
 │   │   └── matchCleanup.js      # Distance-based dissolution
 │   └── constants/
-│       └── theme.js             # Design system (black/white/green)
+│       └── theme.js             # Design system
 ├── supabase/
 │   └── functions/
 │       └── auto-cleanup/        # Edge Function for auto-wipe
+├── website/
+│   └── index.html               # B2B sponsor landing page
 ├── App.js                       # Navigation + UserProvider
 ├── app.json                     # Expo config + permissions
 ├── supabase-setup.sql           # Base DB schema
-├── supabase-exchanges-schema.sql # Number exchange schema
-├── SUPABASE_SETUP.md            # Step-by-step setup guide
-└── NUMBER_EXCHANGE_SETUP.md     # Number exchange setup guide
+├── supabase-festival-rooms-safe.sql # Festival rooms migration
+├── QR_B2B_MODEL.md              # Complete B2B documentation
+├── SUPABASE_SETUP.md            # Backend setup guide
+└── README.md                    # This file
 ```
 
-## Website
+## Website - B2B Sponsor Landing Page ✅
 
-### B2B Sponsor Landing Page ✅
+A complete sponsor-focused landing page at `/website/index.html`:
 
-A complete sponsor-focused landing page has been built at `/website/index.html`:
-
-**Key Sections:**
-- **Hero**: Premium sponsor activation platform messaging
+**Sections:**
+- **Hero**: "Own the Moment of Connection" - Premium sponsor activation
 - **Your Audience**: Festival singles looking to connect
-- **Sponsor Advantage**: Brand activation examples (Heineken, Red Bull, Spotify)
-- **How It Works**: 3-step flow showing match → branded Green Light → booth traffic
-- **Post-Event Analytics**: Real-time dashboard with Connection Score, Booth Traffic, Brand Impressions
-- **Activation Examples**: Branded Green Light messages with rewards
-- **CTA**: Contact form for sponsors
-
-**Design:**
-- Black background with flick green (#00FF00) accents
-- Ghost emoji logo with green hearts
-- Video demonstration of Heineken Green Light activation
-- Mobile phone mockup showing app interface
-- Festival audience imagery
-
-**Analytics Metrics:**
-- Connection Score: Total introductions powered by brand
-- Booth Traffic: Direct-to-booth attribution
-- Brand Impressions: Guaranteed engagement per match
+- **Sponsor Advantage**: Heineken, Red Bull, Spotify brand examples
+- **How It Works**: QR scan → Match → Branded Green Light → Booth traffic
+- **Post-Event Analytics**: Connection Score, Booth Traffic, Brand Impressions
+- **Video Demo**: Heineken Green Light activation in action
 
 **Deployment:**
 - Static HTML + Tailwind CSS
-- Ready for Vercel/Netlify deployment
-- Optimized for desktop and mobile viewing
+- Ready for Vercel/Netlify
+- Mobile responsive
 
 ## What's Next
 
-### Deployment & Launch
+### Immediate
+- [ ] **Test QR Flow**: Verify QR scanner → profile → festival room flow
+- [ ] **Deploy Website**: Push to Vercel for sponsor showcase
+- [ ] **Create Test QR Codes**: Generate QR codes for test festivals
 
-- [ ] **Deploy Website**: Push to Vercel for sponsor access
-- [ ] **App Store Submission**: Prepare for iOS/Android release
-- [ ] **Polish & Testing**
-  - Refine animations and transitions
-  - Add loading states
-  - Test with multiple real users
-  - Performance optimization
-  - Error handling improvements
+### Future Enhancements
+- [ ] **Sponsor Dashboard**: Real-time analytics for sponsors
+- [ ] **Custom Branding**: Festival-specific colors and logos
+- [ ] **Multi-Stage QR Codes**: Different codes per stage/area
+- [ ] **Push Notifications**: Alert users when matched
+- [ ] **App Store Submission**: iOS/Android release
 
-### Future Enhancements (Post-MVP)
+## Testing the QR System
 
-- **Push Notifications**: Alert users when matched
-- **Match History**: Temporary log of recent matches (also self-destructs)
-- **Radius Adjustment**: Let users choose 50m / 500m / 200m
-- **Do Not Disturb**: Schedule when you want to be invisible
-- **Sound Design**: Subtle audio cues for matches
-- **Onboarding**: Quick tutorial for first-time users
+### Test Festival Codes (Dev Mode)
 
-## Testing Tips
+The app includes test festivals in the database:
+- `coachella2024` - Coachella 2024 (Heineken)
+- `tomorrowland2024` - Tomorrowland 2024 (Red Bull)
+- `lollapalooza2024` - Lollapalooza 2024 (Spotify)
 
-### Testing Proximity Locally
+### Dev Mode Testing
 
-Since you probably don't have friends within 500m while developing:
+1. Open app → QR Scanner appears
+2. Tap "Skip (Dev Only)" button (only visible in development)
+3. Automatically joins `coachella2024` festival
+4. Complete profile creation
+5. Dashboard shows "Coachella 2024 - Sponsored by Heineken"
 
-1. **Modify the radius temporarily**:
-   - In `src/constants/theme.js`, change `PROXIMITY_RADIUS` to `100000` (100km)
-   - This lets you test with users anywhere in your city
+### Multi-User Testing
 
-2. **Use Expo Location Mocking**:
-   - iOS Simulator: Debug → Location → Custom Location
-   - Android Emulator: Extended Controls → Location
+1. Open two devices/simulators
+2. Both scan same QR code (or use "Skip" to join same festival)
+3. Create different profiles
+4. Both should see each other on Dashboard
+5. Test flicking and matching
 
-3. **Create test accounts**:
-   - Open two devices/simulators
-   - Create different users
-   - Set custom locations nearby
-   - Watch them appear in each other's radar!
+### Creating Real QR Codes
 
-### Debugging
+```bash
+# Using qrencode (install: brew install qrencode)
+qrencode -o coachella2024.png "coachella2024"
+qrencode -o tomorrowland2024.png "tomorrowland2024"
+
+# Or use online generator:
+# https://www.qr-code-generator.com/
+# Content: coachella2024
+```
+
+### Adding New Festivals
+
+```sql
+INSERT INTO festivals (id, name, sponsor_name, is_active)
+VALUES ('yourfestival2024', 'Your Festival 2024', 'Your Sponsor', true);
+```
+
+## Debugging
 
 - **Check Supabase logs**: Dashboard → Logs
-- **Monitor database**: Table Editor → users (watch records appear)
+- **Monitor database**: Table Editor → users, festivals (watch records)
 - **Storage inspector**: Storage → selfies (verify uploads)
 - **React Native debugger**: Shake device → Enable Remote Debugging
+- **QR Scanner**: Check camera permissions if QR scanner not working
+
+## Documentation
+
+- [QR_B2B_MODEL.md](./QR_B2B_MODEL.md) - Complete B2B model documentation
+- [CLAUDE.md](./CLAUDE.md) - Full project specifications and development log
+- [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) - Backend setup guide
+- [START_APP.md](./START_APP.md) - How to start the app
+
+---
+
+**Built with React Native, Expo, and Supabase**
+**B2B QR Room Model by flick**
