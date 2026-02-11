@@ -15,6 +15,7 @@ import SetupScreen from './src/screens/SetupScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import GreenLightScreen from './src/screens/GreenLightScreen';
 import VaultScreen from './src/screens/VaultScreen';
+import QRScannerScreen from './src/screens/QRScannerScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 
@@ -47,6 +48,7 @@ export default function App() {
         >
           <Stack.Screen name="Camera" component={CameraScreen} />
           <Stack.Screen name="Setup" component={SetupScreen} />
+          <Stack.Screen name="QRScanner" component={QRScannerScreen} />
           <Stack.Screen name="Dashboard" component={DashboardScreen} />
           <Stack.Screen name="GreenLight" component={GreenLightScreen} />
           <Stack.Screen name="Vault" component={VaultScreen} />

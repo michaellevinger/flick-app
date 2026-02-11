@@ -42,7 +42,8 @@ export default function SetupScreen({ route, navigation }) {
         lookingFor,
       });
 
-      navigation.navigate('Dashboard');
+      // Navigate to QR scanner to join a festival
+      navigation.navigate('QRScanner', { fromSetup: true });
     } catch (error) {
       console.error('Error creating user:', error);
 

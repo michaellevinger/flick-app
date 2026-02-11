@@ -17,7 +17,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, TYPOGRAPHY, PROXIMITY_RADIUS } from '../constants/theme';
 import { useUser } from '../lib/userContext';
-import { findNearbyUsers, subscribeToNearbyUsers, uploadSelfie, deleteSelfie } from '../lib/database';
+import { findNearbyUsers, subscribeToNearbyUsers, uploadSelfie, deleteSelfie, getCurrentFestival, findUsersInFestival } from '../lib/database';
 import { requestLocationPermission, formatDistance } from '../lib/location';
 import {
   sendFlick,
@@ -37,6 +37,7 @@ export default function DashboardScreen({ navigation }) {
   const [usersWhoFlickedMe, setUsersWhoFlickdMe] = useState(new Set());
   const [hiddenUsers, setHiddenUsers] = useState(new Set());
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [currentFestival, setCurrentFestival] = useState(null);
   const subscriptionRef = useRef(null);
   const flickSubscriptionRef = useRef(null);
 
@@ -51,6 +52,7 @@ export default function DashboardScreen({ navigation }) {
     setupFlickSubscription();
     loadFlicksSent();
     loadFlicksReceived();
+    loadCurrentFestival();
 
     return () => {
       if (subscriptionRef.current) {
@@ -133,28 +135,35 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const loadNearbyUsers = async () => {
-    if (!user?.location) return;
+  const loadCurrentFestival = async () => {
+    if (!user) return;
 
     try {
-      const users = await findNearbyUsers(
-        user.id,
-        user.location,
-        user.gender,
-        user.lookingFor,
-        PROXIMITY_RADIUS
-      );
+      const festival = await getCurrentFestival(user.id);
+      setCurrentFestival(festival);
+    } catch (error) {
+      console.error('Error loading current festival:', error);
+    }
+  };
 
-      // Filter out current user as safety check (should be handled by SQL, but just in case)
-      const filteredUsers = users.filter(u => u.id !== user.id);
+  const loadNearbyUsers = async () => {
+    // Check if user has joined a festival
+    if (!user?.festival_id) {
+      console.log('User has not joined a festival yet');
+      setNearbyUsers([]);
+      return;
+    }
+
+    try {
+      const users = await findUsersInFestival(user.festival_id, user.id);
 
       console.log('Current user ID:', user.id);
-      console.log('Nearby users found:', users.length);
-      console.log('After filtering self:', filteredUsers.length);
+      console.log('Festival:', user.festival_id);
+      console.log('Users in festival:', users.length);
 
-      setNearbyUsers(filteredUsers);
+      setNearbyUsers(users);
     } catch (error) {
-      console.error('Error loading nearby users:', error);
+      console.error('Error loading festival users:', error);
     }
   };
 
@@ -397,13 +406,37 @@ export default function DashboardScreen({ navigation }) {
         />
       </View>
 
+      {/* Festival Banner */}
+      <View style={styles.festivalBanner}>
+        {currentFestival ? (
+          <View style={styles.festivalInfo}>
+            <Text style={styles.festivalName}>{currentFestival.name}</Text>
+            {currentFestival.sponsor_name && (
+              <Text style={styles.sponsorBadge}>
+                Sponsored by {currentFestival.sponsor_name}
+              </Text>
+            )}
+          </View>
+        ) : (
+          <Text style={styles.noFestivalText}>No festival joined</Text>
+        )}
+        <TouchableOpacity
+          style={styles.changeFestivalButton}
+          onPress={() => navigation.navigate('QRScanner')}
+        >
+          <Text style={styles.changeFestivalText}>
+            {currentFestival ? 'Switch' : 'Join Festival'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Status Message */}
       <View style={styles.statusMessage}>
         {user.status ? (
           <>
             <View style={styles.pulseIndicator} />
             <Text style={styles.statusText}>
-              Visible to others within {PROXIMITY_RADIUS}m
+              {currentFestival ? `Visible to others at ${currentFestival.name}` : 'Join a festival to start flicking'}
             </Text>
           </>
         ) : (
@@ -642,6 +675,44 @@ const styles = StyleSheet.create({
   statusTextOff: {
     ...TYPOGRAPHY.body,
     color: COLORS.gray,
+  },
+  festivalBanner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    backgroundColor: COLORS.black,
+    borderBottomWidth: 1,
+    borderColor: COLORS.green,
+  },
+  festivalInfo: {
+    flex: 1,
+  },
+  festivalName: {
+    ...TYPOGRAPHY.subtitle,
+    color: COLORS.white,
+    fontWeight: 'bold',
+  },
+  sponsorBadge: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.green,
+    marginTop: SPACING.xs,
+  },
+  noFestivalText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.gray,
+  },
+  changeFestivalButton: {
+    backgroundColor: COLORS.green,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: 8,
+  },
+  changeFestivalText: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.black,
+    fontWeight: 'bold',
   },
   radarHeader: {
     flexDirection: 'row',

@@ -262,3 +262,12 @@ export function subscribeToNearbyUsers(userId, callback) {
 
   return subscription;
 }
+
+// Export festival functions
+export {
+  validateAndJoinFestival,
+  findUsersInFestival,
+  getCurrentFestival,
+  leaveFestival,
+  getFestivalStats
+} from './festivals';
