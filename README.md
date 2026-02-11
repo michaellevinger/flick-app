@@ -212,18 +212,19 @@ check_mutual_flick(user_a TEXT, user_b TEXT)
 ### Key Features Implemented
 
 ✅ **QR-First Onboarding**: Scan festival code before creating profile
-✅ **Festival Rooms**: Isolated user pools per festival
-✅ **Camera-First**: Fresh selfies only, gallery fallback
-✅ **Minimalist Profile**: Name + Age + Gender + Preferences
-✅ **Gender Filtering**: Only see users matching preferences
-✅ **Festival Banner**: Shows festival name + sponsor
-✅ **No Switching**: Users locked into scanned festival
-✅ **60s Heartbeat**: Automatic location updates when ON
-✅ **Real-time Sync**: Supabase subscriptions for live updates
-✅ **Auto-Wipe**: 20-minute inactivity timeout
-✅ **Pull-to-Refresh**: Manual location/radar updates
-✅ **Sign Out**: Complete data deletion (selfie + user record)
+✅ **Festival Rooms**: Isolated user pools per festival (no GPS proximity matching)
+✅ **Camera-First**: Fresh selfies only, gallery fallback available
+✅ **Minimalist Profile**: Name + Age + Gender + Looking For preferences
+✅ **Gender Filtering**: Only see users matching your preferences
+✅ **Festival Banner**: Shows festival name + sponsor on every screen
+✅ **No Switching**: Users locked into scanned festival (cannot change rooms)
+✅ **Real-time Sync**: Supabase subscriptions for live festival user updates
+✅ **Auto-Wipe**: 20-minute inactivity timeout (profiles self-destruct)
+✅ **Pull-to-Refresh**: Manual refresh to reload festival users
+✅ **Sign Out**: Complete data deletion (selfie + user record + matches)
 ✅ **Interactive UI**: Swipe to hide, tap to undo flick, full-screen photos
+✅ **Visible Interest**: Green border on users who flicked you
+✅ **Instant Matching**: Flick back triggers immediate Green Light screen
 
 ## B2B Model
 
