@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 /**
- * Validate festival code and join festival
+ * Validate festival code and optionally join festival
  */
 export async function validateAndJoinFestival(userId, festivalCode) {
   try {
@@ -15,15 +15,17 @@ export async function validateAndJoinFestival(userId, festivalCode) {
       return null;
     }
 
-    // Update user's festival_id
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({ festival_id: festivalCode })
-      .eq('id', userId);
+    // If userId provided, update user's festival_id
+    if (userId) {
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ festival_id: festivalCode })
+        .eq('id', userId);
 
-    if (updateError) {
-      console.error('Error joining festival:', updateError);
-      return null;
+      if (updateError) {
+        console.error('Error joining festival:', updateError);
+        return null;
+      }
     }
 
     return festival;

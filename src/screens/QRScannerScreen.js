@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
-import { useUser } from '../lib/userContext';
 import { validateAndJoinFestival } from '../lib/database';
 
 export default function QRScannerScreen({ navigation, route }) {
-  const { user, updateUser } = useUser();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-  const fromSetup = route?.params?.fromSetup;
 
   if (!permission) {
     return (
@@ -35,30 +33,26 @@ export default function QRScannerScreen({ navigation, route }) {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     if (scanned || isJoining) return;
-    
+
     setScanned(true);
     setIsJoining(true);
 
     try {
-      // Validate festival code and join
-      const festival = await validateAndJoinFestival(user.id, data);
+      // Validate festival code (we'll join after user creates profile)
+      const festival = await validateAndJoinFestival(null, data);
       
       if (festival) {
-        // Update user context with festival info
-        await updateUser({ festival_id: data });
-        
+        // Store festival ID in AsyncStorage for later use
+        await AsyncStorage.setItem('festivalId', data);
+
         Alert.alert(
           'Welcome!',
           `You're now in ${festival.name}${festival.sponsor_name ? ` sponsored by ${festival.sponsor_name}` : ''}`,
           [
             {
-              text: 'Start Flicking',
+              text: 'Create Profile',
               onPress: () => {
-                if (fromSetup) {
-                  navigation.replace('Dashboard');
-                } else {
-                  navigation.goBack();
-                }
+                navigation.replace('Camera', { festivalId: data });
               }
             }
           ]

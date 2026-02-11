@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 
@@ -32,6 +33,10 @@ export default function SetupScreen({ route, navigation }) {
     setIsCreating(true);
 
     try {
+      // Get the festival ID from AsyncStorage (stored during QR scan)
+      const festivalId = await AsyncStorage.getItem('festivalId');
+
+      // Create user with festival ID
       await createUser({
         name: name.trim(),
         age: parseInt(age),
@@ -40,10 +45,11 @@ export default function SetupScreen({ route, navigation }) {
         phoneNumber: phoneNumber.trim() || null,
         gender,
         lookingFor,
+        festivalId,
       });
 
-      // Navigate to QR scanner to join a festival
-      navigation.navigate('QRScanner', { fromSetup: true });
+      // Navigate directly to Dashboard
+      navigation.replace('Dashboard');
     } catch (error) {
       console.error('Error creating user:', error);
 

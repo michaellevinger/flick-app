@@ -41,14 +41,14 @@ export default function App() {
         <StatusBar style="dark" />
         <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Camera"
+          initialRouteName="QRScanner"
           screenOptions={{
             headerShown: false,
           }}
         >
+          <Stack.Screen name="QRScanner" component={QRScannerScreen} />
           <Stack.Screen name="Camera" component={CameraScreen} />
           <Stack.Screen name="Setup" component={SetupScreen} />
-          <Stack.Screen name="QRScanner" component={QRScannerScreen} />
           <Stack.Screen name="Dashboard" component={DashboardScreen} />
           <Stack.Screen name="GreenLight" component={GreenLightScreen} />
           <Stack.Screen name="Vault" component={VaultScreen} />

@@ -62,7 +62,7 @@ export function UserProvider({ children }) {
     }
   };
 
-  const createUser = async ({ name, age, height, photoUri, phoneNumber, gender, lookingFor }) => {
+  const createUser = async ({ name, age, height, photoUri, phoneNumber, gender, lookingFor, festivalId }) => {
     try {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -92,6 +92,7 @@ export function UserProvider({ children }) {
         phoneNumber,
         gender,
         lookingFor,
+        festivalId,
       });
 
       // Save to local storage
@@ -106,6 +107,7 @@ export function UserProvider({ children }) {
         phoneNumber,
         gender,
         lookingFor,
+        festival_id: festivalId,
       };
 
       await saveUser(userToSave);

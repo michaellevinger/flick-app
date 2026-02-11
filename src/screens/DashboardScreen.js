@@ -420,14 +420,6 @@ export default function DashboardScreen({ navigation }) {
         ) : (
           <Text style={styles.noFestivalText}>No festival joined</Text>
         )}
-        <TouchableOpacity
-          style={styles.changeFestivalButton}
-          onPress={() => navigation.navigate('QRScanner')}
-        >
-          <Text style={styles.changeFestivalText}>
-            {currentFestival ? 'Switch' : 'Join Festival'}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       {/* Status Message */}
