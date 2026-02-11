@@ -51,6 +51,62 @@
 
 ---
 
+## 🎯 User Flow (QR-First B2B Model)
+
+### The Complete Journey:
+
+**1. Download App → Open**
+- First screen: QR Scanner (camera view with corner guides)
+
+**2. Scan Festival QR Code**
+- User points camera at festival's unique QR code
+- Example codes: `coachella2024`, `tomorrowland2024`, `lollapalooza2024`
+- QR codes printed on: posters, wristbands, tent cards, sponsor booths
+- System validates festival and stores festival ID
+- Dev mode: "Skip (Dev Only)" button to join test festival
+
+**3. Camera Screen → Take Selfie**
+- Front-facing camera (primary)
+- Gallery fallback available
+- Retake option before confirming
+
+**4. Setup Screen → Profile Info**
+- First name only
+- Age (18+ validation)
+- Gender selection (Male/Female/Other)
+- Looking for preferences (Male/Female/Both)
+- Height (optional)
+
+**5. Dashboard → Festival Room**
+- Shows festival banner: "Coachella 2024 - Sponsored by Heineken"
+- List of users in SAME festival only
+- Pull to refresh
+- Flick users to match
+- **No switching festivals** - users locked into scanned festival
+
+### B2B Value Proposition:
+
+**For Festival Sponsors:**
+- ✅ **Direct Attribution** - Know exactly which matches came from YOUR festival
+- ✅ **Isolated Pools** - Users only see attendees of same festival
+- ✅ **Real-time Metrics** - Dashboard shows active users, matches made
+- ✅ **Booth Traffic** - "Visit sponsor booth to exchange numbers" drives foot traffic
+- ✅ **Brand Association** - "Sponsored by Heineken" on every match
+
+**For Festival Organizers:**
+- ✅ **Unique QR per Event** - Different code for each festival/weekend/stage
+- ✅ **Sponsor Upsell** - Add sponsorship tiers with branding
+- ✅ **Attendee Engagement** - Digital icebreaker increases festival satisfaction
+- ✅ **Data Insights** - See which stages/areas have most activity
+
+**Distribution Strategy:**
+1. Print QR codes on festival materials (posters, maps, wristbands)
+2. Display at high-traffic areas (entrance, main stage, food courts)
+3. Include in festival app/push notifications
+4. Sponsor booth signage: "Scan to meet people around you"
+
+---
+
 ## 🛠 Core Tech Stack
 - **Frontend:** React Native (Expo) - *Native required for background GPS/Haptics*
 - **Backend:** Supabase (Auth + Real-time + Postgres + PostGIS)
@@ -121,10 +177,10 @@
 
 ---
 
-### 3. The Nudge & Green Light (REVISED) ✅ COMPLETE
-**Status:** Fully implemented with visible interest signals
+### 3. The Flick & Green Light ✅ COMPLETE
+**Status:** Fully implemented with visible interest signals (renamed from "Nudge" to "Flick")
 
-- **The Nudge:** A visible signal of interest
+- **The Flick:** A visible signal of interest
   - When User A nudges User B, User B's UI reflects this on User A's card
   - User B sees User A's card with green border + "Wants to meet" label
   - Optional: Push notification "Someone nearby nudged you!"
