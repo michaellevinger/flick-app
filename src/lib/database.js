@@ -18,7 +18,7 @@ function normalizeUserData(user) {
 /**
  * Create or update a user in the database
  */
-export async function upsertUser({ id, name, age, height, selfieUrl, status, location, phoneNumber, gender, lookingFor }) {
+export async function upsertUser({ id, name, age, height, selfieUrl, status, location, phoneNumber, gender, lookingFor, festivalId }) {
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -33,6 +33,7 @@ export async function upsertUser({ id, name, age, height, selfieUrl, status, loc
         phone_number: phoneNumber || null,
         gender: gender || null,
         looking_for: lookingFor || null,
+        festival_id: festivalId || null,
         last_heartbeat: new Date().toISOString(),
       },
       {

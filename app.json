@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Flick",
-    "slug": "nudge-app",
+    "slug": "flick-fresh-dev",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,12 +13,14 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.flick.fresh",
       "infoPlist": {
         "NSCameraUsageDescription": "Flick needs access to your camera to take a fresh check-in selfie.",
         "NSLocationWhenInUseUsageDescription": "Flick uses your location to show you people nearby within 100m."
       }
     },
     "android": {
+      "package": "com.flick.fresh",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,8 +29,7 @@
         "CAMERA",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ],
-      "package": "com.michaellevinger123.nudgeapp"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

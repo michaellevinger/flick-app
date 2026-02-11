@@ -179,6 +179,36 @@ export function UserProvider({ children }) {
     }
   };
 
+  const updateUser = async (updates) => {
+    if (!user) return;
+
+    try {
+      // Merge updates with current user data
+      const updatedUser = { ...user, ...updates };
+
+      // Update user in database
+      await upsertUser({
+        id: user.id,
+        name: updatedUser.name,
+        age: updatedUser.age,
+        height: updatedUser.height,
+        selfieUrl: updatedUser.selfieUrl,
+        status: updatedUser.status,
+        location: updatedUser.location,
+        phoneNumber: updatedUser.phoneNumber,
+        gender: updatedUser.gender,
+        lookingFor: updatedUser.lookingFor,
+        festivalId: updatedUser.festival_id,
+      });
+
+      // Update local state and storage
+      await saveUser(updatedUser);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
+  };
+
   const updateSelfie = async (newSelfieUrl) => {
     if (!user) return;
 
@@ -239,6 +269,7 @@ export function UserProvider({ children }) {
         user,
         isLoading,
         createUser,
+        updateUser,
         toggleStatus,
         updateLocation,
         updateSelfie,
