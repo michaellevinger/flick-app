@@ -202,12 +202,44 @@ flick-app/
 └── NUMBER_EXCHANGE_SETUP.md     # Number exchange setup guide
 ```
 
+## Website
+
+### B2B Sponsor Landing Page ✅
+
+A complete sponsor-focused landing page has been built at `/website/index.html`:
+
+**Key Sections:**
+- **Hero**: Premium sponsor activation platform messaging
+- **Your Audience**: Festival singles looking to connect
+- **Sponsor Advantage**: Brand activation examples (Heineken, Red Bull, Spotify)
+- **How It Works**: 3-step flow showing match → branded Green Light → booth traffic
+- **Post-Event Analytics**: Real-time dashboard with Connection Score, Booth Traffic, Brand Impressions
+- **Activation Examples**: Branded Green Light messages with rewards
+- **CTA**: Contact form for sponsors
+
+**Design:**
+- Black background with flick green (#00FF00) accents
+- Ghost emoji logo with green hearts
+- Video demonstration of Heineken Green Light activation
+- Mobile phone mockup showing app interface
+- Festival audience imagery
+
+**Analytics Metrics:**
+- Connection Score: Total introductions powered by brand
+- Booth Traffic: Direct-to-booth attribution
+- Brand Impressions: Guaranteed engagement per match
+
+**Deployment:**
+- Static HTML + Tailwind CSS
+- Ready for Vercel/Netlify deployment
+- Optimized for desktop and mobile viewing
+
 ## What's Next
 
-### Polish & Testing (Task #10)
+### Deployment & Launch
 
-All core features are now complete! Next steps:
-
+- [ ] **Deploy Website**: Push to Vercel for sponsor access
+- [ ] **App Store Submission**: Prepare for iOS/Android release
 - [ ] **Polish & Testing**
   - Refine animations and transitions
   - Add loading states
@@ -217,7 +249,7 @@ All core features are now complete! Next steps:
 
 ### Future Enhancements (Post-MVP)
 
-- **Green Light Screen**: Full-screen green with haptic buzz when matched
+- **Push Notifications**: Alert users when matched
 - **Match History**: Temporary log of recent matches (also self-destructs)
 - **Radius Adjustment**: Let users choose 50m / 500m / 200m
 - **Do Not Disturb**: Schedule when you want to be invisible

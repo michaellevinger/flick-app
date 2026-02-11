@@ -1,5 +1,6 @@
-# Project Nudge
+# Project flick
 **Mission:** Eliminate approach anxiety via a 500m digital "Green Light."
+**Brand:** flick — Turn a Look into Hello
 
 ## 🎯 Project Status
 
@@ -29,8 +30,22 @@
 - [x] Storage bucket creation (selfies)
 - [ ] Edge Function deployment (auto-cleanup) - Optional
 
+### ✅ Website - COMPLETE
+- [x] B2B sponsor landing page (`/website/index.html`)
+- [x] Hero section with brand positioning
+- [x] Your Audience section with festival imagery
+- [x] Sponsor Advantage with activation examples (Heineken, Red Bull, Spotify)
+- [x] How It Works 3-step flow
+- [x] Post-Event Analytics with video demonstration
+- [x] Connection Score, Booth Traffic, Brand Impressions metrics
+- [x] Responsive design with Tailwind CSS
+- [x] Ghost emoji logo with green hearts
+- [x] Ready for Vercel deployment
+
 ### 🔮 Next Up
-- [ ] End-to-end testing
+- [ ] Deploy website to Vercel
+- [ ] App Store submission (iOS/Android)
+- [ ] End-to-end testing with real users
 - [ ] Push notifications
 - [ ] Polish & testing (Task #10)
 
@@ -257,7 +272,7 @@ See [AUTO_WIPE_SETUP.md](./AUTO_WIPE_SETUP.md) for complete deployment instructi
 ## 📁 Project Structure
 
 ```
-spot-app/
+flick-app/
 ├── src/
 │   ├── screens/
 │   │   ├── CameraScreen.js       # ✅ Selfie capture
@@ -275,6 +290,15 @@ spot-app/
 │   │   └── (shared components)   # 🔮 As needed
 │   └── constants/
 │       └── theme.js              # ✅ Design system
+├── website/
+│   ├── index.html                # ✅ B2B sponsor landing page
+│   ├── images/
+│   │   ├── logo.png              # ✅ Ghost emoji logo (green bg)
+│   │   ├── logo-nav.png          # ✅ Ghost emoji logo (black bg)
+│   │   ├── profiles/             # ✅ Profile photos
+│   │   └── festival-audience.png # ✅ Festival imagery
+│   └── videos/
+│       └── heineken-green-light.mp4 # ✅ Brand activation demo
 ├── supabase/
 │   └── functions/
 │       └── auto-cleanup/         # ✅ Edge Function for auto-wipe
@@ -459,5 +483,5 @@ Claude, write a test scenario to verify that [specific behavior from CLAUDE.md] 
 
 ---
 
-**Last Updated:** 2026-02-01
-**Version:** 0.2.0 (Supabase Integration Complete)
+**Last Updated:** 2026-02-11
+**Version:** 0.3.0 (B2B Website Complete + Ready for Deployment)
