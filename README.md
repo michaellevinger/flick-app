@@ -75,6 +75,18 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 - **Privacy First**: No history kept after expiration
 - **Optional Feature**: Phone number optional during setup
 
+### Phase 6: Real-Time Chat System ✅
+
+- **Match-Based Chat**: Message users you've mutually flicked
+- **20-Minute Message TTL**: All messages auto-delete after 20 minutes
+- **Text Messaging**: Real-time text messages with instant delivery
+- **Image Sharing**: Send photos via camera or gallery
+- **Location Sharing**: Share GPS coordinates with one tap
+- **Unread Badges**: See unread message count in Matches tab
+- **Distance Dissolution**: Chats auto-close when users >500m apart
+- **Tab Navigation**: Radar tab (discovery) + Matches tab (conversations)
+- **Start Chat Button**: Launch chat directly from Green Light screen
+
 ## Tech Stack
 
 - **Frontend**: React Native with Expo
@@ -255,12 +267,11 @@ See [QR_B2B_MODEL.md](./QR_B2B_MODEL.md) for complete B2B documentation.
 ## Design Philosophy
 
 - **QR-First**: Scan festival code before profile creation
-- **Minimalist UI**: Black, white, and signature green only
+- **Minimalist UI**: Black, white, and signature rose red only
 - **No Bios**: Just name, age, gender, and a fresh selfie
-- **No Chat**: Tap-to-flick for mutual interest only
+- **Match-First Chat**: Instant Green Light to match, then chat with mutual connections
 - **Festival Rooms**: Isolated user pools per QR code
 - **Sponsor Branding**: Festival name + sponsor on every screen
-- **Auto-Wipe**: Data self-destructs after 20 minutes of inactivity
 
 ## Project Structure
 

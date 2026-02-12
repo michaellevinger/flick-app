@@ -43,7 +43,7 @@ serve(async (req) => {
 
     console.log(`Auto-cleanup completed: ${deletedUsers} inactive users deleted`)
 
-    // Also clean up expired number exchanges
+    // Clean up expired number exchanges
     const { data: deletedExchanges, error: exchangesError } = await supabase.rpc('cleanup_expired_exchanges')
 
     if (exchangesError) {
@@ -53,13 +53,24 @@ serve(async (req) => {
       console.log(`Cleaned up ${deletedExchanges} expired number exchanges`)
     }
 
+    // Clean up expired messages (20 minute TTL)
+    const { data: deletedMessages, error: messagesError } = await supabase.rpc('delete_expired_messages')
+
+    if (messagesError) {
+      console.error('Error cleaning up expired messages:', messagesError)
+      // Don't fail the whole function, just log it
+    } else {
+      console.log(`Cleaned up ${deletedMessages} expired messages`)
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         deleted_users: deletedUsers,
         deleted_exchanges: deletedExchanges || 0,
+        deleted_messages: deletedMessages || 0,
         timestamp: new Date().toISOString(),
-        message: `Deleted ${deletedUsers} inactive user(s) and ${deletedExchanges || 0} expired exchange(s)`,
+        message: `Deleted ${deletedUsers} inactive user(s), ${deletedExchanges || 0} expired exchange(s), and ${deletedMessages || 0} expired message(s)`,
       }),
       {
         status: 200,

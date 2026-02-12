@@ -209,7 +209,7 @@ export default function SetupScreen({ route, navigation }) {
         </TouchableOpacity>
 
         <Text style={styles.notice}>
-          No bios. No chat. Proximity only.
+          No bios. Match first, then chat.
         </Text>
       </View>
     </KeyboardAvoidingView>

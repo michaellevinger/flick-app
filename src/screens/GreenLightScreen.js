@@ -22,6 +22,7 @@ import {
   subscribeToExchanges,
   getUserPhoneNumber,
 } from '../lib/vault';
+import { getMatchId } from '../lib/messages';
 
 const { width, height } = Dimensions.get('window');
 
@@ -293,10 +294,22 @@ export default function GreenLightScreen({ route, navigation }) {
           <Text style={styles.userName}>{matchedUser.name}</Text>
         </View>
 
-        {/* Number Exchange */}
+        {/* Action Buttons */}
         <View style={styles.actionContainer}>
+          {/* Start Chat Button */}
+          <TouchableOpacity
+            style={styles.chatButton}
+            onPress={() => {
+              const matchId = getMatchId(user.id, matchedUser.id);
+              navigation.navigate('Chat', { matchId, otherUser: matchedUser });
+            }}
+          >
+            <Text style={styles.chatButtonText}>💬 Start Chat</Text>
+          </TouchableOpacity>
+
+          {/* Number Exchange */}
           {exchangeRequest && exchangeRequest.status === 'pending' ? (
-            <Text style={styles.hint}>Waiting for response...</Text>
+            <Text style={styles.hint}>Number request pending...</Text>
           ) : (
             <>
               <TouchableOpacity
@@ -476,6 +489,21 @@ const styles = StyleSheet.create({
   actionContainer: {
     alignItems: 'center',
     marginBottom: SPACING.xxl,
+    width: '100%',
+  },
+  chatButton: {
+    backgroundColor: COLORS.green,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    borderRadius: 8,
+    marginBottom: SPACING.md,
+    width: '80%',
+  },
+  chatButtonText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.white,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   requestNumberButton: {
     backgroundColor: COLORS.black,
@@ -483,11 +511,13 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     borderRadius: 8,
     marginBottom: SPACING.md,
+    width: '80%',
   },
   requestNumberText: {
     ...TYPOGRAPHY.body,
     color: COLORS.green,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   hint: {
     ...TYPOGRAPHY.body,

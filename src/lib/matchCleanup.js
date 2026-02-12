@@ -2,6 +2,7 @@ import { getFlicksSentByUser, getFlicksForUser, deleteFlick } from './flicks';
 import { supabase } from './supabase';
 import { calculateDistance, parseGeographyPoint } from './location';
 import { PROXIMITY_RADIUS } from '../constants/theme';
+import { getMatchId } from './messages';
 
 /**
  * Check all active matches and delete flicks if users are too far apart
@@ -59,6 +60,11 @@ export async function cleanupDistantMatches(userId, currentLocation) {
         // Delete both directions of the flick
         await deleteFlick(userId, matchedUser.id);
         await deleteFlick(matchedUser.id, userId);
+
+        // Delete the match record (and cascade to messages)
+        const matchId = getMatchId(userId, matchedUser.id);
+        await supabase.from('matches').delete().eq('id', matchId);
+        console.log(`Match record ${matchId} deleted`);
       }
     }
   } catch (error) {
