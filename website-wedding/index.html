@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flick for Weddings - Turn Wedding Guests into Connections</title>
+    <meta name="description" content="The social catalyst for wedding receptions. Help your single guests meet and connect through a private, wedding-exclusive app experience.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'flick-pink': '#FF6B9D',
+                        'flick-dark': '#0B0F0E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top center, rgba(255, 107, 157, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(255, 107, 157, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        #000000;
+            background-attachment: fixed;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 40px rgba(255, 107, 157, 0.4);
+        }
+
+        .glow {
+            box-shadow: 0 0 60px rgba(255, 107, 157, 0.3);
+        }
+
+        /* Scroll animations */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 backdrop-blur-md bg-black/50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-black">flick<span class="text-flick-pink">.</span></div>
+                <a href="#contact" class="px-6 py-2 bg-flick-pink text-black font-bold rounded-lg btn-hover">
+                    Book a Demo
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center pt-20 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="inline-block px-4 py-2 bg-flick-pink/10 border border-flick-pink/30 rounded-full mb-6 fade-in">
+                <span class="text-flick-pink font-semibold">💕 Perfect for Wedding Receptions</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 fade-in" style="animation-delay: 0.1s;">
+                Your Wedding's<br/>
+                <span class="text-flick-pink">Secret Matchmaker</span>
+            </h1>
+
+            <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto fade-in" style="animation-delay: 0.2s;">
+                A private app experience where single guests can connect, flick, and maybe find their own love story — all within your wedding's exclusive digital space.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in" style="animation-delay: 0.3s;">
+                <a href="#how-it-works" class="px-8 py-4 bg-flick-pink text-black font-bold rounded-lg text-lg btn-hover glow">
+                    See How It Works →
+                </a>
+                <a href="#pricing" class="px-8 py-4 border-2 border-white/20 font-bold rounded-lg text-lg btn-hover hover:border-flick-pink">
+                    View Pricing
+                </a>
+            </div>
+
+            <div class="mt-16 text-sm text-gray-500 fade-in" style="animation-delay: 0.4s;">
+                Already trusted by 50+ weddings nationwide
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    We All Know the Story...
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Amazing single guests at your wedding who never get a chance to connect
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 hover:border-flick-pink/50 transition-all">
+                    <div class="text-5xl mb-4">😔</div>
+                    <h3 class="text-2xl font-bold mb-4">Missed Connections</h3>
+                    <p class="text-gray-400">
+                        Single guests sitting at different tables, never knowing who's single, who's interested, who's available to dance.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 hover:border-flick-pink/50 transition-all">
+                    <div class="text-5xl mb-4">🤐</div>
+                    <h3 class="text-2xl font-bold mb-4">Awkward Approaches</h3>
+                    <p class="text-gray-400">
+                        No one wants to make the first move at a wedding. Too formal, too many eyes watching, too much pressure.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 hover:border-flick-pink/50 transition-all">
+                    <div class="text-5xl mb-4">💔</div>
+                    <h3 class="text-2xl font-bold mb-4">Stories Untold</h3>
+                    <p class="text-gray-400">
+                        How many love stories never started because two people were too shy to say hello at your wedding?
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Introducing <span class="text-flick-pink">flick for Weddings</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    A private, wedding-exclusive app where your single guests can connect before, during, and after the big day
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-flick-pink/10 to-transparent border border-flick-pink/30 rounded-3xl p-12 mb-12">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-6">The Modern Wedding Icebreaker</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <span class="text-flick-pink text-2xl">✓</span>
+                                <div>
+                                    <strong>Private QR Code Access</strong>
+                                    <p class="text-gray-400">Include in save-the-dates, invitations, or welcome bags</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-flick-pink text-2xl">✓</span>
+                                <div>
+                                    <strong>Guest-Only Visibility</strong>
+                                    <p class="text-gray-400">See only other single guests at YOUR wedding</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-flick-pink text-2xl">✓</span>
+                                <div>
+                                    <strong>Mutual Match System</strong>
+                                    <p class="text-gray-400">No awkwardness - connections only happen when both say yes</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-flick-pink text-2xl">✓</span>
+                                <div>
+                                    <strong>Real-Time Chat</strong>
+                                    <p class="text-gray-400">Matched guests can chat, plan to meet at cocktail hour, or dance together</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="relative">
+                        <div class="bg-white/5 backdrop-blur border border-white/20 rounded-3xl p-8 text-center">
+                            <div class="text-6xl mb-4">📱</div>
+                            <h4 class="text-2xl font-bold mb-4">App Preview</h4>
+                            <p class="text-gray-400 mb-6">Clean, elegant interface designed for wedding guests</p>
+                            <div class="bg-black/50 rounded-2xl p-6 border border-flick-pink/30">
+                                <div class="space-y-3 text-left">
+                                    <div class="bg-white/5 p-3 rounded-lg">
+                                        <div class="text-sm font-semibold">Sarah & Mike's Wedding</div>
+                                        <div class="text-xs text-gray-500">June 15, 2026</div>
+                                    </div>
+                                    <div class="bg-flick-pink/20 p-3 rounded-lg border border-flick-pink/50">
+                                        <div class="text-sm font-semibold">12 single guests nearby</div>
+                                        <div class="text-xs text-gray-400">Tap to see who wants to connect</div>
+                                    </div>
+                                    <div class="bg-white/5 p-3 rounded-lg">
+                                        <div class="text-sm">💬 3 new matches!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    How It Works
+                </h2>
+                <p class="text-xl text-gray-400">
+                    Simple setup, magical results
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-flick-pink/20 border-2 border-flick-pink rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">
+                        1
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">You Get a QR Code</h3>
+                    <p class="text-gray-400 mb-6">
+                        We create a private flick room for your wedding with a unique QR code
+                    </p>
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="text-6xl mb-3">📧</div>
+                        <p class="text-sm text-gray-500">Include in:</p>
+                        <p class="text-sm font-semibold">Save-the-dates • Invitations • Welcome bags • Table cards</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-flick-pink/20 border-2 border-flick-pink rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">
+                        2
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Guests Scan & Connect</h3>
+                    <p class="text-gray-400 mb-6">
+                        Single guests scan the QR, create a profile, and see other singles at your wedding
+                    </p>
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="text-6xl mb-3">💕</div>
+                        <p class="text-sm text-gray-500">They can:</p>
+                        <p class="text-sm font-semibold">"Flick" people they like • Match instantly • Chat before the wedding</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-flick-pink/20 border-2 border-flick-pink rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">
+                        3
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Magic Happens</h3>
+                    <p class="text-gray-400 mb-6">
+                        Guests meet at cocktail hour, dance together, exchange numbers — your wedding becomes their story too
+                    </p>
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="text-6xl mb-3">✨</div>
+                        <p class="text-sm text-gray-500">Results:</p>
+                        <p class="text-sm font-semibold">Real connections • Better vibes • Stories for years</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits for Different Buyers -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Perfect For...
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-flick-pink/10 to-transparent border border-flick-pink/30 rounded-2xl p-8">
+                    <div class="text-5xl mb-4">💑</div>
+                    <h3 class="text-2xl font-bold mb-4">Wedding Couples</h3>
+                    <p class="text-gray-400 mb-6">
+                        Give your single friends an unforgettable gift: a chance to meet someone special at YOUR wedding
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>✓ Memorable wedding favor</li>
+                        <li>✓ Help your friends find love</li>
+                        <li>✓ Create legendary wedding stories</li>
+                        <li>✓ One-time setup, lasting impact</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-br from-flick-pink/10 to-transparent border border-flick-pink/30 rounded-2xl p-8">
+                    <div class="text-5xl mb-4">🏛️</div>
+                    <h3 class="text-2xl font-bold mb-4">Wedding Venues</h3>
+                    <p class="text-gray-400 mb-6">
+                        Differentiate your venue with a unique, modern amenity couples will love
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>✓ Premium add-on service</li>
+                        <li>✓ Stand out from competition</li>
+                        <li>✓ Increase booking rates</li>
+                        <li>✓ White-label available</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-br from-flick-pink/10 to-transparent border border-flick-pink/30 rounded-2xl p-8">
+                    <div class="text-5xl mb-4">💼</div>
+                    <h3 class="text-2xl font-bold mb-4">Wedding Planners</h3>
+                    <p class="text-gray-400 mb-6">
+                        Offer an innovative service that makes you the most talked-about planner
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>✓ Upsell to couples</li>
+                        <li>✓ Earn commission per wedding</li>
+                        <li>✓ Easy setup, zero effort</li>
+                        <li>✓ Partner program available</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Simple, Transparent Pricing
+                </h2>
+                <p class="text-xl text-gray-400">
+                    One price, unlimited connections
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Single Wedding -->
+                <div class="bg-white/5 backdrop-blur border-2 border-white/10 rounded-3xl p-10 hover:border-flick-pink/50 transition-all">
+                    <h3 class="text-3xl font-bold mb-4">Single Wedding</h3>
+                    <div class="mb-6">
+                        <span class="text-5xl font-black">$499</span>
+                        <span class="text-gray-400">/wedding</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-gray-300">
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Unlimited guest access</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Custom wedding QR code</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Branded with couple's names</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>30-day access (before & after)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Real-time chat & matching</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Post-event success report</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full py-4 bg-white/10 text-white font-bold rounded-xl text-center btn-hover border border-white/20">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Venue/Planner -->
+                <div class="bg-gradient-to-br from-flick-pink/20 to-transparent border-2 border-flick-pink rounded-3xl p-10 relative overflow-hidden glow">
+                    <div class="absolute top-4 right-4 bg-flick-pink text-black text-xs font-bold px-3 py-1 rounded-full">
+                        BEST VALUE
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">Venue/Planner Package</h3>
+                    <div class="mb-6">
+                        <span class="text-5xl font-black">$2,499</span>
+                        <span class="text-gray-400">/year</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-gray-300">
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span><strong>Unlimited weddings</strong> per year</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>White-label option available</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Marketing materials included</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Commission structure for planners</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-flick-pink text-xl">✓</span>
+                            <span>Analytics dashboard</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full py-4 bg-flick-pink text-black font-bold rounded-xl text-center btn-hover">
+                        Book a Demo
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-center mt-12 text-gray-400">
+                <p>💳 All major payment methods accepted</p>
+                <p class="text-sm mt-2">Money-back guarantee if no matches are made</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Real Wedding Love Stories
+                </h2>
+                <p class="text-xl text-gray-400">
+                    Connections that started with a flick
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-flick-pink/20 rounded-full flex items-center justify-center text-2xl">
+                            💕
+                        </div>
+                        <div>
+                            <div class="font-bold">Emma & Jake</div>
+                            <div class="text-sm text-gray-500">Met at Sarah's wedding</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 italic">
+                        "We were both too shy to approach each other in person. flick broke the ice before cocktail hour even started. Now we're planning OUR wedding!"
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-flick-pink/20 rounded-full flex items-center justify-center text-2xl">
+                            💍
+                        </div>
+                        <div>
+                            <div class="font-bold">The Venue</div>
+                            <div class="text-sm text-gray-500">Riverside Estate</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 italic">
+                        "Couples love that we offer flick. It's become our signature amenity. We've booked 12 additional weddings just from word-of-mouth about this feature."
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-flick-pink/20 rounded-full flex items-center justify-center text-2xl">
+                            ✨
+                        </div>
+                        <div>
+                            <div class="font-bold">Wedding Planner</div>
+                            <div class="text-sm text-gray-500">Elite Events Co.</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 italic">
+                        "My couples LOVE offering this to their guests. It's become a selling point for my services. Easy setup, huge impact."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Frequently Asked Questions
+                </h2>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-3">How do guests access flick?</h3>
+                    <p class="text-gray-400">
+                        You'll receive a unique QR code to include in your wedding communications (save-the-dates, invitations, welcome bags, or table cards). Guests scan it, download the app, and instantly join your private wedding room.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-3">Is it only for single guests?</h3>
+                    <p class="text-gray-400">
+                        Yes! flick is designed specifically for single guests who want to connect. We recommend mentioning it in your invitations or welcome materials so singles know it's available.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-3">When can guests start using it?</h3>
+                    <p class="text-gray-400">
+                        Access begins as soon as you activate your QR code (typically 2-4 weeks before the wedding). Guests can start matching and chatting before the big day, so they can plan to meet at cocktail hour!
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-3">What happens after the wedding?</h3>
+                    <p class="text-gray-400">
+                        Guests keep their matches and can continue chatting for 30 days after your wedding. After that, the private room closes. This creates a special window for connections without being a permanent dating app.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-3">Is this appropriate for all ages?</h3>
+                    <p class="text-gray-400">
+                        flick is for adults 18+. We maintain a respectful, safe environment with reporting tools and moderation. It's designed to be wedding-appropriate and elegant.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-3">Can we customize it with our wedding theme?</h3>
+                    <p class="text-gray-400">
+                        Yes! Your wedding room will display your names and wedding date. Venue/Planner packages include white-label options with custom branding.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="py-24 px-6 scroll-fade">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="bg-gradient-to-br from-flick-pink/20 to-transparent border-2 border-flick-pink rounded-3xl p-16 glow">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Ready to Add Magic to Your Wedding?
+                </h2>
+                <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                    Join 50+ couples who've created unforgettable connection moments at their weddings
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                    <a href="mailto:hello@flick.wedding" class="px-8 py-4 bg-flick-pink text-black font-bold rounded-xl text-lg btn-hover">
+                        📧 hello@flick.wedding
+                    </a>
+                    <a href="tel:+15551234567" class="px-8 py-4 border-2 border-white/20 font-bold rounded-xl text-lg btn-hover hover:border-flick-pink">
+                        📞 (555) 123-4567
+                    </a>
+                </div>
+
+                <p class="text-sm text-gray-500">
+                    Book your demo today • Setup in under 5 minutes • Risk-free guarantee
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="text-2xl font-black mb-4">flick<span class="text-flick-pink">.</span></div>
+                    <p class="text-gray-400 text-sm">
+                        Turn wedding guests into connections
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#how-it-works" class="hover:text-flick-pink">How It Works</a></li>
+                        <li><a href="#pricing" class="hover:text-flick-pink">Pricing</a></li>
+                        <li><a href="#" class="hover:text-flick-pink">Features</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">For Businesses</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-flick-pink">Wedding Venues</a></li>
+                        <li><a href="#" class="hover:text-flick-pink">Wedding Planners</a></li>
+                        <li><a href="#" class="hover:text-flick-pink">Partner Program</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="mailto:hello@flick.wedding" class="hover:text-flick-pink">hello@flick.wedding</a></li>
+                        <li><a href="#" class="hover:text-flick-pink">Book a Demo</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center text-sm text-gray-500 pt-8 border-t border-white/10">
+                © 2026 flick. All rights reserved. • <a href="#" class="hover:text-flick-pink">Privacy</a> • <a href="#" class="hover:text-flick-pink">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Animation Script -->
+    <script>
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
