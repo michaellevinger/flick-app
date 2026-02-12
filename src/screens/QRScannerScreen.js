@@ -117,6 +117,7 @@ export default function QRScannerScreen({ navigation, route }) {
     <View style={styles.container}>
       <CameraView
         style={styles.camera}
+        facing="back"
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: ['qr'],
