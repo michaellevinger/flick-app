@@ -79,6 +79,76 @@
         .fade-in-delay-1 { transition-delay: 0.1s; }
         .fade-in-delay-2 { transition-delay: 0.2s; }
         .fade-in-delay-3 { transition-delay: 0.3s; }
+
+        /* iPhone Mockup Styles */
+        .iphone-mockup {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            aspect-ratio: 9 / 19.5;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 0 0 12px #1a1a1a,
+                        0 0 0 13px #333,
+                        0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background: #0B0F0E;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            padding-top: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .profile-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .profile-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8FAD 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+        }
+
+        .profile-info {
+            padding: 16px;
+        }
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -88,7 +158,7 @@
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <span class="text-2xl font-black text-flick-green">flick</span>
+                    <span class="text-2xl font-black">flick<span class="text-flick-green">.</span></span>
                 </div>
 
                 <div class="hidden md:flex items-center space-x-8">
@@ -292,6 +362,200 @@
                     <div class="absolute -bottom-6 -left-6 bg-flick-green text-black px-6 py-4 rounded-xl font-bold text-lg shadow-xl hidden md:block">
                         ⚡ 300% Dating App Spike at Festivals
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Screens Demo -->
+    <section class="py-24 px-6 fade-in bg-gradient-to-b from-transparent to-flick-green/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    See flick in Action
+                </h2>
+                <p class="text-xl text-gray-400">
+                    High-energy, festival vibes, instant connections
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Screen 1: Scan QR -->
+                <div class="text-center">
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
+                            </div>
+
+                            <!-- QR Scanner Content -->
+                            <div class="flex flex-col items-center justify-center h-full px-6 pb-12">
+                                <div class="mb-8 text-center">
+                                    <h3 class="text-2xl font-bold text-white mb-2">Scan Festival QR Code</h3>
+                                    <p class="text-gray-400 text-sm">Point your camera at the QR code</p>
+                                </div>
+
+                                <!-- Scanner Frame -->
+                                <div class="relative w-48 h-48 mb-8">
+                                    <div class="absolute inset-0 border-4 border-transparent rounded-3xl"
+                                         style="border-image: linear-gradient(135deg, #FF6B9D 0%, transparent 50%) 1;">
+                                    </div>
+                                    <!-- Corner guides -->
+                                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-flick-green rounded-tl-2xl"></div>
+                                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-flick-green rounded-tr-2xl"></div>
+                                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-flick-green rounded-bl-2xl"></div>
+                                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-flick-green rounded-br-2xl"></div>
+                                    <!-- QR Code representation -->
+                                    <div class="absolute inset-4 bg-white/90 rounded-xl flex items-center justify-center text-4xl">
+                                        <div class="text-xs text-black font-mono leading-tight p-2">
+                                            ████░░██<br/>
+                                            ░░████░░<br/>
+                                            ██░░████<br/>
+                                            ████░░██
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-flick-green/20 backdrop-blur px-6 py-3 rounded-full border border-flick-green/50">
+                                    <span class="text-sm font-semibold text-white">⚡ Tap to Skip (Dev)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Step 1: Scan</h3>
+                    <p class="text-gray-400 text-sm">
+                        Attendees scan the festival QR code to join the room
+                    </p>
+                </div>
+
+                <!-- Screen 2: Browse Festival Attendees -->
+                <div class="text-center">
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
+                            </div>
+
+                            <!-- Dashboard Content -->
+                            <div class="flex flex-col h-full">
+                                <!-- Header -->
+                                <div class="px-5 py-4 border-b border-white/10">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h2 class="text-xl font-bold text-white">flick<span class="text-flick-green">.</span></h2>
+                                        <div class="text-sm text-gray-400">Sign Out</div>
+                                    </div>
+                                    <div class="bg-flick-green/20 border border-flick-green/50 rounded-xl p-3 text-center">
+                                        <div class="text-sm font-bold text-flick-green">Coachella 2024</div>
+                                        <div class="text-xs text-gray-400">Sponsored by Heineken</div>
+                                    </div>
+                                </div>
+
+                                <!-- Profile Cards Scroll -->
+                                <div class="flex-1 overflow-y-auto px-5 py-4">
+                                    <!-- Profile Card 1 -->
+                                    <div class="profile-card mb-4">
+                                        <div class="profile-image" style="background-image: url('images/profiles/profile1.png'); background-size: cover; background-position: center;">
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <div class="text-white font-bold">Alex, 24</div>
+                                                    <div class="text-xs text-gray-400">180m away</div>
+                                                </div>
+                                                <button class="bg-flick-green px-4 py-2 rounded-lg text-black text-sm font-bold">
+                                                    Flick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Card 2 -->
+                                    <div class="profile-card">
+                                        <div class="profile-image" style="background-image: url('images/profiles/profile2.png'); background-size: cover; background-position: center;">
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <div class="text-white font-bold">Sam, 26</div>
+                                                    <div class="text-xs text-gray-400">320m away</div>
+                                                </div>
+                                                <button class="bg-flick-green px-4 py-2 rounded-lg text-black text-sm font-bold">
+                                                    Flick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Info -->
+                                <div class="px-5 py-3 bg-white/5 backdrop-blur border-t border-white/10 text-center text-xs text-gray-400">
+                                    47 attendees nearby
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Step 2: Browse</h3>
+                    <p class="text-gray-400 text-sm">
+                        See other festival-goers and "flick" people they want to meet
+                    </p>
+                </div>
+
+                <!-- Screen 3: Match & Green Light -->
+                <div class="text-center">
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen" style="background: linear-gradient(180deg, #FF6B9D 0%, #FF8FAD 50%, #0B0F0E 100%);">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
+                            </div>
+
+                            <!-- Green Light Content -->
+                            <div class="flex flex-col items-center justify-center h-full px-6 text-center">
+                                <!-- Animated glow effect -->
+                                <div class="relative mb-8">
+                                    <div class="absolute inset-0 bg-white/30 rounded-full blur-3xl animate-pulse"></div>
+                                    <div class="relative text-8xl">💕</div>
+                                </div>
+
+                                <h2 class="text-4xl font-black text-white mb-6">
+                                    It's a Match!
+                                </h2>
+
+                                <!-- Matched User Info -->
+                                <div class="bg-black/30 backdrop-blur-lg rounded-3xl p-6 mb-8 border border-white/20">
+                                    <div class="w-20 h-20 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl">
+                                        👤
+                                    </div>
+                                    <div class="text-white font-bold text-lg mb-2">Alex</div>
+                                    <div class="text-white/80 text-sm">
+                                        You both flicked each other
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="space-y-3 w-full">
+                                    <button class="w-full bg-white text-black font-bold py-4 rounded-2xl">
+                                        💬 Start Chat
+                                    </button>
+                                    <button class="w-full bg-white/10 backdrop-blur border border-white/20 text-white font-semibold py-3 rounded-2xl">
+                                        Back to Radar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Step 3: Connect</h3>
+                    <p class="text-gray-400 text-sm">
+                        Mutual matches can chat and plan to meet during the festival
+                    </p>
                 </div>
             </div>
         </div>
