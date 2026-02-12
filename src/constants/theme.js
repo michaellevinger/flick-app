@@ -3,8 +3,8 @@
 export const COLORS = {
   black: '#0B0F0E', // Near-black background
   white: '#FFFFFF',
-  green: '#FF2D5F', // Vibrant Hot Pink
-  greenGlow: '#FF2D5F33', // 20% opacity for glow effect
+  green: '#FF6B9D', // Soft Rose Pink
+  greenGlow: '#FF6B9D33', // 20% opacity for glow effect
   gray: '#808080',
   grayLight: '#F5F5F5',
 };
