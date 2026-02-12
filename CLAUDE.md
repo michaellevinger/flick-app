@@ -20,6 +20,9 @@
 - [x] Number Exchange "The Off-Ramp" (15-min TTL, proximity wipe)
 - [x] Request/Accept flow for number sharing
 - [x] Vault Screen with countdown timer
+- [x] Real-Time Chat System (text, images, location)
+- [x] Tab Navigation (Radar + Matches)
+- [x] Persistent chat history until unmatch
 
 ### ✅ Supabase Setup - COMPLETE
 - [x] Project created (oithyuuztrmohcbfglrh.supabase.co)
@@ -27,8 +30,9 @@
 - [x] PostGIS extension manually enabled
 - [x] Base schema SQL execution (users, nudges, functions)
 - [x] Exchange schema SQL execution (exchanges table)
-- [x] Storage bucket creation (selfies)
-- [ ] Edge Function deployment (auto-cleanup) - Optional
+- [x] Chat schema SQL execution (matches, messages tables)
+- [x] Storage bucket creation (selfies, chat-images)
+- [x] Edge Function deployment (auto-cleanup) - Optional
 
 ### ✅ Website - COMPLETE
 - [x] B2B sponsor landing page (`/website/index.html`)

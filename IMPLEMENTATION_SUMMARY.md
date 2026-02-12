@@ -2,7 +2,7 @@
 
 ## ✅ Implementation Complete
 
-The real-time chat feature has been successfully implemented for the flick app. Users can now message each other after mutual matches with full support for text, images, location sharing, and emoji reactions.
+The real-time chat feature has been successfully implemented for the flick app. Users can now message each other after mutual matches with full support for text, images, location sharing, and emoji reactions. Chat history persists until users unmatch (move >500m apart or logout).
 
 ---
 
@@ -10,8 +10,8 @@ The real-time chat feature has been successfully implemented for the flick app. 
 
 ### 1. Database Schema ✅
 - **`matches` table**: Tracks mutual flicks with metadata
-- **`messages` table**: Stores all chat messages with 20-min TTL
-- **SQL Functions**: Match ID generation, match creation trigger, message cleanup
+- **`messages` table**: Stores all chat messages until unmatch
+- **SQL Functions**: Match ID generation, match creation trigger
 - **Indexes**: Optimized for real-time queries
 - **Triggers**: Automatic match creation on mutual flicks
 
@@ -82,8 +82,8 @@ The real-time chat feature has been successfully implemented for the flick app. 
 - Cascade deletion of messages
 
 **`supabase/functions/auto-cleanup/index.ts`** (updated):
-- Added message cleanup call
-- Runs every 5 minutes via pg_cron
+- User auto-wipe CASCADE deletes messages
+- No time-based message deletion
 
 ---
 
@@ -177,10 +177,10 @@ Documentation:
 2. ✅ Open chat → Unread count clears
 3. ✅ New match → Appears in Matches tab
 
-### TTL & Cleanup
-1. ✅ Messages expire after 20 minutes
-2. ✅ Edge Function deletes expired messages
-3. ✅ Old messages disappear from chat
+### Message Persistence
+1. ✅ Messages persist until unmatch
+2. ✅ Chat history preserved across app restarts
+3. ✅ Messages deleted when match dissolves
 
 ### Distance-Based Cleanup
 1. ✅ Move >500m apart → Match dissolves
@@ -205,12 +205,12 @@ Documentation:
 
 ## 🔐 Privacy & Security
 
-- ✅ **20-minute TTL**: All messages auto-delete
-- ✅ **No history**: Messages >20 mins are gone forever
-- ✅ **Distance-based**: Matches dissolve when users separate
+- ✅ **Match-based persistence**: Messages kept while matched
+- ✅ **Distance-based cleanup**: Matches dissolve when users >500m apart
 - ✅ **Cascade deletion**: User logout removes all messages
-- ✅ **Anonymous**: No persistent chat logs or archives
-- ✅ **Public images**: Trade-off for simplicity (ephemeral anyway)
+- ✅ **Anonymous sessions**: No long-term user tracking
+- ✅ **Auto-wipe**: Inactive users (20 min) deleted with messages
+- ✅ **Public images**: Accessible via URL (deleted with match)
 
 ---
 
@@ -221,10 +221,14 @@ Documentation:
    - Database supports reaction messages
    - Needs emoji picker modal
 
-2. **No Offline Support**: Messages require active internet connection
+2. **Growing Database**: Messages persist, database will grow over time
+   - Monitor storage usage
+   - Consider adding manual "Clear History" option
+
+3. **No Offline Support**: Messages require active internet connection
    - Could add local caching with sync on reconnect
 
-3. **No Push Notifications**: Users must have app open to see new messages
+4. **No Push Notifications**: Users must have app open to see new messages
    - Requires Expo Notifications integration
 
 4. **Single Device**: No cross-device sync
@@ -293,8 +297,8 @@ SELECT * FROM storage.policies WHERE bucket_id = 'chat-images';
 -- Check cron job exists
 SELECT * FROM cron.job WHERE jobname = 'auto-cleanup-job';
 
--- Manually trigger cleanup
-SELECT delete_expired_messages();
+-- Check last execution
+SELECT * FROM cron.job_run_details ORDER BY start_time DESC LIMIT 5;
 ```
 
 ---
@@ -316,7 +320,7 @@ The chat feature is **production-ready** with the following capabilities:
 ✅ Image sharing (camera + gallery)
 ✅ Location sharing (GPS)
 ✅ Unread badges
-✅ 20-minute message TTL
+✅ Persistent chat history
 ✅ Distance-based match dissolution
 ✅ Automatic match creation
 ✅ Tab navigation

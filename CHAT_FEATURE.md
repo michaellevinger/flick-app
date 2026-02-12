@@ -11,7 +11,7 @@ The chat feature enables real-time messaging between mutually matched users (use
 - **Image sharing** via camera or gallery
 - **Location sharing** with GPS coordinates
 - **Emoji reactions** to messages (UI ready, implementation in progress)
-- **20-minute message TTL** - auto-deletion for privacy
+- **Persistent messages** - chat history until unmatch
 - **Unread badges** on Matches tab
 - **Match creation trigger** - automatic on mutual flicks
 
@@ -36,7 +36,7 @@ CREATE TABLE matches (
 ```
 
 #### `messages`
-Stores all chat messages with 20-minute expiration.
+Stores all chat messages until match is dissolved.
 
 ```sql
 CREATE TABLE messages (
@@ -49,8 +49,7 @@ CREATE TABLE messages (
   image_url TEXT,                          -- Supabase Storage URL
   location GEOGRAPHY(POINT, 4326),         -- PostGIS location
   reaction_to_message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '20 minutes')
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
 
@@ -62,8 +61,10 @@ Generates a consistent match ID by alphabetically sorting user IDs.
 #### `create_match_on_mutual_flick()`
 Trigger function that automatically creates a match record when mutual flicks are detected.
 
-#### `delete_expired_messages()`
-Deletes all messages past their 20-minute TTL. Called by Edge Function every 5 minutes.
+#### Message Deletion
+Messages are automatically deleted via CASCADE when:
+- Match is deleted (users move >500m apart)
+- User is deleted (logout or 20-min inactivity auto-wipe)
 
 ## Architecture
 
@@ -133,9 +134,9 @@ Stack Navigator (Root)
    - **Reaction**: Long-press message → Select emoji (in progress)
 
 4. **Message Lifecycle**
-   - Message created with `expires_at = NOW() + 20 minutes`
-   - Displayed in chat until expiration
-   - Deleted by Edge Function cleanup (runs every 5 minutes)
+   - Message created and stored in database
+   - Displayed in chat indefinitely
+   - Deleted when match dissolves or user logs out
 
 5. **Distance-Based Dissolution**
    - Heartbeat checks distance to all matches every 60s
@@ -180,26 +181,23 @@ subscribeToMatches(userId, (newMatch) => {
 - **Public**: Yes (URLs accessible without auth)
 - **File naming**: `{matchId}_{timestamp}.jpg`
 - **Upload**: Base64 encoding via `expo-file-system`
-- **Cleanup**: Images deleted when parent message expires
+- **Cleanup**: Images deleted when match dissolves (cascade)
 
 ## Privacy & Security
 
-- **Ephemeral Messages**: 20-minute TTL enforced
-- **No Message History**: Old messages automatically purged
-- **Distance-Based Cleanup**: Matches dissolve when users separate
-- **Anonymous Sessions**: No persistent chat logs
-- **Cascade Deletion**: User deletion removes all messages
+- **Match-Based History**: Messages persist while matched
+- **Distance-Based Cleanup**: Matches dissolve when users separate (>500m)
+- **Cascade Deletion**: Match/user deletion removes all messages
+- **Anonymous Sessions**: Session-based, no long-term storage
+- **Auto-Wipe**: Inactive users (20 min) deleted with all their messages
 
 ## Edge Function Integration
 
-The existing `auto-cleanup` Edge Function now includes message cleanup:
+The existing `auto-cleanup` Edge Function handles:
+- User auto-wipe (20 min inactivity) - CASCADE deletes messages
+- Number exchange cleanup (15 min TTL)
 
-```typescript
-// Clean up expired messages
-const { data: deletedMessages } = await supabase.rpc('delete_expired_messages');
-```
-
-**Schedule**: Runs every 5 minutes via pg_cron.
+Messages are NOT time-based deleted - they persist until unmatch.
 
 ## Testing Checklist
 
@@ -230,10 +228,9 @@ const { data: deletedMessages } = await supabase.rpc('delete_expired_messages');
 - [ ] Location displays with coordinates
 - [ ] Tap location → Shows on map (future enhancement)
 
-### 20-Minute TTL
-- [ ] Wait 20+ minutes → Messages auto-delete
-- [ ] Edge Function cleanup runs every 5 minutes
-- [ ] Chat shows "no messages" after cleanup
+### Message Persistence
+- [ ] Messages remain in chat indefinitely while matched
+- [ ] Chat history preserved across app restarts
 
 ### Distance Dissolution
 - [ ] Move >500m apart → Match dissolves

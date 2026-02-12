@@ -53,24 +53,18 @@ serve(async (req) => {
       console.log(`Cleaned up ${deletedExchanges} expired number exchanges`)
     }
 
-    // Clean up expired messages (20 minute TTL)
-    const { data: deletedMessages, error: messagesError } = await supabase.rpc('delete_expired_messages')
-
-    if (messagesError) {
-      console.error('Error cleaning up expired messages:', messagesError)
-      // Don't fail the whole function, just log it
-    } else {
-      console.log(`Cleaned up ${deletedMessages} expired messages`)
-    }
+    // Note: Messages are NOT auto-deleted - they persist until unmatch
+    // Messages are cascade-deleted when:
+    // 1. Match is deleted (users >500m apart)
+    // 2. User is deleted (logout or auto-wipe)
 
     return new Response(
       JSON.stringify({
         success: true,
         deleted_users: deletedUsers,
         deleted_exchanges: deletedExchanges || 0,
-        deleted_messages: deletedMessages || 0,
         timestamp: new Date().toISOString(),
-        message: `Deleted ${deletedUsers} inactive user(s), ${deletedExchanges || 0} expired exchange(s), and ${deletedMessages || 0} expired message(s)`,
+        message: `Deleted ${deletedUsers} inactive user(s) and ${deletedExchanges || 0} expired exchange(s)`,
       }),
       {
         status: 200,

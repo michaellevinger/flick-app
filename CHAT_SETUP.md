@@ -19,7 +19,6 @@
 - Indexes for performance
 - `get_match_id()` function
 - `create_match_on_mutual_flick()` trigger
-- `delete_expired_messages()` function
 - Row Level Security policies
 
 ## Step 2: Create Storage Bucket
@@ -148,17 +147,12 @@ npm install @react-navigation/bottom-tabs
 2. Grant location permissions if prompted
 3. **Expected**: Location message appears with coordinates
 
-### Test 5: Message Expiration
+### Test 5: Message Persistence
 
-1. Send a message
-2. Wait 20+ minutes (or manually run cleanup function)
-3. **Expected**: Message disappears from chat
-
-To manually trigger cleanup:
-
-```sql
-SELECT delete_expired_messages();
-```
+1. Send several messages
+2. Close and reopen the app
+3. **Expected**: Messages still visible in chat
+4. **Expected**: Chat history preserved
 
 ### Test 6: Distance Dissolution
 
@@ -199,13 +193,13 @@ INSERT INTO nudges (from_user_id, to_user_id) VALUES ('user2', 'user1');
 SELECT * FROM matches WHERE user1_id = 'user1' OR user2_id = 'user1';
 ```
 
-### Issue: Messages not being deleted after 20 minutes
+### Issue: Messages not appearing after app restart
 
-**Solution**: Check Edge Function logs:
-1. Go to **Edge Functions** → **auto-cleanup**
-2. View **Logs** tab
-3. Verify function is being called every 5 minutes
-4. Check for errors in `delete_expired_messages()` call
+**Solution**: Check database persistence:
+```sql
+-- Verify messages are stored
+SELECT * FROM messages WHERE match_id = 'user1|user2';
+```
 
 ### Issue: Unread count not updating
 
@@ -232,15 +226,9 @@ ORDER BY created_at DESC
 LIMIT 50;
 ```
 
-### Check expired messages
+### Check total messages count
 ```sql
-SELECT * FROM messages
-WHERE expires_at < NOW();
-```
-
-### Manually clean up expired messages
-```sql
-SELECT delete_expired_messages();
+SELECT COUNT(*) as total_messages FROM messages;
 ```
 
 ### Check storage usage
@@ -258,10 +246,13 @@ GROUP BY bucket_id;
 
 Monitor these metrics in production:
 
-- **Message volume**: Average messages per match
+- **Message volume**: Total messages and average per match
 - **Storage usage**: Total size of chat-images bucket
+- **Database size**: Monitor messages table growth
 - **Edge Function execution time**: Should be <1 second
 - **Database query performance**: Check slow queries in Supabase logs
+
+**Note**: Since messages persist, monitor database growth over time. Consider adding manual cleanup options if needed.
 
 ## Next Steps
 

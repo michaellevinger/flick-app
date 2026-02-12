@@ -159,15 +159,13 @@ CREATE TABLE IF NOT EXISTS messages (
   image_url TEXT,
   location GEOGRAPHY(POINT, 4326),
   reaction_to_message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '20 minutes')
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Indexes for messages
 CREATE INDEX IF NOT EXISTS messages_match_id_idx ON messages(match_id);
 CREATE INDEX IF NOT EXISTS messages_sender_id_idx ON messages(sender_id);
 CREATE INDEX IF NOT EXISTS messages_recipient_id_idx ON messages(recipient_id);
-CREATE INDEX IF NOT EXISTS messages_expires_at_idx ON messages(expires_at);
 CREATE INDEX IF NOT EXISTS messages_created_at_idx ON messages(created_at DESC);
 CREATE INDEX IF NOT EXISTS messages_reaction_to_idx ON messages(reaction_to_message_id);
 
@@ -224,19 +222,9 @@ CREATE TRIGGER on_nudge_inserted
   FOR EACH ROW
   EXECUTE FUNCTION create_match_on_mutual_flick();
 
--- Function to delete expired messages (20 minute TTL)
-CREATE OR REPLACE FUNCTION delete_expired_messages()
-RETURNS INTEGER AS $$
-DECLARE
-  deleted_count INTEGER;
-BEGIN
-  DELETE FROM messages
-  WHERE expires_at < NOW();
-
-  GET DIAGNOSTICS deleted_count = ROW_COUNT;
-  RETURN deleted_count;
-END;
-$$ LANGUAGE plpgsql;
+-- Messages are deleted automatically via CASCADE when:
+-- 1. Match is deleted (users move >500m apart)
+-- 2. User is deleted (logout or auto-wipe)
 
 -- Enable RLS on new tables
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;

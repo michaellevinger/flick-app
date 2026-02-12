@@ -78,7 +78,7 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 ### Phase 6: Real-Time Chat System ✅
 
 - **Match-Based Chat**: Message users you've mutually flicked
-- **20-Minute Message TTL**: All messages auto-delete after 20 minutes
+- **Persistent History**: Chat history saved until unmatch
 - **Text Messaging**: Real-time text messages with instant delivery
 - **Image Sharing**: Send photos via camera or gallery
 - **Location Sharing**: Share GPS coordinates with one tap
