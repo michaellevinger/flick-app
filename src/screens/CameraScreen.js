@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
@@ -86,9 +87,19 @@ export default function CameraScreen({ navigation, route }) {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 0.7,
         base64: false,
+        exif: true,
       });
+
+      // Fix orientation for front-facing camera
+      // Front camera often needs horizontal flip
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        photo.uri,
+        [{ flip: ImageManipulator.FlipType.Horizontal }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
       hasResetRef.current = false; // Clear reset flag when taking new photo
-      setPhoto(photo);
+      setPhoto(manipulatedImage);
     }
   };
 
