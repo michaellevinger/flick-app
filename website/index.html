@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>flick | Sponsor Activation Platform for Events</title>
     <meta name="description" content="Turn passive attendees into active participants. Brand activation platform that drives measurable engagement at festivals, concerts, and events. Own the moment of connection.">
-    <!-- Cache bust: 2025-02-12 v2 -->
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90' font-weight='900' fill='%23FF4B6E'>f</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -47,6 +48,37 @@
                         #000000;
             background-attachment: fixed;
         }
+
+        /* Hover animations for buttons */
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scroll fade-in animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -63,7 +95,7 @@
                     <a href="#how-it-works" class="hover:text-flick-green transition">How It Works</a>
                     <a href="#sponsors" class="hover:text-flick-green transition">Activations</a>
                     <a href="#contact" class="hover:text-flick-green transition">Contact</a>
-                    <a href="mailto:sponsors@getflick.com" class="bg-flick-green text-black px-6 py-2 rounded-lg font-bold hover:bg-green-400 transition">Book a Demo</a>
+                    <a href="mailto:sponsors@getflick.com" class="bg-flick-green text-black px-6 py-2 rounded-lg font-bold hover:bg-green-400 transition btn-hover">Book a Demo</a>
                 </div>
             </div>
         </div>
@@ -85,10 +117,10 @@
                         flick drives attendees from digital swipes to your activation booth. Measurable engagement. Guaranteed foot traffic. Your brand at the center of their best night out.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="mailto:sponsors@getflick.com" class="bg-flick-green text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition glow-green text-center">
+                        <a href="mailto:sponsors@getflick.com" class="bg-flick-green text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition glow-green text-center btn-hover">
                             Book a Demo
                         </a>
-                        <a href="#how-it-works" class="bg-gray-800 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transition text-center">
+                        <a href="#how-it-works" class="bg-gray-800 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transition text-center btn-secondary">
                             See How It Works
                         </a>
                     </div>
@@ -218,7 +250,7 @@
     </section>
 
     <!-- Festival Experience / Your Audience -->
-    <section class="py-24 px-6 bg-black">
+    <section class="py-24 px-6 bg-black fade-in">
         <div class="max-w-7xl mx-auto">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="order-2 md:order-1">
@@ -266,7 +298,7 @@
     </section>
 
     <!-- Stats Section / POST-EVENT ANALYTICS -->
-    <section id="analytics" class="bg-flick-dark py-20 border-y border-gray-800">
+    <section id="analytics" class="bg-flick-dark py-20 border-y border-gray-800 fade-in">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-12">
                 <div class="text-sm font-bold text-flick-green mb-3 tracking-wider">POST-EVENT ANALYTICS</div>
@@ -313,7 +345,7 @@
     </section>
 
     <!-- For Sponsors / Activation Examples -->
-    <section id="sponsors" class="py-24 px-6">
+    <section id="sponsors" class="py-24 px-6 fade-in">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
                 <div class="text-flick-green font-bold mb-4 tracking-wide">THE SPONSOR ADVANTAGE</div>
@@ -367,7 +399,7 @@
                         </div>
                     </div>
 
-                    <a href="mailto:sponsors@getflick.com" class="inline-block bg-flick-green text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition">
+                    <a href="mailto:sponsors@getflick.com" class="inline-block bg-flick-green text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-400 transition btn-hover">
                         Partner With Us
                     </a>
                 </div>
@@ -401,7 +433,7 @@
     </section>
 
     <!-- CTA Section -->
-    <section id="contact" class="py-24 px-6 bg-gradient-to-br from-black to-flick-dark">
+    <section id="contact" class="py-24 px-6 bg-gradient-to-br from-black to-flick-dark fade-in">
         <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-4xl md:text-5xl font-black mb-6">Ready to Activate Your Brand?</h2>
             <p class="text-xl text-gray-400 mb-8">
@@ -454,7 +486,7 @@
                     </div>
                 </div>
 
-                <a href="mailto:sponsors@getflick.com?subject=Partnership Inquiry" class="inline-block bg-flick-green text-black px-12 py-5 rounded-xl font-bold text-xl hover:bg-green-400 transition glow-green">
+                <a href="mailto:sponsors@getflick.com?subject=Partnership Inquiry" class="inline-block bg-flick-green text-black px-12 py-5 rounded-xl font-bold text-xl hover:bg-green-400 transition glow-green btn-hover">
                     Book a Demo
                 </a>
                 <p class="text-gray-500 text-sm mt-4">
@@ -537,6 +569,23 @@
                 }
             });
         });
+
+        // Scroll fade-in animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
