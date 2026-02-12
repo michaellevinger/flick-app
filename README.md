@@ -393,11 +393,79 @@ VALUES ('yourfestival2024', 'Your Festival 2024', 'Your Sponsor', true);
 - **React Native debugger**: Shake device → Enable Remote Debugging
 - **QR Scanner**: Check camera permissions if QR scanner not working
 
+### Phase 4: Real-time Chat System ✅
+
+- **Matches Tab**: Bottom tab navigation shows all mutual matches
+- **Chat List**: See all active conversations with unread badges
+- **Real-time Messaging**: Text, images, location sharing, emoji reactions
+- **Persistent Chat**: Messages persist until manual unmatch (no auto-delete)
+- **Match Creation**: Automatic match record created on mutual flick
+- **Database Tables**: `matches` and `messages` tables with CASCADE deletion
+
+**Files:**
+- `src/lib/messages.js` - Message operations (send, fetch, subscribe)
+- `src/lib/matchesContext.js` - Global matches state
+- `src/screens/MatchesScreen.js` - Chat list view
+- `src/screens/ChatScreen.js` - Individual conversation
+- `src/components/MessageBubble.js` - Message display
+- `src/components/MessageInput.js` - Text input with media buttons
+- `src/components/MatchCard.js` - Match list item
+
+## Tools & Utilities
+
+### QR Code Generator
+
+Generate festival QR codes for testing and production:
+
+```bash
+# Generate QR codes for all test festivals
+node generate-qr.js
+
+# Generate custom QR code
+node generate-qr.js burningman2024 "Burning Man 2024" "Red Bull"
+```
+
+**Output:** Creates PNG files in `qr-codes/` directory (1024x1024px)
+
+**Web Generator:** Open `generate-qr.html` in browser for visual QR generator
+
+See [QR-SYSTEM-GUIDE.md](./QR-SYSTEM-GUIDE.md) for complete QR system documentation.
+
+### Build & Share App
+
+Share the app with friends for testing:
+
+**Option 1: Expo Go (Instant)**
+```bash
+npx expo start --tunnel
+# Friends scan QR code with Expo Go app
+```
+
+**Option 2: Standalone APK (Android)**
+```bash
+eas login
+eas build -p android --profile preview
+# Share APK file with friends
+```
+
+See [BUILD-AND-SHARE.md](./BUILD-AND-SHARE.md) for complete build guide.
+
+## Database Migrations
+
+### Initial Setup
+```bash
+# Run in Supabase SQL Editor
+1. supabase-setup.sql       # Base tables (users, nudges, exchanges)
+2. festivals-schema.sql     # Festival system + user fields
+3. chat-migration.sql       # Chat system (matches, messages)
+```
+
 ## Documentation
 
-- [QR_B2B_MODEL.md](./QR_B2B_MODEL.md) - Complete B2B model documentation
 - [CLAUDE.md](./CLAUDE.md) - Full project specifications and development log
 - [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) - Backend setup guide
+- [QR-SYSTEM-GUIDE.md](./QR-SYSTEM-GUIDE.md) - QR code system for festivals
+- [BUILD-AND-SHARE.md](./BUILD-AND-SHARE.md) - How to build and share the app
 - [START_APP.md](./START_APP.md) - How to start the app
 
 ---

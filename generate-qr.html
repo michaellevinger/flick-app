@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flick - QR Code Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0B0F0E;
+      color: white;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #FF6B9D;
+      margin-bottom: 10px;
+      font-size: 36px;
+    }
+    .subtitle {
+      color: #808080;
+      margin-bottom: 40px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #FF6B9D;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #1a1a1a;
+      color: white;
+      font-size: 16px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #FF6B9D;
+    }
+    button {
+      background: #FF6B9D;
+      color: #0B0F0E;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+    button:hover {
+      filter: brightness(1.1);
+    }
+    .qr-output {
+      margin-top: 40px;
+      padding: 40px;
+      background: white;
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+    }
+    .qr-output.active {
+      display: block;
+    }
+    .qr-output h2 {
+      color: #0B0F0E;
+      margin-bottom: 20px;
+    }
+    .qr-output canvas {
+      margin: 20px auto;
+      display: block;
+    }
+    .download-btn {
+      background: #FF6B9D;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .info {
+      background: rgba(255, 107, 157, 0.1);
+      border: 1px solid #FF6B9D;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .info h3 {
+      color: #FF6B9D;
+      margin-bottom: 10px;
+    }
+    .info p {
+      color: #ccc;
+      line-height: 1.6;
+    }
+    .sample-codes {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .sample-codes code {
+      color: #FF6B9D;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 flick QR Generator</h1>
+    <p class="subtitle">Generate QR codes for your festival/event</p>
+
+    <div class="info">
+      <h3>How It Works</h3>
+      <p>
+        1. Create a festival in your Supabase database (run festivals-schema.sql)<br>
+        2. Generate a QR code with the festival ID<br>
+        3. Print and display at your event (posters, wristbands, booths)<br>
+        4. Users scan → Locked into that festival room<br>
+        5. They only see other attendees of the same event
+      </p>
+      <div class="sample-codes">
+        <strong>Sample Festival IDs:</strong><br>
+        <code>coachella2024</code>, <code>tomorrowland2024</code>, <code>lollapalooza2024</code>
+      </div>
+    </div>
+
+    <form id="qrForm">
+      <div class="form-group">
+        <label for="festivalId">Festival ID *</label>
+        <input
+          type="text"
+          id="festivalId"
+          placeholder="e.g., coachella2024"
+          required
+          pattern="[a-z0-9-]+"
+          title="Only lowercase letters, numbers, and hyphens"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="festivalName">Festival Name *</label>
+        <input
+          type="text"
+          id="festivalName"
+          placeholder="e.g., Coachella 2024"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="sponsorName">Sponsor Name (Optional)</label>
+        <input
+          type="text"
+          id="sponsorName"
+          placeholder="e.g., Heineken"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="qrSize">QR Code Size</label>
+        <select id="qrSize">
+          <option value="512">Small (512x512) - Digital Display</option>
+          <option value="1024" selected>Medium (1024x1024) - Posters</option>
+          <option value="2048">Large (2048x2048) - Banners</option>
+        </select>
+      </div>
+
+      <button type="submit">Generate QR Code</button>
+    </form>
+
+    <div id="qrOutput" class="qr-output">
+      <h2 id="outputTitle"></h2>
+      <canvas id="qrCanvas"></canvas>
+      <p style="color: #666; margin-top: 10px;">
+        Festival ID: <code id="outputId" style="color: #FF6B9D; font-weight: bold;"></code>
+      </p>
+      <a id="downloadBtn" class="download-btn" download>📥 Download QR Code</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('qrForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const festivalId = document.getElementById('festivalId').value.toLowerCase().trim();
+      const festivalName = document.getElementById('festivalName').value.trim();
+      const sponsorName = document.getElementById('sponsorName').value.trim();
+      const qrSize = parseInt(document.getElementById('qrSize').value);
+
+      // Generate QR code
+      const canvas = document.getElementById('qrCanvas');
+      await QRCode.toCanvas(canvas, festivalId, {
+        width: qrSize,
+        margin: 2,
+        color: {
+          dark: '#0B0F0E',
+          light: '#FFFFFF'
+        }
+      });
+
+      // Show output
+      const output = document.getElementById('qrOutput');
+      const title = document.getElementById('outputTitle');
+      const outputId = document.getElementById('outputId');
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      let titleText = festivalName;
+      if (sponsorName) {
+        titleText += ` - Sponsored by ${sponsorName}`;
+      }
+
+      title.textContent = titleText;
+      outputId.textContent = festivalId;
+
+      // Setup download
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        downloadBtn.href = url;
+        downloadBtn.download = `flick-qr-${festivalId}.png`;
+      });
+
+      output.classList.add('active');
+      output.scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
