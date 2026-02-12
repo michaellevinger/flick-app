@@ -98,10 +98,10 @@ WHAT'S LEFT TO DO
 HIGH PRIORITY (Pre-Launch):
 
 1. Database Setup ⚠️
-   Time: 10 minutes | Complexity: Easy
-   → Run festivals-schema.sql in Supabase
-   → Run chat-migration.sql in Supabase
-   → Verify tables created
+   Time: 5 minutes | Complexity: Easy
+   → ✅ chat-migration.sql (DONE - matches & messages tables created)
+   → ❓ festivals-schema.sql (need to verify if run)
+   → Test with real data
 
 2. End-to-End Testing 🧪
    Time: 2-3 days | Complexity: Medium

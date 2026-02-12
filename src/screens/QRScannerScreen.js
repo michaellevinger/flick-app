@@ -138,7 +138,7 @@ export default function QRScannerScreen({ navigation, route }) {
 
         {__DEV__ && (
           <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-            <Text style={styles.skipText}>Skip (Dev Only)</Text>
+            <Text style={styles.skipText}>⚡ Camera Not Working? Tap Here to Skip</Text>
           </TouchableOpacity>
         )}
 

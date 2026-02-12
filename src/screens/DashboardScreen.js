@@ -157,11 +157,14 @@ export default function DashboardScreen({ navigation }) {
     try {
       const users = await findUsersInFestival(user.festival_id, user.id);
 
+      // Extra safety filter: ensure current user is never in the list
+      const filteredUsers = users.filter(u => u.id !== user.id);
+
       console.log('Current user ID:', user.id);
       console.log('Festival:', user.festival_id);
-      console.log('Users in festival:', users.length);
+      console.log('Users in festival:', filteredUsers.length);
 
-      setNearbyUsers(users);
+      setNearbyUsers(filteredUsers);
     } catch (error) {
       console.error('Error loading festival users:', error);
     }
