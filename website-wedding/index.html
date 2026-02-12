@@ -67,6 +67,76 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* iPhone Mockup Styles */
+        .iphone-mockup {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            aspect-ratio: 9 / 19.5;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 0 0 12px #1a1a1a,
+                        0 0 0 13px #333,
+                        0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background: #0B0F0E;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            padding-top: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .profile-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .profile-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8FAD 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+        }
+
+        .profile-info {
+            padding: 16px;
+        }
     </style>
 </head>
 <body class="text-white">
@@ -462,22 +532,47 @@
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Screen 1: Scan QR -->
                 <div class="text-center">
-                    <div class="bg-gradient-to-br from-white/10 to-transparent border border-white/20 rounded-3xl p-6 mb-6 aspect-[9/16] flex items-center justify-center relative overflow-hidden">
-                        <!-- Placeholder for screenshot -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-flick-pink/20 to-transparent"></div>
-                        <div class="relative z-10 text-center p-8">
-                            <div class="text-7xl mb-6">📷</div>
-                            <h3 class="text-2xl font-bold mb-3">Scan QR Code</h3>
-                            <p class="text-gray-400 text-sm">
-                                "Sarah & Mike's Wedding<br/>June 15, 2026"
-                            </p>
-                            <div class="mt-6 inline-block bg-white/10 backdrop-blur px-6 py-3 rounded-full border border-flick-pink/50">
-                                <span class="text-sm font-semibold">Scan to Join</span>
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
                             </div>
-                        </div>
-                        <!-- Note for you to add screenshot -->
-                        <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur p-3 rounded-lg text-xs text-gray-400">
-                            📸 Replace with wedding app screenshot
+
+                            <!-- QR Scanner Content -->
+                            <div class="flex flex-col items-center justify-center h-full px-6 pb-12">
+                                <div class="mb-8 text-center">
+                                    <h3 class="text-2xl font-bold text-white mb-2">Scan Wedding QR Code</h3>
+                                    <p class="text-gray-400 text-sm">Point your camera at the QR code</p>
+                                </div>
+
+                                <!-- Scanner Frame -->
+                                <div class="relative w-48 h-48 mb-8">
+                                    <div class="absolute inset-0 border-4 border-transparent rounded-3xl"
+                                         style="border-image: linear-gradient(135deg, #FF6B9D 0%, transparent 50%) 1;">
+                                    </div>
+                                    <!-- Corner guides -->
+                                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-flick-pink rounded-tl-2xl"></div>
+                                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-flick-pink rounded-tr-2xl"></div>
+                                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-flick-pink rounded-bl-2xl"></div>
+                                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-flick-pink rounded-br-2xl"></div>
+                                    <!-- QR Code representation -->
+                                    <div class="absolute inset-4 bg-white/90 rounded-xl flex items-center justify-center text-4xl">
+                                        <div class="text-xs text-black font-mono leading-tight p-2">
+                                            ████░░██<br/>
+                                            ░░████░░<br/>
+                                            ██░░████<br/>
+                                            ████░░██
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-flick-pink/20 backdrop-blur px-6 py-3 rounded-full border border-flick-pink/50">
+                                    <span class="text-sm font-semibold text-white">⚡ Tap to Skip (Dev)</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 1: Scan</h3>
@@ -488,33 +583,81 @@
 
                 <!-- Screen 2: Browse Guests -->
                 <div class="text-center">
-                    <div class="bg-gradient-to-br from-white/10 to-transparent border border-white/20 rounded-3xl p-6 mb-6 aspect-[9/16] flex items-center justify-center relative overflow-hidden">
-                        <!-- Placeholder for screenshot -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-flick-pink/20 to-transparent"></div>
-                        <div class="relative z-10 text-center p-8 w-full">
-                            <div class="text-sm font-bold mb-4 text-flick-pink">Sarah & Mike's Wedding</div>
-
-                            <!-- Mock profiles -->
-                            <div class="space-y-3">
-                                <div class="bg-black/40 backdrop-blur rounded-2xl p-4 border border-white/20">
-                                    <div class="w-16 h-16 bg-flick-pink/30 rounded-full mx-auto mb-2"></div>
-                                    <div class="font-bold">Emma, 27</div>
-                                    <div class="text-xs text-gray-400">200m away</div>
-                                </div>
-                                <div class="bg-black/40 backdrop-blur rounded-2xl p-4 border border-white/20">
-                                    <div class="w-16 h-16 bg-flick-pink/30 rounded-full mx-auto mb-2"></div>
-                                    <div class="font-bold">Jake, 29</div>
-                                    <div class="text-xs text-gray-400">150m away</div>
-                                </div>
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
                             </div>
 
-                            <div class="mt-4 bg-flick-pink/20 backdrop-blur px-4 py-2 rounded-full border border-flick-pink/50 text-xs">
-                                12 single guests at wedding
+                            <!-- Dashboard Content -->
+                            <div class="flex flex-col h-full">
+                                <!-- Header -->
+                                <div class="px-5 py-4 border-b border-white/10">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h2 class="text-xl font-bold text-white">flick</h2>
+                                        <div class="text-sm text-gray-400">Sign Out</div>
+                                    </div>
+                                    <div class="bg-flick-pink/20 border border-flick-pink/50 rounded-xl p-3 text-center">
+                                        <div class="text-sm font-bold text-flick-pink">Sarah & Mike's Wedding</div>
+                                        <div class="text-xs text-gray-400">June 15, 2026</div>
+                                    </div>
+                                </div>
+
+                                <!-- Profile Cards Scroll -->
+                                <div class="flex-1 overflow-y-auto px-5 py-4">
+                                    <!-- Profile Card 1 -->
+                                    <div class="profile-card mb-4">
+                                        <div class="profile-image" style="background-image: url('images/screenshots/profile-1.jpg'); background-size: cover; background-position: center;">
+                                            <!-- Placeholder gradient if no image -->
+                                            <span class="text-6xl opacity-40">👤</span>
+                                            <!-- Add note overlay -->
+                                            <div class="absolute bottom-2 right-2 bg-black/80 backdrop-blur px-2 py-1 rounded text-xs text-gray-400">
+                                                Add photo →
+                                            </div>
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <div class="text-white font-bold">Emma, 27</div>
+                                                    <div class="text-xs text-gray-400">150m away</div>
+                                                </div>
+                                                <button class="bg-flick-pink px-4 py-2 rounded-lg text-black text-sm font-bold">
+                                                    Flick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Card 2 -->
+                                    <div class="profile-card">
+                                        <div class="profile-image" style="background-image: url('images/screenshots/profile-2.jpg'); background-size: cover; background-position: center;">
+                                            <span class="text-6xl opacity-40">👤</span>
+                                            <div class="absolute bottom-2 right-2 bg-black/80 backdrop-blur px-2 py-1 rounded text-xs text-gray-400">
+                                                Add photo →
+                                            </div>
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <div class="text-white font-bold">Jake, 29</div>
+                                                    <div class="text-xs text-gray-400">220m away</div>
+                                                </div>
+                                                <button class="bg-flick-pink px-4 py-2 rounded-lg text-black text-sm font-bold">
+                                                    Flick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Info -->
+                                <div class="px-5 py-3 bg-white/5 backdrop-blur border-t border-white/10 text-center text-xs text-gray-400">
+                                    12 single guests nearby
+                                </div>
                             </div>
-                        </div>
-                        <!-- Note for you to add screenshot -->
-                        <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur p-3 rounded-lg text-xs text-gray-400">
-                            📸 Replace with browse screen
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 2: Browse</h3>
@@ -525,23 +668,48 @@
 
                 <!-- Screen 3: Match & Chat -->
                 <div class="text-center">
-                    <div class="bg-gradient-to-br from-white/10 to-transparent border border-white/20 rounded-3xl p-6 mb-6 aspect-[9/16] flex items-center justify-center relative overflow-hidden">
-                        <!-- Placeholder for screenshot -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-flick-pink/40 to-transparent"></div>
-                        <div class="relative z-10 text-center p-8 w-full">
-                            <div class="text-6xl mb-4">💕</div>
-                            <h3 class="text-3xl font-black mb-4 text-flick-pink">It's a Match!</h3>
-                            <div class="bg-black/40 backdrop-blur rounded-2xl p-6 border border-flick-pink/50 mb-4">
-                                <div class="text-lg font-bold mb-2">You both flicked each other</div>
-                                <div class="text-sm text-gray-400">Start chatting or meet at cocktail hour</div>
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen" style="background: linear-gradient(180deg, #FF6B9D 0%, #FF8FAD 50%, #0B0F0E 100%);">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
                             </div>
-                            <div class="bg-white/10 backdrop-blur px-6 py-3 rounded-full border border-flick-pink/50 inline-block">
-                                <span class="font-bold">Start Chat →</span>
+
+                            <!-- Green Light Content -->
+                            <div class="flex flex-col items-center justify-center h-full px-6 text-center">
+                                <!-- Animated glow effect -->
+                                <div class="relative mb-8">
+                                    <div class="absolute inset-0 bg-white/30 rounded-full blur-3xl animate-pulse"></div>
+                                    <div class="relative text-8xl">💕</div>
+                                </div>
+
+                                <h2 class="text-4xl font-black text-white mb-6">
+                                    It's a Match!
+                                </h2>
+
+                                <!-- Matched User Info -->
+                                <div class="bg-black/30 backdrop-blur-lg rounded-3xl p-6 mb-8 border border-white/20">
+                                    <div class="w-20 h-20 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl">
+                                        👤
+                                    </div>
+                                    <div class="text-white font-bold text-lg mb-2">Emma</div>
+                                    <div class="text-white/80 text-sm">
+                                        You both flicked each other
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="space-y-3 w-full">
+                                    <button class="w-full bg-white text-black font-bold py-4 rounded-2xl">
+                                        💬 Start Chat
+                                    </button>
+                                    <button class="w-full bg-white/10 backdrop-blur border border-white/20 text-white font-semibold py-3 rounded-2xl">
+                                        Back to Radar
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Note for you to add screenshot -->
-                        <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur p-3 rounded-lg text-xs text-gray-400">
-                            📸 Replace with match screen
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 3: Connect</h3>
@@ -551,16 +719,24 @@
                 </div>
             </div>
 
-            <div class="text-center mt-12 bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 max-w-3xl mx-auto">
-                <p class="text-gray-400 mb-4">
-                    💡 <strong>Pro Tip:</strong> Add these screenshots to your folder at:
+            <div class="text-center mt-12 bg-gradient-to-br from-flick-pink/10 to-transparent border border-flick-pink/30 rounded-2xl p-8 max-w-3xl mx-auto">
+                <div class="text-4xl mb-4">📸</div>
+                <p class="text-white font-bold text-lg mb-3">
+                    Add Your Profile Photos
                 </p>
-                <code class="text-sm bg-black/50 px-4 py-2 rounded-lg inline-block text-flick-pink">
-                    website-wedding/images/screenshots/
-                </code>
-                <p class="text-xs text-gray-500 mt-4">
-                    Recommended: 3 clean app screenshots showing wedding guests using flick<br/>
-                    Format: PNG or JPG • Size: 1170x2532px (iPhone 13 Pro) or similar
+                <p class="text-gray-400 mb-4 text-sm">
+                    Replace the placeholder avatars with real wedding-appropriate photos
+                </p>
+                <div class="bg-black/50 backdrop-blur rounded-xl p-4 mb-4 text-left">
+                    <div class="text-xs text-gray-400 mb-2">Save photos to:</div>
+                    <code class="text-sm text-flick-pink">
+                        website-wedding/images/screenshots/profile-1.jpg<br/>
+                        website-wedding/images/screenshots/profile-2.jpg
+                    </code>
+                </div>
+                <p class="text-xs text-gray-500">
+                    💡 Use elegant, wedding-appropriate photos (not festival vibes)<br/>
+                    Recommended: Professional headshots or classy portraits • Square format • ~500x500px
                 </p>
             </div>
         </div>
