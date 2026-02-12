@@ -115,20 +115,13 @@ export default function QRScannerScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      {__DEV__ ? (
-        <View style={[styles.camera, { backgroundColor: COLORS.black, justifyContent: 'center', alignItems: 'center' }]}>
-          <Text style={{ color: COLORS.white, fontSize: 48 }}>📷</Text>
-          <Text style={{ color: COLORS.white, marginTop: 20, textAlign: 'center' }}>Dev Mode: Use Skip Button Below</Text>
-        </View>
-      ) : (
-        <CameraView
-          style={styles.camera}
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-          barcodeScannerSettings={{
-            barcodeTypes: ['qr'],
-          }}
-        />
-      )}
+      <CameraView
+        style={styles.camera}
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        barcodeScannerSettings={{
+          barcodeTypes: ['qr'],
+        }}
+      />
       <View style={styles.overlay}>
         <View style={styles.header}>
           <Text style={styles.title}>Scan Festival QR Code</Text>

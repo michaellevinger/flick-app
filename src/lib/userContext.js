@@ -236,29 +236,49 @@ export function UserProvider({ children }) {
   };
 
   const logout = async () => {
+    if (!user) return;
+
+    // Stop heartbeat first
+    stopHeartbeat();
+
+    // Store user data for cleanup
+    const userId = user.id;
+    const selfieUrl = user.selfieUrl;
+
     try {
-      if (user) {
-        // Stop heartbeat
-        stopHeartbeat();
+      // Clear local state IMMEDIATELY (never fails)
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('festivalId');
+      setUser(null);
 
+      // Then try backend cleanup (don't block logout if this fails)
+      try {
         // Delete all flicks (sent and received)
-        await deleteAllFlicksForUser(user.id);
-
-        // Delete selfie from storage
-        if (user.selfieUrl) {
-          await deleteSelfie(user.selfieUrl);
-        }
-
-        // Delete user from database
-        await deleteUser(user.id);
-
-        // Clear local storage
-        await AsyncStorage.removeItem('user');
-        setUser(null);
+        await deleteAllFlicksForUser(userId);
+      } catch (error) {
+        console.warn('Failed to delete flicks (non-critical):', error.message);
       }
+
+      try {
+        // Delete selfie from storage
+        if (selfieUrl) {
+          await deleteSelfie(selfieUrl);
+        }
+      } catch (error) {
+        console.warn('Failed to delete selfie (non-critical):', error.message);
+      }
+
+      try {
+        // Delete user from database (CASCADE deletes matches, messages, etc.)
+        await deleteUser(userId);
+      } catch (error) {
+        console.warn('Failed to delete user from database (non-critical):', error.message);
+      }
+
+      console.log('Logout completed successfully');
     } catch (error) {
-      console.error('Error logging out:', error);
-      throw error;
+      console.error('Error during logout:', error);
+      // Don't throw - logout should always succeed
     }
   };
 

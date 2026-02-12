@@ -353,19 +353,22 @@ export default function DashboardScreen({ navigation }) {
         style: 'destructive',
         onPress: async () => {
           try {
-            // First navigate away, then logout
+            // Logout first (always succeeds now)
+            await logout();
+
+            // Then navigate to QR scanner for fresh start
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Camera', params: { forceReset: Date.now() } }],
+              routes: [{ name: 'QRScanner' }],
             });
-
-            // Logout after navigation to ensure clean state
-            setTimeout(async () => {
-              await logout();
-            }, 100);
           } catch (error) {
             console.error('Error during logout:', error);
-            Alert.alert('Error', 'Failed to sign out. Please try again.');
+            // Even if there's an error, logout already cleared local state
+            // So still navigate away
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'QRScanner' }],
+            });
           }
         },
       },
