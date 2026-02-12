@@ -123,11 +123,11 @@ Users can now:
 - ✅ Messages auto-delete after 20 minutes
 
 **How Messages Work:**
-- ✅ Messages persist until users unmatch
-- ✅ Automatic deletion when:
-  - Users move >500m apart
-  - User logs out
-  - User inactive >20 minutes
+- ✅ Messages persist permanently (like WhatsApp, Tinder, etc.)
+- ✅ Only deleted when match record is deleted
+- ✅ Event-based model - no distance checks
+- ✅ Matches remain active within festival/event
+- ✅ Add "Unmatch" feature to allow deletion (future)
 
 **Next Steps:**
 - Monitor Supabase logs for errors

@@ -78,8 +78,8 @@ The real-time chat feature has been successfully implemented for the flick app. 
 - Navigates to ChatScreen with match ID
 
 **`src/lib/matchCleanup.js`** (updated):
-- Delete match record when users >500m apart
-- Cascade deletion of messages
+- Removed distance-based cleanup
+- Event-based model - matches persist
 
 **`supabase/functions/auto-cleanup/index.ts`** (updated):
 - User auto-wipe CASCADE deletes messages
@@ -182,10 +182,10 @@ Documentation:
 2. ✅ Chat history preserved across app restarts
 3. ✅ Messages deleted when match dissolves
 
-### Distance-Based Cleanup
-1. ✅ Move >500m apart → Match dissolves
-2. ✅ Chat becomes inaccessible
-3. ✅ Messages cascade-deleted
+### Match Persistence
+1. ✅ Matches persist within event/festival
+2. ✅ No distance-based dissolution
+3. ✅ Messages remain until unmatch/logout
 
 ---
 
@@ -205,11 +205,11 @@ Documentation:
 
 ## 🔐 Privacy & Security
 
-- ✅ **Match-based persistence**: Messages kept while matched
-- ✅ **Distance-based cleanup**: Matches dissolve when users >500m apart
-- ✅ **Cascade deletion**: User logout removes all messages
-- ✅ **Anonymous sessions**: No long-term user tracking
-- ✅ **Auto-wipe**: Inactive users (20 min) deleted with messages
+- ✅ **Persistent messages**: Like normal dating apps, messages remain until unmatch
+- ✅ **Event-based model**: Matches persist within festival/event
+- ✅ **Cascade deletion**: Messages deleted only when match is deleted
+- ✅ **Session-based**: Temporary user IDs, no long-term accounts
+- ✅ **Auto-wipe**: Inactive users (20 min) deleted, CASCADE removes their matches
 - ✅ **Public images**: Accessible via URL (deleted with match)
 
 ---
@@ -244,6 +244,7 @@ Documentation:
 Priority features to consider:
 
 ### High Priority
+- [ ] **Unmatch Feature** - Allow users to delete conversations
 - [ ] **Push Notifications** - Alert users to new messages
 - [ ] **Emoji Reactions** - Complete implementation
 - [ ] **Voice Messages** - Audio recording/playback
@@ -321,7 +322,7 @@ The chat feature is **production-ready** with the following capabilities:
 ✅ Location sharing (GPS)
 ✅ Unread badges
 ✅ Persistent chat history
-✅ Distance-based match dissolution
+✅ Event-based match model
 ✅ Automatic match creation
 ✅ Tab navigation
 ✅ Responsive UI

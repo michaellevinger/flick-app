@@ -78,12 +78,12 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 ### Phase 6: Real-Time Chat System ✅
 
 - **Match-Based Chat**: Message users you've mutually flicked
-- **Persistent History**: Chat history saved until unmatch
+- **Persistent Messages**: Like normal dating apps - messages remain until unmatch
 - **Text Messaging**: Real-time text messages with instant delivery
 - **Image Sharing**: Send photos via camera or gallery
 - **Location Sharing**: Share GPS coordinates with one tap
 - **Unread Badges**: See unread message count in Matches tab
-- **Distance Dissolution**: Chats auto-close when users >500m apart
+- **Event-Based Persistence**: Matches persist within festival/event
 - **Tab Navigation**: Radar tab (discovery) + Matches tab (conversations)
 - **Start Chat Button**: Launch chat directly from Green Light screen
 

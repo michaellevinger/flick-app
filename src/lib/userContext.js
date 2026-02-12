@@ -12,7 +12,6 @@ import {
 } from './database';
 import { getCurrentLocation } from './location';
 import { deleteAllFlicksForUser } from './flicks';
-import { cleanupDistantMatches } from './matchCleanup';
 
 const UserContext = createContext(null);
 
@@ -172,10 +171,8 @@ export function UserProvider({ children }) {
       const newLocation = await updateLocation();
       await updateHeartbeat(user.id);
 
-      // Clean up matches with users who are now too far away
-      if (newLocation) {
-        await cleanupDistantMatches(user.id, newLocation);
-      }
+      // Note: In event-based model, matches persist regardless of distance
+      // Users are locked to their festival/event, no proximity-based cleanup
     } catch (error) {
       console.error('Error sending heartbeat:', error);
     }

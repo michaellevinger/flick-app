@@ -62,9 +62,11 @@ Generates a consistent match ID by alphabetically sorting user IDs.
 Trigger function that automatically creates a match record when mutual flicks are detected.
 
 #### Message Deletion
-Messages are automatically deleted via CASCADE when:
-- Match is deleted (users move >500m apart)
-- User is deleted (logout or 20-min inactivity auto-wipe)
+Messages persist indefinitely and are only deleted via CASCADE when:
+- Match record is deleted (explicit unmatch)
+- Both users' accounts are deleted (logout or 20-min inactivity)
+
+**Note**: Like normal dating apps, messages remain even if one user logs out temporarily.
 
 ## Architecture
 
@@ -134,17 +136,18 @@ Stack Navigator (Root)
    - **Reaction**: Long-press message → Select emoji (in progress)
 
 4. **Message Lifecycle**
-   - Message created and stored in database
+   - Message created and stored permanently
    - Displayed in chat indefinitely
-   - Deleted when match dissolves or user logs out
+   - Only deleted when match is explicitly deleted
+   - Survives user logout (unless both users logout)
 
-5. **Distance-Based Dissolution**
-   - Heartbeat checks distance to all matches every 60s
-   - If distance > 500m:
-     - Delete both flicks
-     - Delete match record
-     - Messages cascade-deleted
-     - Chat becomes inaccessible
+5. **Match Persistence**
+   - Matches persist within the same event/festival
+   - No distance-based dissolution (event-based model)
+   - Users stay matched until:
+     - Manual unmatch (if feature exists)
+     - User logs out
+     - User inactive >20 minutes
 
 ## Real-Time Updates
 
@@ -185,11 +188,11 @@ subscribeToMatches(userId, (newMatch) => {
 
 ## Privacy & Security
 
-- **Match-Based History**: Messages persist while matched
-- **Distance-Based Cleanup**: Matches dissolve when users separate (>500m)
-- **Cascade Deletion**: Match/user deletion removes all messages
-- **Anonymous Sessions**: Session-based, no long-term storage
-- **Auto-Wipe**: Inactive users (20 min) deleted with all their messages
+- **Persistent Messages**: Like normal dating apps, messages remain until unmatch
+- **Event-Based Model**: Matches persist within festival/event
+- **Cascade Deletion**: Messages deleted only when match record is deleted
+- **Unmatch Feature**: Add manual unmatch to delete conversations (future)
+- **Auto-Wipe**: Inactive users (20 min) deleted, which CASCADE deletes their matches
 
 ## Edge Function Integration
 
@@ -232,10 +235,10 @@ Messages are NOT time-based deleted - they persist until unmatch.
 - [ ] Messages remain in chat indefinitely while matched
 - [ ] Chat history preserved across app restarts
 
-### Distance Dissolution
-- [ ] Move >500m apart → Match dissolves
-- [ ] Chat becomes inaccessible
-- [ ] Messages cascade-deleted
+### Match Persistence
+- [ ] Matches persist within same event/festival
+- [ ] No distance-based dissolution
+- [ ] Messages remain until unmatch/logout
 
 ### Logout
 - [ ] User logs out → All matches deleted

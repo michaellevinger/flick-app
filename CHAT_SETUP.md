@@ -149,16 +149,18 @@ npm install @react-navigation/bottom-tabs
 
 ### Test 5: Message Persistence
 
-1. Send several messages
+1. Send several messages between users
 2. Close and reopen the app
 3. **Expected**: Messages still visible in chat
-4. **Expected**: Chat history preserved
+4. **Expected**: Chat history preserved even after app restart
+5. **Note**: Messages only deleted on explicit unmatch (future feature)
 
-### Test 6: Distance Dissolution
+### Test 6: Match Persistence
 
-1. With an active match, move one device >500m away
+1. With an active match, move devices apart
 2. Wait for heartbeat (60 seconds)
-3. **Expected**: Match dissolves, chat becomes inaccessible
+3. **Expected**: Match persists, chat remains accessible
+4. **Note**: Event-based model - no distance cleanup
 
 ## Troubleshooting
 
@@ -252,7 +254,7 @@ Monitor these metrics in production:
 - **Edge Function execution time**: Should be <1 second
 - **Database query performance**: Check slow queries in Supabase logs
 
-**Note**: Since messages persist, monitor database growth over time. Consider adding manual cleanup options if needed.
+**Note**: Messages persist like normal dating apps. Monitor database growth over time. Add "Unmatch" feature to allow users to delete conversations.
 
 ## Next Steps
 
