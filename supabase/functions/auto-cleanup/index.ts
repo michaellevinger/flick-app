@@ -1,5 +1,10 @@
-// Auto-Cleanup Edge Function
-// Runs every 5 minutes to delete inactive users (20+ minutes without heartbeat)
+// Exchange Cleanup Edge Function
+// Cleans up expired number exchanges (15-min TTL only)
+//
+// Note: No user or message auto-deletion
+// - Accounts persist indefinitely
+// - Users control their own data deletion via logout
+// - Status ON/OFF doesn't affect account persistence
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
@@ -24,26 +29,10 @@ serve(async (req) => {
 
     console.log('Running auto-cleanup function...')
 
-    // Call the auto_wipe_inactive_users() SQL function
-    const { data: deletedUsers, error: usersError } = await supabase.rpc('auto_wipe_inactive_users')
+    // Note: User auto-wipe removed - accounts persist until manual logout
+    // Users can be OFF indefinitely without losing data
 
-    if (usersError) {
-      console.error('Error running auto_wipe_inactive_users:', usersError)
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: usersError.message
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    console.log(`Auto-cleanup completed: ${deletedUsers} inactive users deleted`)
-
-    // Clean up expired number exchanges
+    // Clean up expired number exchanges (15-min TTL)
     const { data: deletedExchanges, error: exchangesError } = await supabase.rpc('cleanup_expired_exchanges')
 
     if (exchangesError) {
@@ -53,18 +42,15 @@ serve(async (req) => {
       console.log(`Cleaned up ${deletedExchanges} expired number exchanges`)
     }
 
-    // Note: Messages are NOT auto-deleted - they persist until unmatch
-    // Messages are cascade-deleted when:
-    // 1. Match is deleted (users >500m apart)
-    // 2. User is deleted (logout or auto-wipe)
+    // Note: Messages and users are NOT auto-deleted
+    // Data persists until manual logout by user
 
     return new Response(
       JSON.stringify({
         success: true,
-        deleted_users: deletedUsers,
         deleted_exchanges: deletedExchanges || 0,
         timestamp: new Date().toISOString(),
-        message: `Deleted ${deletedUsers} inactive user(s) and ${deletedExchanges || 0} expired exchange(s)`,
+        message: `Deleted ${deletedExchanges || 0} expired exchange(s)`,
       }),
       {
         status: 200,

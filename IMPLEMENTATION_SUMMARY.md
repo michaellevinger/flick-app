@@ -208,8 +208,9 @@ Documentation:
 - ✅ **Persistent messages**: Like normal dating apps, messages remain until unmatch
 - ✅ **Event-based model**: Matches persist within festival/event
 - ✅ **Cascade deletion**: Messages deleted only when match is deleted
-- ✅ **Session-based**: Temporary user IDs, no long-term accounts
-- ✅ **Auto-wipe**: Inactive users (20 min) deleted, CASCADE removes their matches
+- ✅ **No auto-wipe**: Accounts persist indefinitely - user-controlled deletion
+- ✅ **Status ON/OFF**: Just controls visibility, doesn't delete data
+- ✅ **Manual logout**: User-initiated deletion removes all data (CASCADE)
 - ✅ **Public images**: Accessible via URL (deleted with match)
 
 ---

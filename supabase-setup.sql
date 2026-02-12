@@ -92,22 +92,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to auto-delete inactive users (20 minute timeout)
-CREATE OR REPLACE FUNCTION auto_wipe_inactive_users()
-RETURNS INTEGER AS $$
-DECLARE
-  deleted_count INTEGER;
-BEGIN
-  WITH deleted AS (
-    DELETE FROM users
-    WHERE last_heartbeat < NOW() - INTERVAL '20 minutes'
-    RETURNING id
-  )
-  SELECT COUNT(*) INTO deleted_count FROM deleted;
-
-  RETURN deleted_count;
-END;
-$$ LANGUAGE plpgsql;
+-- Note: Auto-wipe has been removed for dating app model
+-- Users control their own data:
+-- - Manual logout → Deletes user and all associated data (CASCADE)
+-- - Otherwise → Account persists indefinitely
+--
+-- Old auto-wipe function removed - users can be OFF for any duration
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;

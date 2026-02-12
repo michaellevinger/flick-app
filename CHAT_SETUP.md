@@ -21,6 +21,8 @@
 - `create_match_on_mutual_flick()` trigger
 - Row Level Security policies
 
+**Note**: Auto-wipe function removed - accounts persist indefinitely
+
 ## Step 2: Create Storage Bucket
 
 1. In Supabase dashboard, go to **Storage**

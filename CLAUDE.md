@@ -15,8 +15,8 @@
 - [x] The Nudge & Green Light (mutual match detection)
 - [x] Haptic feedback for matches
 - [x] Real-time nudge subscriptions
-- [x] Auto-wipe automation (Supabase Edge Function)
-- [x] Distance-based match dissolution
+- [x] No auto-wipe (dating app model - user-controlled deletion)
+- [x] Event-based persistence (no distance cleanup)
 - [x] Number Exchange "The Off-Ramp" (15-min TTL, proximity wipe)
 - [x] Request/Accept flow for number sharing
 - [x] Vault Screen with countdown timer

@@ -57,13 +57,13 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 - **Full-Screen Photos**: Tap photos to view full-screen
 - **Festival Isolation**: Matches only within same festival
 
-### Phase 4: Self-Destruct & Safety ✅
+### Phase 4: User Data Control ✅
 
-- **Time-Based Auto-Wipe**: Users deleted after 20 minutes of inactivity
-- **Supabase Edge Function**: Automated cleanup every 5 minutes
-- **Distance Dissolution**: Matches auto-delete when users move >100m apart
-- **Heartbeat Integration**: Distance checks run every 60 seconds
-- **Complete Cleanup**: Selfies, matches, and user data all removed
+- **Manual Logout**: User-initiated deletion removes all data (CASCADE)
+- **No Auto-Wipe**: Accounts persist indefinitely
+- **Status ON/OFF**: Controls visibility only, doesn't delete data
+- **Event-Based**: No distance-based cleanup
+- **Complete Cleanup on Logout**: Selfies, matches, messages all removed
 
 ### Phase 5: Number Exchange "The Off-Ramp" ✅
 

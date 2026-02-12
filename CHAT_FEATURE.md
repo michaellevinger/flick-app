@@ -63,10 +63,13 @@ Trigger function that automatically creates a match record when mutual flicks ar
 
 #### Message Deletion
 Messages persist indefinitely and are only deleted via CASCADE when:
-- Match record is deleted (explicit unmatch)
-- Both users' accounts are deleted (logout or 20-min inactivity)
+- Match record is deleted (explicit unmatch - future feature)
+- User manually logs out (deletes their account)
 
-**Note**: Like normal dating apps, messages remain even if one user logs out temporarily.
+**Note**: Like normal dating apps:
+- Messages remain even if status is OFF
+- No auto-wipe - accounts persist indefinitely
+- Users control their own data deletion
 
 ## Architecture
 
@@ -190,17 +193,20 @@ subscribeToMatches(userId, (newMatch) => {
 
 - **Persistent Messages**: Like normal dating apps, messages remain until unmatch
 - **Event-Based Model**: Matches persist within festival/event
-- **Cascade Deletion**: Messages deleted only when match record is deleted
+- **No Auto-Wipe**: Accounts persist indefinitely - users control deletion
+- **Status ON/OFF**: Doesn't affect data - just visibility on radar
+- **Manual Logout**: User-initiated deletion removes all data (CASCADE)
 - **Unmatch Feature**: Add manual unmatch to delete conversations (future)
-- **Auto-Wipe**: Inactive users (20 min) deleted, which CASCADE deletes their matches
 
 ## Edge Function Integration
 
-The existing `auto-cleanup` Edge Function handles:
-- User auto-wipe (20 min inactivity) - CASCADE deletes messages
-- Number exchange cleanup (15 min TTL)
+The `auto-cleanup` Edge Function handles:
+- Number exchange cleanup (15 min TTL only)
 
-Messages are NOT time-based deleted - they persist until unmatch.
+No user or message auto-deletion:
+- Accounts persist indefinitely
+- Messages persist until unmatch
+- Users control their own data
 
 ## Testing Checklist
 

@@ -122,12 +122,13 @@ Users can now:
 - ✅ See unread badges
 - ✅ Messages auto-delete after 20 minutes
 
-**How Messages Work:**
+**How Messages & Accounts Work:**
 - ✅ Messages persist permanently (like WhatsApp, Tinder, etc.)
-- ✅ Only deleted when match record is deleted
-- ✅ Event-based model - no distance checks
-- ✅ Matches remain active within festival/event
-- ✅ Add "Unmatch" feature to allow deletion (future)
+- ✅ Accounts persist indefinitely - no auto-wipe
+- ✅ Status ON/OFF only controls visibility
+- ✅ Users can turn OFF for days/weeks and return
+- ✅ Data deleted only on manual logout
+- ✅ Add "Unmatch" feature to delete conversations (future)
 
 **Next Steps:**
 - Monitor Supabase logs for errors

@@ -3,15 +3,19 @@ import { getFlicksSentByUser, getFlicksForUser } from './flicks';
 /**
  * Match cleanup utilities
  *
- * Note: In event-based model, matches persist regardless of physical distance.
- * Users are locked to their festival/event room.
+ * Event-based dating app model:
+ * - Matches persist regardless of physical distance
+ * - Users locked to their festival/event room
+ * - Accounts persist indefinitely (no auto-wipe)
  *
  * Messages work like normal dating apps:
  * - Persist indefinitely until explicit unmatch
  * - CASCADE deleted only when match record is deleted
- * - Survive user logout (unless both users logout)
+ * - Status ON/OFF doesn't affect persistence
  *
- * Future: Add manual "Unmatch" feature to delete conversations
+ * User data deletion only on:
+ * - Manual logout (user-initiated)
+ * - Future: Add "Unmatch" feature to delete conversations
  */
 
 /**
