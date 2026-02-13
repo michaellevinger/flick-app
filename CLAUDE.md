@@ -34,17 +34,29 @@
 - [x] Storage bucket creation (selfies, chat-images)
 - [x] Edge Function deployment (auto-cleanup) - Optional
 
-### ✅ Website - COMPLETE
-- [x] B2B sponsor landing page (`/website/index.html`)
-- [x] Hero section with brand positioning
-- [x] Your Audience section with festival imagery
-- [x] Sponsor Advantage with activation examples (Heineken, Red Bull, Spotify)
-- [x] How It Works 3-step flow
-- [x] Post-Event Analytics with video demonstration
-- [x] Connection Score, Booth Traffic, Brand Impressions metrics
-- [x] Responsive design with Tailwind CSS
-- [x] Ghost emoji logo with green hearts
-- [x] Ready for Vercel deployment
+### ✅ Website - LIVE at helloflick.com
+- [x] **Festival Site** (`/website/index.html`) - LIVE at https://helloflick.com
+  - Hero section with "Turn a Look into Hello" positioning
+  - Your Audience section with festival imagery
+  - Sponsor Advantage with activation examples (Heineken, Red Bull, Spotify)
+  - How It Works 3-step flow
+  - See flick in Action with iPhone mockups
+  - Post-Event Analytics with video demonstration
+  - Social media links (Instagram, Twitter, LinkedIn)
+- [x] **Wedding Site** (`/website/weddings/index.html`) - LIVE at https://helloflick.com/weddings
+  - Your Wedding's Secret Matchmaker positioning
+  - How It Works: QR → Scan → Browse → Match
+  - See flick in Action with real profile photos (David, 34 & Michael, 32)
+  - Pricing tiers (Starter, Classic, Premium)
+  - Perfect For section (couples, planners, venues)
+  - App preview showcase
+  - Social media integration
+- [x] **Deployment**
+  - Deployed on Vercel with custom domain
+  - DNS configured (helloflick.com + www.helloflick.com)
+  - SEO-optimized with Open Graph tags
+  - Mobile responsive with hamburger menus
+  - Seamless backgrounds (no section dividers)
 
 ### ✅ Development Tools - COMPLETE
 - [x] QR Code Generator (`generate-qr.js`) - CLI tool for festival QR codes
@@ -56,10 +68,11 @@
 ### 🔮 Next Up
 - [ ] Run festivals-schema.sql in Supabase (festivals table)
 - [ ] Run chat-migration.sql in Supabase (matches/messages tables)
-- [ ] Deploy website to Vercel
+- [x] Deploy website to Vercel - ✅ LIVE at helloflick.com
 - [ ] Test complete user flow with real devices
 - [ ] App Store submission (iOS/Android)
 - [ ] Push notifications
+- [ ] Marketing: Share website on social media
 
 ---
 
@@ -551,5 +564,5 @@ Claude, write a test scenario to verify that [specific behavior from CLAUDE.md] 
 
 ---
 
-**Last Updated:** 2026-02-11
-**Version:** 0.3.0 (B2B Website Complete + Ready for Deployment)
+**Last Updated:** 2026-02-13
+**Version:** 0.4.0 (Websites LIVE at helloflick.com - Festival + Wedding Sites Deployed)
