@@ -300,7 +300,10 @@ flick-app/
 │   └── functions/
 │       └── auto-cleanup/        # Edge Function for auto-wipe
 ├── website/
-│   └── index.html               # B2B sponsor landing page
+│   ├── index.html               # Festival/sponsor landing page (LIVE at helloflick.com)
+│   ├── weddings/
+│   │   └── index.html           # Wedding landing page (LIVE at helloflick.com/weddings)
+│   └── images/                  # Logos, profiles, screenshots
 ├── App.js                       # Navigation + UserProvider
 ├── app.json                     # Expo config + permissions
 ├── supabase-setup.sql           # Base DB schema
@@ -310,29 +313,51 @@ flick-app/
 └── README.md                    # This file
 ```
 
-## Website - B2B Sponsor Landing Page ✅
+## Website - LIVE at helloflick.com ✅
 
-A complete sponsor-focused landing page at `/website/index.html`:
+**🌐 Live Sites:**
+- **Festival/Sponsors**: https://helloflick.com
+- **Weddings**: https://helloflick.com/weddings
+
+### Festival Site (`/website/index.html`)
 
 **Sections:**
-- **Hero**: "Own the Moment of Connection" - Premium sponsor activation
-- **Your Audience**: Festival singles looking to connect
-- **Sponsor Advantage**: Heineken, Red Bull, Spotify brand examples
-- **How It Works**: QR scan → Match → Branded Green Light → Booth traffic
+- **Hero**: "Turn a Look into Hello" - User-focused brand positioning
+- **Your Audience**: Festival crowd imagery and demographics
+- **Sponsor Advantage**: Heineken, Red Bull, Spotify activation examples
+- **How It Works**: QR scan → Match → Green Light → Booth traffic
+- **See flick in Action**: iPhone mockups showing real app flow
 - **Post-Event Analytics**: Connection Score, Booth Traffic, Brand Impressions
-- **Video Demo**: Heineken Green Light activation in action
+- **Video Demo**: Heineken Green Light activation
+- **Social Links**: Instagram (@joinflick), Twitter (@MichaelLevinger), LinkedIn
+
+### Wedding Site (`/website/weddings/index.html`)
+
+**Sections:**
+- **Hero**: "Your Wedding's Secret Matchmaker"
+- **How It Works**: QR code → Scan → Browse → Match
+- **See flick in Action**: iPhone mockups with profile photos (David, 34 & Michael, 32)
+- **Perfect For**: Couples, planners, venues
+- **Pricing Tiers**: Starter ($299), Classic ($499), Premium ($799)
+- **App Preview**: Clean interface showcase
+- **Testimonials**: Success stories
+- **Social Links**: Twitter, Instagram, LinkedIn
 
 **Deployment:**
-- Static HTML + Tailwind CSS
-- Ready for Vercel/Netlify
-- Mobile responsive
+- ✅ Deployed on Vercel with custom domain
+- ✅ DNS configured (helloflick.com + www.helloflick.com)
+- ✅ Static HTML + Tailwind CSS
+- ✅ Mobile responsive with hamburger menus
+- ✅ SEO-optimized with Open Graph tags
+- ✅ Seamless backgrounds (no visible section dividers)
 
 ## What's Next
 
 ### Immediate
 - [ ] **Test QR Flow**: Verify QR scanner → profile → festival room flow
-- [ ] **Deploy Website**: Push to Vercel for sponsor showcase
+- [x] **Deploy Website**: ✅ LIVE at helloflick.com (Festival + Wedding sites)
 - [ ] **Create Test QR Codes**: Generate QR codes for test festivals
+- [ ] **App Store Submission**: Prepare iOS/Android builds for distribution
 
 ### Future Enhancements
 - [ ] **Sponsor Dashboard**: Real-time analytics for sponsors
