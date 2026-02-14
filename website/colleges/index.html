@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>flick for Colleges - Turn Campus Strangers into Friends</title>
+    <meta name="description" content="The social catalyst for Student Unions. Help students meet and connect at orientation, campus festivals, and high-energy events.">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="flick for Colleges - Turn Campus Strangers into Friends">
+    <meta property="og:description" content="The social catalyst for Student Unions. Help students meet and connect at orientation, campus festivals, and high-energy events.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://helloflick.com/colleges">
+    <meta property="og:image" content="https://helloflick.com/images/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="flick for Colleges - Turn Campus Strangers into Friends">
+    <meta property="og:description" content="The social catalyst for Student Unions. Help students meet and connect at orientation, campus festivals, and high-energy events.">
+    <meta name="twitter:image" content="https://helloflick.com/images/logo.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'flick-pink': '#FF6B9D',
+                        'flick-dark': '#0B0F0E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top center, rgba(255, 107, 157, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(255, 107, 157, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        #000000;
+            background-attachment: fixed;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+        }
+
+        .glow {
+            box-shadow: 0 0 40px rgba(255, 107, 157, 0.3);
+        }
+
+        /* iPhone Mockup Styles */
+        .iphone-mockup {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .iphone-screen {
+            background: #0B0F0E;
+            border-radius: 40px;
+            overflow: hidden;
+            border: 8px solid #1a1a1a;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            aspect-ratio: 9/19.5;
+        }
+
+        .status-bar {
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+        }
+
+        /* Profile Card Styles */
+        .profile-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .profile-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8FAD 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+        }
+
+        .profile-info {
+            padding: 16px;
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 backdrop-blur-md bg-black/50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-black">flick<span class="text-flick-pink">.</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="hover:text-flick-pink transition">Festivals</a>
+                    <a href="/weddings" class="hover:text-flick-pink transition">Weddings</a>
+                    <a href="#contact" class="hover:text-flick-pink transition">Contact</a>
+                    <a href="#contact" class="bg-flick-pink text-black px-6 py-2 rounded-lg font-bold hover:brightness-110 transition btn-hover">Book a Demo</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-4">
+                <a href="/" class="block hover:text-flick-pink transition">Festivals</a>
+                <a href="/weddings" class="block hover:text-flick-pink transition">Weddings</a>
+                <a href="#contact" class="block hover:text-flick-pink transition">Contact</a>
+                <a href="#contact" class="block bg-flick-pink text-black px-6 py-2 rounded-lg font-bold text-center">Book a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center px-6 pt-24">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="inline-block px-4 py-2 bg-flick-pink/10 border border-flick-pink/30 rounded-full mb-6 fade-in">
+                <span class="text-flick-pink font-semibold">🎓 Built for Student Unions</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 fade-in" style="animation-delay: 0.1s;">
+                Turn Campus Strangers<br/>
+                <span class="text-flick-pink">into Friends</span>
+            </h1>
+
+            <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto fade-in" style="animation-delay: 0.2s;">
+                The social catalyst for Student Unions. Transform orientation weeks, campus festivals, and high-energy events from "same old faces" to real connections.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in" style="animation-delay: 0.3s;">
+                <a href="#how-it-works" class="px-8 py-4 bg-flick-pink text-black font-bold rounded-lg text-lg btn-hover glow">
+                    See How It Works →
+                </a>
+                <a href="#pricing" class="px-8 py-4 border-2 border-white/20 font-bold rounded-lg text-lg btn-hover hover:border-flick-pink">
+                    View Pricing
+                </a>
+            </div>
+
+            <div class="mt-16 text-sm text-gray-500 fade-in" style="animation-delay: 0.4s;">
+                Trusted by Student Unions at 25+ universities nationwide
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-black mb-6">
+                    The Client — Student Unions That Run Campus Life
+                </h2>
+                <p class="text-xl text-gray-400 mb-8">
+                    flick is built specifically for Student Unions that design and operate the highest-impact social moments on campus:
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-12">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                    <div class="text-3xl mb-3">🎉</div>
+                    <h3 class="font-bold mb-2">Orientation Weeks</h3>
+                    <p class="text-sm text-gray-400">Break the ice for incoming students</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                    <div class="text-3xl mb-3">📚</div>
+                    <h3 class="font-bold mb-2">Student Fairs</h3>
+                    <p class="text-sm text-gray-400">Connect students beyond club booths</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                    <div class="text-3xl mb-3">🎪</div>
+                    <h3 class="font-bold mb-2">Campus Festivals</h3>
+                    <p class="text-sm text-gray-400">Turn passive attendees into participants</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                    <div class="text-3xl mb-3">🏠</div>
+                    <h3 class="font-bold mb-2">Dorm & Residence Programming</h3>
+                    <p class="text-sm text-gray-400">Build community within residence halls</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                    <div class="text-3xl mb-3">🌙</div>
+                    <h3 class="font-bold mb-2">Student Union Social Nights</h3>
+                    <p class="text-sm text-gray-400">Activate your union spaces with purpose</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                    <div class="text-3xl mb-3">👋</div>
+                    <h3 class="font-bold mb-2">Welcome Events for New Students</h3>
+                    <p class="text-sm text-gray-400">Make first impressions last</p>
+                </div>
+            </div>
+
+            <div class="bg-flick-pink/10 border-2 border-flick-pink/30 rounded-3xl p-8 text-center">
+                <p class="text-xl font-semibold mb-4">The Problem</p>
+                <p class="text-2xl md:text-3xl font-black">
+                    These are <span class="text-flick-pink">dense, high-energy environments</span> — but most students still leave having met <span class="text-flick-pink">only people they already knew.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    How It Works
+                </h2>
+                <p class="text-xl text-gray-400">
+                    Simple setup, instant connections
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-flick-pink/20 border-2 border-flick-pink rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">
+                        1
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">You Get a QR Code</h3>
+                    <p class="text-gray-400 mb-6">
+                        We create a private flick room for your event with a unique QR code
+                    </p>
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="text-6xl mb-3">📧</div>
+                        <p class="text-sm text-gray-500">Display on:</p>
+                        <p class="text-sm font-semibold">Event posters • Instagram stories • Digital screens • Table tents</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-flick-pink/20 border-2 border-flick-pink rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">
+                        2
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Students Scan & Connect</h3>
+                    <p class="text-gray-400 mb-6">
+                        Students scan the QR, create a profile, and see other students at the event
+                    </p>
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="text-6xl mb-3">💕</div>
+                        <p class="text-sm text-gray-500">They can:</p>
+                        <p class="text-sm font-semibold">"Flick" people they want to meet • Match instantly • Chat during the event</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-flick-pink/20 border-2 border-flick-pink rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6">
+                        3
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Magic Happens</h3>
+                    <p class="text-gray-400 mb-6">
+                        Students meet, connect, form study groups —<br/>your event becomes legendary
+                    </p>
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="text-6xl mb-3">✨</div>
+                        <p class="text-sm text-gray-500">Results:</p>
+                        <p class="text-sm font-semibold">Real friendships • Better retention<br/>• Campus engagement stories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- See flick in Action -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    See flick in Action
+                </h2>
+                <p class="text-xl text-gray-400">
+                    Campus-appropriate, instant, effortless
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Screen 1: Scan QR -->
+                <div class="text-center">
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
+                            </div>
+
+                            <!-- QR Scanner Content -->
+                            <div class="flex flex-col items-center justify-center h-full px-6 pb-12">
+                                <div class="mb-8 text-center">
+                                    <h3 class="text-2xl font-bold text-white mb-2">Scan Event QR Code</h3>
+                                    <p class="text-gray-400 text-sm">Point your camera at the QR code</p>
+                                </div>
+
+                                <!-- Scanner Frame -->
+                                <div class="relative w-48 h-48 mb-8">
+                                    <div class="absolute inset-0 border-4 border-transparent rounded-3xl"
+                                         style="border-image: linear-gradient(135deg, #FF6B9D 0%, transparent 50%) 1;">
+                                    </div>
+                                    <!-- Corner guides -->
+                                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-flick-pink rounded-tl-2xl"></div>
+                                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-flick-pink rounded-tr-2xl"></div>
+                                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-flick-pink rounded-bl-2xl"></div>
+                                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-flick-pink rounded-br-2xl"></div>
+                                    <!-- QR Code representation -->
+                                    <div class="absolute inset-4 bg-white/90 rounded-xl flex items-center justify-center text-4xl">
+                                        <div class="text-xs text-black font-mono leading-tight p-2">
+                                            ████░░██<br/>
+                                            ░░████░░<br/>
+                                            ██░░████<br/>
+                                            ████░░██
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Step 1: Scan</h3>
+                    <p class="text-gray-400 text-sm">
+                        Students scan the QR code<br/>from event posters or screens
+                    </p>
+                </div>
+
+                <!-- Screen 2: Browse Students -->
+                <div class="text-center">
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
+                            </div>
+
+                            <!-- Dashboard Content -->
+                            <div class="flex flex-col h-full">
+                                <!-- Header -->
+                                <div class="px-5 py-4 border-b border-white/10">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h2 class="text-xl font-bold text-white">flick</h2>
+                                        <div class="text-sm text-gray-400">Sign Out</div>
+                                    </div>
+                                    <div class="bg-flick-pink/20 border border-flick-pink/50 rounded-xl p-3 text-center">
+                                        <div class="text-sm font-bold text-flick-pink">Orientation Week 2024</div>
+                                        <div class="text-xs text-gray-400">University Welcome Event</div>
+                                    </div>
+                                </div>
+
+                                <!-- Profile Cards Scroll -->
+                                <div class="flex-1 overflow-y-auto px-5 py-4">
+                                    <!-- Profile Card 1 -->
+                                    <div class="profile-card mb-4">
+                                        <div class="profile-image" style="background: none !important; padding: 0 !important; display: block !important;">
+                                            <img src="/colleges/images/screenshots/profile-1.jpg?v=1" alt="Alex" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <div class="text-white font-bold">Alex, 19</div>
+                                                    <div class="text-xs text-gray-400">Computer Science • Sophomore</div>
+                                                </div>
+                                                <button class="bg-flick-pink px-4 py-2 rounded-lg text-black text-sm font-bold">
+                                                    Flick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Card 2 -->
+                                    <div class="profile-card">
+                                        <div class="profile-image" style="background: none !important; padding: 0 !important; display: block !important;">
+                                            <img src="/colleges/images/screenshots/profile-2.jpg?v=1" alt="Jordan" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                        </div>
+                                        <div class="profile-info">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <div class="text-white font-bold">Jordan, 20</div>
+                                                    <div class="text-xs text-gray-400">Business • Junior</div>
+                                                </div>
+                                                <button class="bg-flick-pink px-4 py-2 rounded-lg text-black text-sm font-bold">
+                                                    Flick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Info -->
+                                <div class="px-5 py-3 bg-white/5 backdrop-blur border-t border-white/10 text-center text-xs text-gray-400">
+                                    87 students at this event
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Step 2: Browse</h3>
+                    <p class="text-gray-400 text-sm">
+                        See other students at the event<br/>and "flick" people they want to meet
+                    </p>
+                </div>
+
+                <!-- Screen 3: Match & Chat -->
+                <div class="text-center">
+                    <div class="iphone-mockup mb-6">
+                        <div class="iphone-notch"></div>
+                        <div class="iphone-screen" style="background: linear-gradient(180deg, #FF6B9D 0%, #FF8FAD 50%, #0B0F0E 100%);">
+                            <!-- Status Bar -->
+                            <div class="status-bar text-white text-xs">
+                                <span>9:41</span>
+                                <span>📶 📡 🔋</span>
+                            </div>
+
+                            <!-- Green Light Content -->
+                            <div class="flex flex-col items-center justify-center h-full px-6 py-6 text-center">
+                                <!-- Animated glow effect -->
+                                <div class="relative mb-4">
+                                    <div class="absolute inset-0 bg-white/30 rounded-full blur-3xl animate-pulse"></div>
+                                    <div class="relative text-6xl">💕</div>
+                                </div>
+
+                                <h2 class="text-3xl font-black text-white mb-4">
+                                    It's a Match!
+                                </h2>
+
+                                <!-- Matched User Info -->
+                                <div class="bg-black/30 backdrop-blur-lg rounded-3xl p-4 mb-5 border border-white/20">
+                                    <div class="w-16 h-16 rounded-full mx-auto mb-3 overflow-hidden border-2 border-white/40">
+                                        <img src="/colleges/images/screenshots/profile-1.jpg?v=1" alt="Alex" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="text-white font-bold text-base mb-1">Alex</div>
+                                    <div class="text-white/80 text-xs">
+                                        You both flicked each other
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="space-y-2.5 w-full">
+                                    <button class="w-full bg-white text-black font-bold py-3.5 rounded-2xl text-sm">
+                                        💬 Start Chat
+                                    </button>
+                                    <button class="w-full bg-white/10 backdrop-blur border border-white/20 text-white font-semibold py-3 rounded-2xl text-sm">
+                                        Back to Event
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Step 3: Connect</h3>
+                    <p class="text-gray-400 text-sm">
+                        Mutual matches can chat<br/>and connect during the event
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perfect For -->
+    <section class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    Perfect For...
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <div class="text-6xl mb-4">🎓</div>
+                    <h3 class="text-2xl font-bold mb-4">Student Unions</h3>
+                    <p class="text-gray-400 mb-4">
+                        Transform orientation weeks, campus festivals, and social nights from passive attendance to real connections.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>✓ Orientation programming</li>
+                        <li>✓ Student fair activations</li>
+                        <li>✓ Campus-wide social events</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <div class="text-6xl mb-4">🏠</div>
+                    <h3 class="text-2xl font-bold mb-4">Residence Life</h3>
+                    <p class="text-gray-400 mb-4">
+                        Build community within residence halls and create lasting friendships beyond hallway small talk.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>✓ Dorm welcome events</li>
+                        <li>✓ Floor socials</li>
+                        <li>✓ RA programming</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8">
+                    <div class="text-6xl mb-4">🎭</div>
+                    <h3 class="text-2xl font-bold mb-4">Greek Life & Clubs</h3>
+                    <p class="text-gray-400 mb-4">
+                        Enhance rush events, mixers, and social gatherings with a modern way for students to connect.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>✓ Recruitment events</li>
+                        <li>✓ Mixer activations</li>
+                        <li>✓ Inter-club socials</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24 px-6 scroll-fade">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">Simple, Transparent Pricing</h2>
+                <p class="text-xl text-gray-400">Choose the plan that fits your event size</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Starter -->
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8">
+                    <h3 class="text-2xl font-bold mb-2">Starter</h3>
+                    <p class="text-gray-400 mb-6">Perfect for dorm floors & small socials</p>
+                    <div class="text-5xl font-black mb-6">
+                        $199
+                        <span class="text-xl font-normal text-gray-400">/event</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Up to 100 students</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Custom QR code</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Real-time matching</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Basic analytics</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Email support</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full text-center py-3 border-2 border-white/20 rounded-xl font-bold hover:border-flick-pink transition">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Popular -->
+                <div class="bg-white/5 backdrop-blur border-2 border-flick-pink rounded-3xl p-8 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-flick-pink text-black px-4 py-1 rounded-full text-sm font-bold">
+                        Most Popular
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Campus</h3>
+                    <p class="text-gray-400 mb-6">Ideal for orientation & campus festivals</p>
+                    <div class="text-5xl font-black mb-6">
+                        $499
+                        <span class="text-xl font-normal text-gray-400">/event</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Up to 500 students</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Custom QR code + branding</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Real-time matching</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Advanced analytics dashboard</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Priority support</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Multi-day events supported</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full text-center py-3 bg-flick-pink text-black rounded-xl font-bold btn-hover">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- University -->
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8">
+                    <h3 class="text-2xl font-bold mb-2">University</h3>
+                    <p class="text-gray-400 mb-6">For large-scale campus activations</p>
+                    <div class="text-5xl font-black mb-6">
+                        $999
+                        <span class="text-xl font-normal text-gray-400">/event</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Unlimited students</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Full university branding</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Real-time matching</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Full analytics suite + reports</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Dedicated account manager</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Multi-event packages available</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-flick-pink mr-2">✓</span>
+                            <span class="text-sm">Custom integrations</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full text-center py-3 border-2 border-white/20 rounded-xl font-bold hover:border-flick-pink transition">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+
+            <p class="text-center text-gray-500 mt-12">
+                All plans include: Instant setup • Real-time chat • Photo sharing • Match analytics • Privacy-first design
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="py-24 px-6 scroll-fade">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-black mb-6">Ready to Transform Your Campus Events?</h2>
+            <p class="text-xl text-gray-400 mb-12">
+                Join the Student Unions using flick to turn orientation weeks and campus festivals into legendary connection moments.
+            </p>
+
+            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-12 mb-8">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                    <a href="https://mail.google.com/mail/?view=cm&to=info@helloflick.com&su=College%20Demo%20Request" target="_blank" rel="noopener noreferrer" class="px-8 py-4 bg-flick-pink text-black font-bold rounded-xl text-lg btn-hover">
+                        📧 info@helloflick.com
+                    </a>
+                    <a href="tel:+12019212947" class="px-8 py-4 border-2 border-white/20 font-bold rounded-xl text-lg btn-hover hover:border-flick-pink">
+                        📞 +1 (201) 921-2947
+                    </a>
+                </div>
+
+                <p class="text-gray-400 text-sm">
+                    Response time: Within 24 hours
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="text-2xl font-black mb-4">flick<span class="text-flick-pink">.</span></div>
+                    <p class="text-gray-400 text-sm">
+                        Turn campus strangers into friends
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#how-it-works" class="hover:text-flick-pink">How It Works</a></li>
+                        <li><a href="#pricing" class="hover:text-flick-pink">Pricing</a></li>
+                        <li><a href="/" class="hover:text-flick-pink">Festivals</a></li>
+                        <li><a href="/weddings" class="hover:text-flick-pink">Weddings</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">For Universities</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-flick-pink">Student Unions</a></li>
+                        <li><a href="#" class="hover:text-flick-pink">Residence Life</a></li>
+                        <li><a href="#" class="hover:text-flick-pink">Greek Life</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="https://mail.google.com/mail/?view=cm&to=info@helloflick.com" target="_blank" rel="noopener noreferrer" class="hover:text-flick-pink">info@helloflick.com</a></li>
+                        <li><a href="#contact" class="hover:text-flick-pink">Book a Demo</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500 mb-4 md:mb-0">
+                    © 2026 flick. All rights reserved. • <a href="#" class="hover:text-flick-pink">Privacy</a> • <a href="#" class="hover:text-flick-pink">Terms</a>
+                </p>
+                <div class="flex space-x-6">
+                    <a href="https://x.com/MichaelLevinger" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-flick-pink">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/joinflick/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-flick-pink">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/in/michael-levinger/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-flick-pink">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Animation Script -->
+    <script>
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade').forEach(el => observer.observe(el));
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
