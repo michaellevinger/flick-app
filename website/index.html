@@ -695,34 +695,31 @@
 
                             <!-- Green Light Content -->
                             <div class="flex flex-col items-center justify-center h-full px-6 py-6 text-center">
-                                <!-- Animated glow effect -->
-                                <div class="relative mb-4">
-                                    <div class="absolute inset-0 bg-white/30 rounded-full blur-3xl animate-pulse"></div>
-                                    <div class="relative text-6xl">💕</div>
-                                </div>
-
-                                <h2 class="text-3xl font-black text-white mb-4">
+                                <h2 class="text-3xl font-black text-white mb-6">
                                     It's a Match!
                                 </h2>
 
-                                <!-- Matched User Info -->
-                                <div class="bg-black/30 backdrop-blur-lg rounded-3xl p-4 mb-5 border border-white/20">
-                                    <div class="w-16 h-16 rounded-full mx-auto mb-3 overflow-hidden border-2 border-white/40">
-                                        <img src="images/profiles/man-profile1.jpg?v=1" alt="Alex" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="text-white font-bold text-base mb-1">Alex</div>
-                                    <div class="text-white/80 text-xs">
-                                        You both flicked each other
+                                <!-- Profile Photo -->
+                                <div class="relative mb-6">
+                                    <div class="absolute inset-0 bg-white/20 rounded-full blur-2xl animate-pulse"></div>
+                                    <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white/30">
+                                        <img src="images/profiles/man-profile1.jpg?v=1" alt="Alex" style="width: 100%; height: 100%; object-fit: cover;">
                                     </div>
                                 </div>
 
+                                <!-- Matched User Info -->
+                                <div class="bg-white/10 backdrop-blur rounded-2xl p-6 mb-6 w-full">
+                                    <div class="text-xl font-bold text-white mb-1">Alex</div>
+                                    <div class="text-sm text-white/80">You both flicked each other</div>
+                                </div>
+
                                 <!-- Action Buttons -->
-                                <div class="space-y-2.5 w-full">
-                                    <button class="w-full bg-white text-black font-bold py-3.5 rounded-2xl text-sm">
-                                        💬 Start Chat
+                                <div class="space-y-3 w-full">
+                                    <button class="w-full bg-white text-black font-bold py-4 rounded-xl text-lg">
+                                        Start Chat 💬
                                     </button>
-                                    <button class="w-full bg-white/10 backdrop-blur border border-white/20 text-white font-semibold py-3 rounded-2xl text-sm">
-                                        Back to Radar
+                                    <button class="w-full border-2 border-white/30 text-white font-bold py-4 rounded-xl text-lg">
+                                        Back to Browse
                                     </button>
                                 </div>
                             </div>
