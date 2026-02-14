@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flick for Bars & Nightlife - Turn a Look into Hello</title>
+    <meta name="description" content="Built for high-density bars and rooftop venues. Break social circles and create unforgettable nights where strangers become connections.">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="flick for Bars & Nightlife - Turn a Look into Hello">
+    <meta property="og:description" content="Built for high-density bars and rooftop venues. Break social circles and create unforgettable nights.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://helloflick.com/bars">
+    <meta property="og:image" content="https://helloflick.com/images/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="flick for Bars & Nightlife - Turn a Look into Hello">
+    <meta name="twitter:description" content="Built for high-density bars and rooftop venues. Break social circles and create unforgettable nights.">
+    <meta name="twitter:image" content="https://helloflick.com/images/logo.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'flick-pink': '#FF6B9D',
+                        'flick-dark': '#0B0F0E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top center, rgba(255, 107, 157, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(255, 107, 157, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        #000000;
+            background-attachment: fixed;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 40px rgba(255, 107, 157, 0.4);
+        }
+
+        .glow {
+            box-shadow: 0 0 60px rgba(255, 107, 157, 0.3);
+        }
+
+        /* Scroll animations */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Number counter animation */
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="text-3xl">👻</div>
+                    <span class="text-2xl font-black">flick</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="hover:text-flick-pink transition">Festivals & Sponsors</a>
+                    <a href="/weddings" class="hover:text-flick-pink transition">Weddings</a>
+                    <a href="/colleges" class="hover:text-flick-pink transition">Colleges</a>
+                    <a href="#contact" class="px-6 py-2 bg-flick-pink text-black font-bold rounded-lg btn-hover">
+                        Book a Demo
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-4">
+                <a href="/" class="block hover:text-flick-pink transition">Festivals & Sponsors</a>
+                <a href="/weddings" class="block hover:text-flick-pink transition">Weddings</a>
+                <a href="/colleges" class="block hover:text-flick-pink transition">Colleges</a>
+                <a href="#contact" class="block bg-flick-pink text-black px-6 py-2 rounded-lg font-bold text-center">Book a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6 text-center">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-black mb-6 fade-in" style="animation-delay: 0.1s;">
+                Turn a Look into Hello<br/>
+                <span class="text-flick-pink">At Your Bar</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto fade-in" style="animation-delay: 0.2s;">
+                Built for high-density bars & rooftop venues. Break social circles and turn crowded nights into unforgettable connections.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in" style="animation-delay: 0.3s;">
+                <a href="#contact" class="px-8 py-4 bg-flick-pink text-black font-bold rounded-xl text-lg btn-hover">
+                    Book a Demo
+                </a>
+                <a href="tel:+12019212947" class="px-8 py-4 border-2 border-white/20 font-bold rounded-xl text-lg btn-hover hover:border-flick-pink">
+                    📞 +1 (201) 921-2947
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Client Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-black mb-8 text-center scroll-fade">
+                The Client — <span class="text-flick-pink">Venues That Create Social Energy</span>
+            </h2>
+            <p class="text-xl text-gray-300 mb-12 text-center max-w-3xl mx-auto scroll-fade">
+                flick is built for operators running high-density nightlife environments where people come specifically to socialize:
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6 scroll-fade">
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <div class="text-4xl mb-4">🍸</div>
+                    <h3 class="text-xl font-bold mb-2">High-Volume Bars</h3>
+                    <p class="text-gray-400">Packed venues where strangers rarely connect</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <div class="text-4xl mb-4">🌆</div>
+                    <h3 class="text-xl font-bold mb-2">Rooftop Venues</h3>
+                    <p class="text-gray-400">Social hotspots with energy but closed circles</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <div class="text-4xl mb-4">🎵</div>
+                    <h3 class="text-xl font-bold mb-2">Nightlife Districts</h3>
+                    <p class="text-gray-400">DJ nights, themed events, celebration bookings</p>
+                </div>
+            </div>
+
+            <p class="text-xl text-gray-400 mt-12 text-center max-w-3xl mx-auto scroll-fade">
+                These spaces already have <span class="text-flick-pink font-bold">attention, music, and energy</span> — but strangers rarely cross social circles.
+            </p>
+        </div>
+    </section>
+
+    <!-- The Problem Section -->
+    <section class="py-20 px-6 bg-black/20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-black mb-8 scroll-fade">
+                The Problem — <span class="text-flick-pink">Crowded Rooms, Closed Social Circles</span>
+            </h2>
+            <p class="text-2xl md:text-3xl font-black scroll-fade">
+                Even with heavy use of dating apps like <span class="text-flick-pink">Tinder and Bumble,</span> people inside the same venue often:
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6 mt-12 scroll-fade">
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-flick-pink/20">
+                    <div class="text-5xl mb-4">👥</div>
+                    <p class="text-lg font-semibold">Stay inside their friend group</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-flick-pink/20">
+                    <div class="text-5xl mb-4">🚫</div>
+                    <p class="text-lg font-semibold">Avoid approaching strangers</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-flick-pink/20">
+                    <div class="text-5xl mb-4">📱</div>
+                    <p class="text-lg font-semibold">Default back to their phone</p>
+                </div>
+            </div>
+
+            <div class="mt-16 p-8 bg-flick-pink/10 border-2 border-flick-pink/30 rounded-2xl scroll-fade">
+                <p class="text-xl font-bold mb-4">For venues, this means:</p>
+                <ul class="text-lg text-gray-300 space-y-3">
+                    <li>❌ Energy doesn't fully convert into interaction</li>
+                    <li>❌ Guests don't always form memorable experiences</li>
+                    <li>❌ Hard to measure real engagement vs just attendance</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-black mb-16 text-center scroll-fade">
+                How It Works — <span class="text-flick-pink">Break the Ice in Real Time</span>
+            </h2>
+
+            <div class="space-y-12">
+                <!-- Step 1 -->
+                <div class="flex flex-col md:flex-row gap-8 items-center scroll-fade">
+                    <div class="flex-shrink-0 w-20 h-20 bg-flick-pink rounded-full flex items-center justify-center text-3xl font-black text-black">
+                        1
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold mb-4">Display Your Unique QR Code</h3>
+                        <p class="text-gray-400 text-lg">
+                            Print QR codes on coasters, bathroom mirrors, bar tops, or digital screens. Guests scan to enter your venue's private dating pool.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex flex-col md:flex-row gap-8 items-center scroll-fade">
+                    <div class="flex-shrink-0 w-20 h-20 bg-flick-pink rounded-full flex items-center justify-center text-3xl font-black text-black">
+                        2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold mb-4">Guests Browse & "Flick"</h3>
+                        <p class="text-gray-400 text-lg">
+                            See only people in the same venue right now. Send a "flick" (visible interest signal) to someone across the room.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex flex-col md:flex-row gap-8 items-center scroll-fade">
+                    <div class="flex-shrink-0 w-20 h-20 bg-flick-pink rounded-full flex items-center justify-center text-3xl font-black text-black">
+                        3
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold mb-4">Instant Green Light = Real Connection</h3>
+                        <p class="text-gray-400 text-lg">
+                            Mutual interest triggers a "Green Light" — both users get notified, chat, and meet face-to-face. Your venue becomes the story.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="py-20 px-6 bg-black/20">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-black mb-16 scroll-fade">
+                What You Get — <span class="text-flick-pink">Measurable Social Energy</span>
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-8 scroll-fade">
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-10 border border-white/10">
+                    <div class="text-5xl font-black text-flick-pink mb-4 stat-number">87%</div>
+                    <p class="text-lg font-semibold mb-2">More Social Interaction</p>
+                    <p class="text-sm text-gray-400">Guests engage with strangers, not just their phones</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-10 border border-white/10">
+                    <div class="text-5xl font-black text-flick-pink mb-4 stat-number">2.5x</div>
+                    <p class="text-lg font-semibold mb-2">Return Visits</p>
+                    <p class="text-sm text-gray-400">People come back for the social experience</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-10 border border-white/10">
+                    <div class="text-5xl font-black text-flick-pink mb-4">📊</div>
+                    <p class="text-lg font-semibold mb-2">Real-Time Analytics</p>
+                    <p class="text-sm text-gray-400">Track active users, matches, peak hours</p>
+                </div>
+            </div>
+
+            <div class="mt-16 p-10 bg-flick-pink/10 border-2 border-flick-pink rounded-2xl scroll-fade">
+                <p class="text-2xl font-black mb-6">Your venue becomes known for:</p>
+                <div class="grid md:grid-cols-2 gap-4 text-lg">
+                    <p class="flex items-center justify-center gap-2">✨ Memorable nights</p>
+                    <p class="flex items-center justify-center gap-2">💑 Real connections</p>
+                    <p class="flex items-center justify-center gap-2">🔥 High social energy</p>
+                    <p class="flex items-center justify-center gap-2">📈 Repeat customers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perfect For Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-black mb-16 text-center scroll-fade">
+                Perfect For
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-8 scroll-fade">
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold mb-4 text-flick-pink">🍹 Bar & Club Owners</h3>
+                    <p class="text-gray-400">
+                        Transform crowded nights into connection moments. Create buzz and loyalty with guests who meet at your venue.
+                    </p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold mb-4 text-flick-pink">🌇 Rooftop Venues</h3>
+                    <p class="text-gray-400">
+                        Turn stunning views into memorable meetings. Your space becomes where relationships begin.
+                    </p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold mb-4 text-flick-pink">🎉 Event Promoters</h3>
+                    <p class="text-gray-400">
+                        Add a social layer to themed nights and DJ events. Make your parties legendary.
+                    </p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold mb-4 text-flick-pink">🏙️ Nightlife Districts</h3>
+                    <p class="text-gray-400">
+                        Coordinate across multiple venues. Create a connected social experience across the district.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA Section -->
+    <section id="contact" class="py-32 px-6 bg-gradient-to-b from-black to-flick-pink/20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-6xl font-black mb-8 scroll-fade">
+                Ready to Transform Your Venue?
+            </h2>
+            <p class="text-xl text-gray-300 mb-12 scroll-fade">
+                Book a demo and see how flick creates unforgettable social experiences at your bar.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center scroll-fade">
+                <a href="https://mail.google.com/mail/?view=cm&to=info@helloflick.com&su=Bar%20Partnership%20Inquiry" target="_blank" rel="noopener noreferrer" class="px-10 py-5 bg-flick-pink text-black font-bold rounded-xl text-xl btn-hover">
+                    📧 Email Us
+                </a>
+                <a href="tel:+12019212947" class="px-10 py-5 border-2 border-white/20 font-bold rounded-xl text-xl btn-hover hover:border-flick-pink">
+                    📞 +1 (201) 921-2947
+                </a>
+            </div>
+            <p class="mt-8 text-gray-400">Or email us at <a href="https://mail.google.com/mail/?view=cm&to=info@helloflick.com" target="_blank" rel="noopener noreferrer" class="text-flick-pink hover:underline">info@helloflick.com</a></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="text-3xl">👻</div>
+                    <div>
+                        <div class="text-2xl font-black">flick</div>
+                        <div class="text-sm text-gray-500">Turn a look into hello</div>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="flex flex-wrap justify-center gap-8">
+                    <a href="/" class="text-gray-400 hover:text-flick-pink transition">Festivals</a>
+                    <a href="/weddings" class="text-gray-400 hover:text-flick-pink transition">Weddings</a>
+                    <a href="/colleges" class="text-gray-400 hover:text-flick-pink transition">Colleges</a>
+                    <a href="/bars" class="text-gray-400 hover:text-flick-pink transition">Bars</a>
+                </div>
+
+                <!-- Social -->
+                <div class="flex gap-6">
+                    <a href="https://www.instagram.com/joinflick/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-flick-pink transition text-2xl">📷</a>
+                    <a href="https://x.com/MichaelLevinger" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-flick-pink transition text-2xl">𝕏</a>
+                    <a href="https://www.linkedin.com/in/michael-levinger/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-flick-pink transition text-2xl">💼</a>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-white/10 text-center text-gray-500 text-sm">
+                © 2026 flick. Turn a look into hello.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
