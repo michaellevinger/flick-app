@@ -49,7 +49,7 @@ export default function DashboardScreen({ navigation }) {
 
   useEffect(() => {
     if (!user) {
-      navigation.replace('Camera');
+      navigation.replace('QRScanner');
       return;
     }
 

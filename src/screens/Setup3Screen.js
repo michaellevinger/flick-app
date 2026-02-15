@@ -10,6 +10,10 @@ import {
   StatusBar,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
@@ -29,6 +33,13 @@ export default function Setup3Screen({ route, navigation }) {
 
     try {
       const festivalId = await AsyncStorage.getItem('festivalId');
+
+      // If no festival ID, redirect to QR Scanner
+      if (!festivalId) {
+        Alert.alert('Error', 'Please scan a festival QR code first.');
+        navigation.replace('QRScanner');
+        return;
+      }
 
       await createUser({
         name,
@@ -53,68 +64,79 @@ export default function Setup3Screen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {/* Progress */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressDot} />
-          <View style={styles.progressDot} />
-          <View style={[styles.progressDot, styles.progressDotActive]} />
-        </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Progress */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressDot} />
+              <View style={styles.progressDot} />
+              <View style={[styles.progressDot, styles.progressDotActive]} />
+            </View>
 
-        <Text style={styles.title}>About you</Text>
-        <Text style={styles.subtitle}>Optional but helps you stand out!</Text>
+            <Text style={styles.title}>About you</Text>
+            <Text style={styles.subtitle}>Optional but helps you stand out!</Text>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Bio</Text>
-          <TextInput
-            style={styles.bioInput}
-            value={bio}
-            onChangeText={setBio}
-            placeholder="Tell others something interesting about yourself..."
-            placeholderTextColor="#999"
-            multiline
-            maxLength={150}
-            textAlignVertical="top"
-          />
-          <Text style={styles.charCount}>{bio.length}/150</Text>
-        </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Bio</Text>
+              <TextInput
+                style={styles.bioInput}
+                value={bio}
+                onChangeText={setBio}
+                placeholder="Tell others something interesting about yourself..."
+                placeholderTextColor="#999"
+                multiline
+                maxLength={150}
+                textAlignVertical="top"
+              />
+              <Text style={styles.charCount}>{bio.length}/150</Text>
+            </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Phone Number</Text>
-          <Text style={styles.helperText}>For sharing after you match</Text>
-          <TextInput
-            style={styles.input}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            placeholder="(555) 123-4567"
-            placeholderTextColor="#999"
-            keyboardType="phone-pad"
-            maxLength={20}
-          />
-        </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Phone Number</Text>
+              <Text style={styles.helperText}>For sharing after you match</Text>
+              <TextInput
+                style={styles.input}
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                placeholder="(555) 123-4567"
+                placeholderTextColor="#999"
+                keyboardType="phone-pad"
+                maxLength={20}
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+              />
+            </View>
 
-        <View style={styles.spacer} />
+            <TouchableOpacity
+              style={[styles.button, isCreating && styles.buttonDisabled]}
+              onPress={handleFinish}
+              disabled={isCreating}
+            >
+              {isCreating ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.buttonText}>Let's Go!</Text>
+              )}
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, isCreating && styles.buttonDisabled]}
-          onPress={handleFinish}
-          disabled={isCreating}
-        >
-          {isCreating ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text style={styles.buttonText}>Let's Go!</Text>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.skipButton}
-          onPress={handleFinish}
-          disabled={isCreating}
-        >
-          <Text style={styles.skipButtonText}>Skip for now</Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              style={styles.skipButton}
+              onPress={handleFinish}
+              disabled={isCreating}
+            >
+              <Text style={styles.skipButtonText}>Skip for now</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -125,10 +147,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  content: {
+  keyboardView: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 24,
     paddingTop: 20,
+    paddingBottom: 40,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -196,10 +224,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     color: '#000000',
   },
-  spacer: {
-    flex: 1,
-  },
   button: {
+    marginTop: 32,
     backgroundColor: COLORS.green,
     paddingVertical: 16,
     borderRadius: 12,
