@@ -27,6 +27,12 @@ export default function QRScannerScreen({ navigation, route }) {
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
           <Text style={styles.buttonText}>Grant Camera Access</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.skipButtonAlt}
+          onPress={() => handleBarCodeScanned({ data: 'coachella2024' })}
+        >
+          <Text style={styles.skipTextAlt}>Skip - Join Test Festival</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -256,6 +262,15 @@ const styles = StyleSheet.create({
   skipText: {
     ...TYPOGRAPHY.caption,
     color: COLORS.white,
+  },
+  skipButtonAlt: {
+    marginTop: SPACING.lg,
+    paddingVertical: SPACING.md,
+  },
+  skipTextAlt: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.green,
+    textDecorationLine: 'underline',
   },
   loadingOverlay: {
     position: 'absolute',

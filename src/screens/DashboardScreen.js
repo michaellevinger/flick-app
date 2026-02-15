@@ -2,20 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  Switch,
   StyleSheet,
-  ScrollView,
   Image,
   TouchableOpacity,
   Alert,
   RefreshControl,
-  Animated,
   Modal,
-  ActionSheet,
+  FlatList,
+  Dimensions,
+  SafeAreaView,
+  Platform,
+  StatusBar,
 } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
-import { COLORS, SPACING, TYPOGRAPHY, PROXIMITY_RADIUS } from '../constants/theme';
+import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 import { findNearbyUsers, subscribeToNearbyUsers, uploadSelfie, deleteSelfie, getCurrentFestival, findUsersInFestival } from '../lib/database';
 import { requestLocationPermission, formatDistance } from '../lib/location';
@@ -29,6 +29,11 @@ import {
   deleteFlick,
 } from '../lib/flicks';
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const GRID_PADDING = 16;
+const CARD_GAP = 8;
+const CARD_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (CARD_GAP * 2)) / 3;
+
 export default function DashboardScreen({ navigation }) {
   const { user, toggleStatus, updateLocation, updateSelfie, logout } = useUser();
   const [nearbyUsers, setNearbyUsers] = useState([]);
@@ -38,6 +43,7 @@ export default function DashboardScreen({ navigation }) {
   const [hiddenUsers, setHiddenUsers] = useState(new Set());
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentFestival, setCurrentFestival] = useState(null);
+  const [countdown, setCountdown] = useState('');
   const subscriptionRef = useRef(null);
   const flickSubscriptionRef = useRef(null);
 
@@ -72,12 +78,42 @@ export default function DashboardScreen({ navigation }) {
     }
   }, [user?.status, user?.location]);
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (!currentFestival?.ends_at) {
+      setCountdown('');
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const end = new Date(currentFestival.ends_at);
+      const diff = end - now;
+
+      if (diff <= 0) {
+        setCountdown('Event ended');
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setCountdown(`${hours}h:${minutes.toString().padStart(2, '0')}m:${seconds.toString().padStart(2, '0')}s`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentFestival?.ends_at]);
+
   const initializeLocation = async () => {
     const hasPermission = await requestLocationPermission();
     if (!hasPermission) {
       Alert.alert(
         'Location Required',
-        'SPOT needs your location to show you people nearby. Please enable location access in settings.'
+        'flick needs your location to show you people nearby. Please enable location access in settings.'
       );
     }
   };
@@ -86,7 +122,6 @@ export default function DashboardScreen({ navigation }) {
     if (!user) return;
 
     subscriptionRef.current = subscribeToNearbyUsers(user.id, () => {
-      // Reload nearby users when database changes
       if (user.status && user.location) {
         loadNearbyUsers();
       }
@@ -97,14 +132,11 @@ export default function DashboardScreen({ navigation }) {
     if (!user) return;
 
     flickSubscriptionRef.current = subscribeToFlicks(user.id, async (flick) => {
-      // Someone flicked us! Reload received flicks to update UI
       await loadFlicksReceived();
 
-      // Check if it's a mutual match
       const isMutual = await checkMutualMatch(user.id, flick.from_user_id);
 
       if (isMutual) {
-        // It's a match! Navigate to Green Light screen
         const matchedUser = await getMatchedUserInfo(flick.from_user_id);
         navigation.navigate('GreenLight', { matchedUser });
       }
@@ -147,7 +179,6 @@ export default function DashboardScreen({ navigation }) {
   };
 
   const loadNearbyUsers = async () => {
-    // Check if user has joined a festival
     if (!user?.festival_id) {
       console.log('User has not joined a festival yet');
       setNearbyUsers([]);
@@ -156,8 +187,6 @@ export default function DashboardScreen({ navigation }) {
 
     try {
       const users = await findUsersInFestival(user.festival_id, user.id);
-
-      // Extra safety filter: ensure current user is never in the list
       const filteredUsers = users.filter(u => u.id !== user.id);
 
       console.log('Current user ID:', user.id);
@@ -167,14 +196,6 @@ export default function DashboardScreen({ navigation }) {
       setNearbyUsers(filteredUsers);
     } catch (error) {
       console.error('Error loading festival users:', error);
-    }
-  };
-
-  const handleToggleAvailability = async (value) => {
-    try {
-      await toggleStatus(value);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update your status. Please try again.');
     }
   };
 
@@ -197,16 +218,13 @@ export default function DashboardScreen({ navigation }) {
     const iFlickdThem = flickedUsers.has(targetUser.id);
     const theyFlickdMe = usersWhoFlickedMe.has(targetUser.id);
 
-    // Check if user can initiate first flick based on gender rules
-    // Males looking for females cannot initiate first flick
     const canInitiateFlick = !(
       user.gender === 'male' &&
       user.lookingFor === 'female' &&
       targetUser.gender === 'female' &&
-      !theyFlickdMe // Unless they already flicked us
+      !theyFlickdMe
     );
 
-    // If can't initiate and they haven't flicked us, show alert
     if (!canInitiateFlick && !iFlickdThem) {
       Alert.alert(
         'Cannot Initiate',
@@ -215,11 +233,9 @@ export default function DashboardScreen({ navigation }) {
       return;
     }
 
-    // If already flicked, allow unflick
     if (iFlickdThem) {
       try {
         await deleteFlick(user.id, targetUser.id);
-        // Update local state to remove the flick
         setFlickdUsers((prev) => {
           const newSet = new Set(prev);
           newSet.delete(targetUser.id);
@@ -233,7 +249,6 @@ export default function DashboardScreen({ navigation }) {
     }
 
     try {
-      // Send the flick
       const result = await sendFlick(user.id, targetUser.id);
 
       if (result.alreadyFlicked) {
@@ -241,23 +256,18 @@ export default function DashboardScreen({ navigation }) {
         return;
       }
 
-      // Update local state
       setFlickdUsers((prev) => new Set([...prev, targetUser.id]));
 
-      // If they already flicked us, this is an instant match!
       if (theyFlickdMe) {
         const matchedUser = await getMatchedUserInfo(targetUser.id);
         navigation.navigate('GreenLight', { matchedUser });
       } else {
-        // Check if it's a mutual match (in case of race condition)
         const isMutual = await checkMutualMatch(user.id, targetUser.id);
 
         if (isMutual) {
-          // It's a match! Navigate to Green Light screen
           const matchedUser = await getMatchedUserInfo(targetUser.id);
           navigation.navigate('GreenLight', { matchedUser });
         }
-        // No alert for one-way flick - just silent action
       }
     } catch (error) {
       console.error('Error sending flick:', error);
@@ -265,42 +275,16 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const handleHideUser = (userId) => {
-    setHiddenUsers((prev) => new Set([...prev, userId]));
-  };
-
-  const renderRightActions = (userId, progress, dragX) => {
-    const opacity = dragX.interpolate({
-      inputRange: [-80, -40, 0],
-      outputRange: [1, 0.5, 0],
-      extrapolate: 'clamp',
-    });
-
-    return (
-      <Animated.View style={{ opacity }}>
-        <TouchableOpacity
-          style={styles.hideButton}
-          onPress={() => handleHideUser(userId)}
-        >
-          <Text style={styles.hideButtonText}>Hide</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
-
-  const handleChangePhoto = () => {
-    Alert.alert('Profile Photo', 'Choose an option', [
+  const handleProfilePress = () => {
+    Alert.alert('Profile', 'Choose an option', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'View Photo',
-        onPress: () => {
-          setSelectedPhoto(user.selfieUrl);
-        },
+        onPress: () => setSelectedPhoto(user.selfieUrl),
       },
       {
         text: 'Take New Selfie',
         onPress: () => {
-          // Navigate to camera to take new selfie (without logging out)
           navigation.navigate('Camera', {
             updatePhoto: true,
             forceReset: Date.now()
@@ -308,270 +292,157 @@ export default function DashboardScreen({ navigation }) {
         },
       },
       {
-        text: 'Choose from Gallery',
-        onPress: async () => {
-          try {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-              Alert.alert('Permission Required', 'We need camera roll permissions to select photos.');
-              return;
-            }
-
-            const result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ['images'],
-              allowsEditing: false,
-              quality: 0.7,
-            });
-
-            if (!result.canceled && result.assets && result.assets.length > 0) {
-              const newPhotoUri = result.assets[0].uri;
-
-              // Delete old selfie from storage
-              if (user.selfieUrl) {
-                await deleteSelfie(user.selfieUrl);
-              }
-
-              // Upload new selfie
-              const newSelfieUrl = await uploadSelfie(user.id, newPhotoUri);
-
-              // Update user using context
-              await updateSelfie(newSelfieUrl);
-
-              Alert.alert('Success', 'Profile photo updated!');
-            }
-          } catch (error) {
-            console.error('Error updating photo:', error);
-            Alert.alert('Error', 'Failed to update photo. Please try again.');
-          }
-        },
+        text: 'Sign Out',
+        style: 'destructive',
+        onPress: handleLogout,
       },
     ]);
   };
 
-  const handleLogout = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Sign Out',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            // Logout first (always succeeds now)
-            await logout();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'QRScanner' }],
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'QRScanner' }],
+      });
+    }
+  };
 
-            // Then navigate to QR scanner for fresh start
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'QRScanner' }],
-            });
-          } catch (error) {
-            console.error('Error during logout:', error);
-            // Even if there's an error, logout already cleared local state
-            // So still navigate away
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'QRScanner' }],
-            });
-          }
-        },
-      },
-    ]);
+  const handleFilterPress = () => {
+    Alert.alert('Filters', 'Filter options coming soon!');
+  };
+
+  const renderUserCard = ({ item: nearbyUser }) => {
+    const theyFlickdMe = usersWhoFlickedMe.has(nearbyUser.id);
+    const iFlickdThem = flickedUsers.has(nearbyUser.id);
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.gridCard,
+          theyFlickdMe && styles.gridCardInterested,
+        ]}
+        onPress={() => handleFlick(nearbyUser)}
+        onLongPress={() => setSelectedPhoto(nearbyUser.selfie_url)}
+        activeOpacity={0.8}
+      >
+        {nearbyUser.selfie_url ? (
+          <Image
+            source={{ uri: nearbyUser.selfie_url }}
+            style={styles.gridPhoto}
+          />
+        ) : (
+          <View style={styles.gridPhotoPlaceholder}>
+            <Text style={styles.placeholderText}>?</Text>
+          </View>
+        )}
+
+        {/* Gradient overlay for name visibility */}
+        <View style={styles.nameOverlay}>
+          <Text style={styles.gridName} numberOfLines={1}>
+            {nearbyUser.name}
+          </Text>
+        </View>
+
+        {/* Flicked indicator */}
+        {iFlickdThem && (
+          <View style={styles.flickedBadge}>
+            <Text style={styles.flickedBadgeText}>✓</Text>
+          </View>
+        )}
+
+        {/* They flicked me indicator */}
+        {theyFlickdMe && !iFlickdThem && (
+          <View style={styles.interestedBadge}>
+            <Text style={styles.interestedBadgeText}>♥</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    );
   };
 
   if (!user) {
     return null;
   }
 
+  const visibleUsers = nearbyUsers.filter((u) => !hiddenUsers.has(u.id));
+
   return (
-    <View style={[styles.container, !user.status && styles.containerOff]}>
-      {/* User Profile Header */}
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleChangePhoto}>
-          <Image source={{ uri: user.selfieUrl }} style={styles.profilePhoto} />
-        </TouchableOpacity>
-        <Text style={styles.name}>
-          {user.name}, {user.age}
-        </Text>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Text style={styles.logoutText}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Availability Toggle */}
-      <View style={styles.toggleSection}>
-        <View style={styles.toggleLabelContainer}>
-          <Text style={styles.toggleLabel}>Available</Text>
-          <Text style={styles.toggleStatus}>{user.status ? 'ON' : 'OFF'}</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.logo}>♥ flick</Text>
         </View>
-        <Switch
-          value={Boolean(user.status)}
-          onValueChange={handleToggleAvailability}
-          trackColor={{ false: COLORS.gray, true: COLORS.green }}
-          thumbColor={COLORS.white}
-          ios_backgroundColor={COLORS.gray}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileTab')}>
+          <Image source={{ uri: user.selfieUrl }} style={styles.headerAvatar} />
+        </TouchableOpacity>
       </View>
 
-      {/* Festival Banner */}
-      <View style={styles.festivalBanner}>
-        {currentFestival ? (
-          <View style={styles.festivalInfo}>
-            <Text style={styles.festivalName}>{currentFestival.name}</Text>
-            {currentFestival.sponsor_name && (
-              <Text style={styles.sponsorBadge}>
-                Sponsored by {currentFestival.sponsor_name}
-              </Text>
-            )}
+      {/* Title Section */}
+      <View style={styles.titleSection}>
+        <View style={styles.titleLeft}>
+          <Text style={styles.title}>
+            {currentFestival ? `Singles at ${currentFestival.name}` : 'Discover'}
+          </Text>
+          {countdown ? (
+            <Text style={styles.subtitle}>Everything expires in {countdown}</Text>
+          ) : (
+            <Text style={styles.subtitle}>{visibleUsers.length} people nearby</Text>
+          )}
+        </View>
+        <TouchableOpacity style={styles.filterButton} onPress={handleFilterPress}>
+          <Text style={styles.filterIcon}>⚙</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Grid */}
+      <FlatList
+        data={visibleUsers}
+        renderItem={renderUserCard}
+        keyExtractor={(item) => item.id}
+        numColumns={3}
+        contentContainerStyle={styles.gridContainer}
+        columnWrapperStyle={styles.gridRow}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={COLORS.green}
+          />
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateEmoji}>👀</Text>
+            <Text style={styles.emptyStateText}>No one here yet</Text>
+            <Text style={styles.emptyStateSubtext}>Pull down to refresh</Text>
           </View>
-        ) : (
-          <Text style={styles.noFestivalText}>No festival joined</Text>
-        )}
+        }
+      />
+
+      {/* Bottom Tab Bar */}
+      <View style={styles.tabBar}>
+        <TouchableOpacity style={styles.tabItem}>
+          <Text style={styles.tabIconActive}>👥</Text>
+          <Text style={styles.tabLabelActive}>Discover</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('MatchesTab')}>
+          <Text style={styles.tabIcon}>💬</Text>
+          <Text style={styles.tabLabel}>Matches</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('ProfileTab')}>
+          <Text style={styles.tabIcon}>👤</Text>
+          <Text style={styles.tabLabel}>Profile</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Status Message */}
-      <View style={styles.statusMessage}>
-        {user.status ? (
-          <>
-            <View style={styles.pulseIndicator} />
-            <Text style={styles.statusText}>
-              {currentFestival ? `Visible to others at ${currentFestival.name}` : 'Join a festival to start flicking'}
-            </Text>
-          </>
-        ) : (
-          <Text style={styles.statusTextOff}>You're invisible</Text>
-        )}
-      </View>
-
-      {/* Radar Feed */}
-      {user.status && (
-        <>
-          <View style={styles.radarHeader}>
-            <Text style={styles.radarTitle}>Nearby</Text>
-            <Text style={styles.radarCount}>
-              {nearbyUsers.length}{' '}
-              {nearbyUsers.length === 1 ? 'person' : 'people'}
-            </Text>
-          </View>
-
-          <ScrollView
-            style={styles.radarFeed}
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={handleRefresh}
-                tintColor={COLORS.green}
-              />
-            }
-          >
-            {nearbyUsers.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>
-                  No one nearby yet
-                </Text>
-                <Text style={styles.emptyStateSubtext}>
-                  Pull down to refresh
-                </Text>
-              </View>
-            ) : (
-              nearbyUsers
-                .filter((u) => !hiddenUsers.has(u.id))
-                .map((nearbyUser) => {
-                  const theyFlickdMe = usersWhoFlickedMe.has(nearbyUser.id);
-                  const iFlickdThem = flickedUsers.has(nearbyUser.id);
-
-                  // Check if user can initiate flick (males looking for females cannot)
-                  const canInitiate = !(
-                    user.gender === 'male' &&
-                    user.lookingFor === 'female' &&
-                    nearbyUser.gender === 'female' &&
-                    !theyFlickdMe
-                  );
-
-                  return (
-                    <Swipeable
-                      key={nearbyUser.id}
-                      renderRightActions={(progress, dragX) => renderRightActions(nearbyUser.id, progress, dragX)}
-                      overshootRight={false}
-                      friction={2}
-                      rightThreshold={40}
-                    >
-                      <View
-                        style={[
-                          styles.userCard,
-                          theyFlickdMe && styles.userCardInterested,
-                        ]}
-                      >
-                    <View style={styles.userInfo}>
-                      {nearbyUser.selfie_url ? (
-                        <TouchableOpacity onPress={() => setSelectedPhoto(nearbyUser.selfie_url)}>
-                          <Image
-                            source={{ uri: nearbyUser.selfie_url }}
-                            style={[
-                              styles.userPhoto,
-                              theyFlickdMe && styles.userPhotoInterested,
-                            ]}
-                          />
-                        </TouchableOpacity>
-                      ) : (
-                        <View
-                          style={[
-                            styles.userPhotoPlaceholder,
-                            theyFlickdMe && styles.userPhotoInterestedPlaceholder,
-                          ]}
-                        >
-                          <Text style={styles.userInitial}>?</Text>
-                        </View>
-                      )}
-                      <View style={styles.userDetails}>
-                        <View style={styles.userNameRow}>
-                          <Text style={styles.userName}>
-                            {nearbyUser.age} years old{nearbyUser.height ? ` • ${nearbyUser.height}cm` : ''}
-                          </Text>
-                        </View>
-                        {theyFlickdMe ? (
-                          <Text style={styles.interestedLabel}>
-                            Wants to meet
-                          </Text>
-                        ) : (
-                          <Text style={styles.userDistance}>
-                            {formatDistance(nearbyUser.distance_meters)} away
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                    <TouchableOpacity
-                      style={[
-                        styles.flickButton,
-                        theyFlickdMe && styles.flickButtonInterested,
-                        iFlickdThem && styles.flickButtonDisabled,
-                        !canInitiate && !iFlickdThem && styles.flickButtonDisabled,
-                      ]}
-                      onPress={() => handleFlick(nearbyUser)}
-                      disabled={!canInitiate && !iFlickdThem && !theyFlickdMe}
-                    >
-                      <Text
-                        style={[
-                          styles.flickButtonText,
-                          (iFlickdThem || (!canInitiate && !theyFlickdMe)) && styles.flickButtonTextDisabled,
-                        ]}
-                      >
-                        {iFlickdThem
-                          ? 'FLICKED ✓'
-                          : theyFlickdMe
-                          ? 'FLICK BACK'
-                          : !canInitiate
-                          ? 'WAIT'
-                          : 'FLICK'}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </Swipeable>
-              );
-            })
-            )}
-          </ScrollView>
-        </>
-      )}
 
       {/* Full-Screen Photo Modal */}
       <Modal
@@ -592,262 +463,210 @@ export default function DashboardScreen({ navigation }) {
           />
         </TouchableOpacity>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
-    paddingTop: SPACING.xxl,
-  },
-  containerOff: {
-    backgroundColor: COLORS.grayLight,
+    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SPACING.xl,
+    paddingHorizontal: GRID_PADDING,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
-  profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logo: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: COLORS.green,
+  },
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: COLORS.green,
+  },
+  titleSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: GRID_PADDING,
+    paddingBottom: 12,
+  },
+  titleLeft: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 2,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#888888',
+  },
+  filterButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterIcon: {
+    fontSize: 16,
+  },
+  gridContainer: {
+    paddingHorizontal: GRID_PADDING,
+    paddingBottom: 80,
+  },
+  gridRow: {
+    justifyContent: 'flex-start',
+    gap: CARD_GAP,
+    marginBottom: CARD_GAP,
+  },
+  gridCard: {
+    width: CARD_WIDTH,
+    height: CARD_WIDTH * 1.3,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#F0F0F0',
+  },
+  gridCardInterested: {
     borderWidth: 3,
     borderColor: COLORS.green,
-    marginBottom: SPACING.md,
+    shadowColor: COLORS.green,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  name: {
-    ...TYPOGRAPHY.subtitle,
-    marginBottom: SPACING.sm,
+  gridPhoto: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
-  logoutButton: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-  },
-  logoutText: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.gray,
-  },
-  toggleSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.lg,
-    backgroundColor: COLORS.white,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: COLORS.black,
-  },
-  toggleLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: SPACING.md,
-  },
-  toggleLabel: {
-    ...TYPOGRAPHY.subtitle,
-  },
-  toggleStatus: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: COLORS.gray,
-  },
-  statusMessage: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  gridPhotoPlaceholder: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#CCCCCC',
     justifyContent: 'center',
-    paddingVertical: SPACING.lg,
-    gap: SPACING.sm,
-  },
-  pulseIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: COLORS.green,
-  },
-  statusText: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.black,
-  },
-  statusTextOff: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.gray,
-  },
-  festivalBanner: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    backgroundColor: COLORS.black,
-    borderBottomWidth: 1,
-    borderColor: COLORS.green,
   },
-  festivalInfo: {
-    flex: 1,
+  placeholderText: {
+    fontSize: 32,
+    color: '#888888',
   },
-  festivalName: {
-    ...TYPOGRAPHY.subtitle,
-    color: COLORS.white,
+  nameOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+  gridName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  flickedBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: COLORS.green,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  flickedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 14,
     fontWeight: 'bold',
   },
-  sponsorBadge: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.green,
-    marginTop: SPACING.xs,
-  },
-  noFestivalText: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.gray,
-  },
-  changeFestivalButton: {
-    backgroundColor: COLORS.green,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderRadius: 8,
-  },
-  changeFestivalText: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.black,
-    fontWeight: 'bold',
-  },
-  radarHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  interestedBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FF4466',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
   },
-  radarTitle: {
-    ...TYPOGRAPHY.subtitle,
-  },
-  radarCount: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.gray,
-  },
-  radarFeed: {
-    flex: 1,
+  interestedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: SPACING.xxl,
+    paddingVertical: 60,
+  },
+  emptyStateEmoji: {
+    fontSize: 48,
+    marginBottom: 16,
   },
   emptyStateText: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.gray,
-    marginBottom: SPACING.xs,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
   },
   emptyStateSubtext: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.gray,
-  },
-  userCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.grayLight,
-  },
-  userCardInterested: {
-    backgroundColor: COLORS.greenGlow,
-    borderLeftWidth: 3,
-    borderLeftColor: COLORS.green,
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
-    flex: 1,
-    marginRight: SPACING.md,
-  },
-  userPhoto: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-  },
-  userPhotoInterested: {
-    borderWidth: 3,
-    borderColor: COLORS.green,
-  },
-  userPhotoPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: COLORS.black,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  userPhotoInterestedPlaceholder: {
-    borderWidth: 3,
-    borderColor: COLORS.green,
-  },
-  userInitial: {
-    ...TYPOGRAPHY.subtitle,
-    color: COLORS.white,
-  },
-  userDetails: {
-    flex: 1,
-  },
-  userNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.xs,
-  },
-  userName: {
-    ...TYPOGRAPHY.body,
-    fontWeight: '600',
-  },
-  waveEmoji: {
-    fontSize: 16,
-  },
-  interestedLabel: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.green,
-    fontWeight: 'bold',
-  },
-  userDistance: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.gray,
-  },
-  flickButton: {
-    backgroundColor: COLORS.green,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-    borderRadius: 16,
-    minWidth: 80,
-    alignItems: 'center',
-  },
-  flickButtonInterested: {
-    backgroundColor: COLORS.green,
-  },
-  flickButtonDisabled: {
-    backgroundColor: COLORS.gray,
-  },
-  flickButtonText: {
-    fontFamily: 'Inter_900Black',
     fontSize: 14,
-    letterSpacing: 1.5,
-    color: '#0b0f0e',
+    color: '#888888',
   },
-  flickButtonTextDisabled: {
-    color: COLORS.white,
+  tabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#EEEEEE',
+    paddingBottom: Platform.OS === 'android' ? 50 : 24,
+    paddingTop: 10,
   },
-  hideButton: {
-    backgroundColor: '#FF3B30',
-    justifyContent: 'center',
+  tabItem: {
+    flex: 1,
     alignItems: 'center',
-    width: 100,
-    height: 70,
-    marginVertical: SPACING.sm,
-    borderRadius: 8,
+    justifyContent: 'center',
   },
-  hideButtonText: {
-    color: COLORS.white,
-    fontWeight: 'bold',
-    fontSize: 16,
+  tabIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+    opacity: 0.5,
+  },
+  tabIconActive: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  tabLabel: {
+    fontSize: 12,
+    color: '#888888',
+  },
+  tabLabelActive: {
+    fontSize: 12,
+    color: COLORS.green,
+    fontWeight: '600',
   },
   photoModalOverlay: {
     flex: 1,

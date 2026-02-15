@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { HEARTBEAT_INTERVAL } from '../constants/theme';
+import { supabase } from './supabase';
 import {
   upsertUser,
   updateHeartbeat,
@@ -61,7 +62,7 @@ export function UserProvider({ children }) {
     }
   };
 
-  const createUser = async ({ name, age, height, photoUri, phoneNumber, gender, lookingFor, festivalId }) => {
+  const createUser = async ({ name, age, height, photoUri, phoneNumber, gender, lookingFor, festivalId, bio }) => {
     try {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -92,6 +93,7 @@ export function UserProvider({ children }) {
         gender,
         lookingFor,
         festivalId,
+        bio,
       });
 
       // Save to local storage
@@ -107,6 +109,7 @@ export function UserProvider({ children }) {
         gender,
         lookingFor,
         festival_id: festivalId,
+        bio,
       };
 
       await saveUser(userToSave);
@@ -282,6 +285,40 @@ export function UserProvider({ children }) {
     }
   };
 
+  const refreshUser = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        const updatedUser = {
+          id: data.id,
+          name: data.name,
+          age: data.age,
+          height: data.height,
+          selfieUrl: data.selfie_url,
+          status: Boolean(data.status),
+          location: data.location,
+          phoneNumber: data.phone_number,
+          gender: data.gender,
+          lookingFor: data.looking_for,
+          festival_id: data.festival_id,
+          bio: data.bio,
+        };
+        await saveUser(updatedUser);
+      }
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -293,6 +330,7 @@ export function UserProvider({ children }) {
         updateLocation,
         updateSelfie,
         logout,
+        refreshUser,
       }}
     >
       {children}

@@ -6,14 +6,15 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
+import { uploadSelfie, deleteSelfie } from '../lib/database';
 
 export default function CameraScreen({ navigation, route }) {
   const { user, isLoading, updateSelfie } = useUser();
   const forceReset = route?.params?.forceReset;
   const updatePhoto = route?.params?.updatePhoto;
 
-  // Initialize photo state - if forceReset is present, start with null
-  const [photo, setPhoto] = useState(forceReset ? null : null);
+  // Initialize photo state
+  const [photo, setPhoto] = useState(null);
   const [key, setKey] = useState(Date.now()); // Unique key for camera remount
   const [isUpdating, setIsUpdating] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
@@ -83,7 +84,12 @@ export default function CameraScreen({ navigation, route }) {
   }
 
   const takePicture = async () => {
-    if (cameraRef.current) {
+    if (!cameraRef.current) {
+      Alert.alert('Error', 'Camera not ready. Please try again.');
+      return;
+    }
+
+    try {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 0.7,
         base64: false,
@@ -100,6 +106,13 @@ export default function CameraScreen({ navigation, route }) {
 
       hasResetRef.current = false; // Clear reset flag when taking new photo
       setPhoto(manipulatedImage);
+    } catch (error) {
+      console.error('Error taking picture:', error);
+      Alert.alert(
+        'Camera Not Available',
+        'Camera capture is not working on this device. Please use "Choose from Gallery" instead.',
+        [{ text: 'OK' }]
+      );
     }
   };
 
@@ -113,8 +126,6 @@ export default function CameraScreen({ navigation, route }) {
     if (updatePhoto && user) {
       setIsUpdating(true);
       try {
-        const { uploadSelfie, deleteSelfie } = require('../lib/database');
-
         // Delete old selfie
         if (user.selfieUrl) {
           await deleteSelfie(user.selfieUrl);
@@ -140,21 +151,26 @@ export default function CameraScreen({ navigation, route }) {
   };
 
   const pickFromGallery = async () => {
-    // Request media library permissions first
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to select photos!');
-      return;
-    }
+    try {
+      // Request media library permissions first
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'We need photo library access to select photos.');
+        return;
+      }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: false, // Skip crop screen for simpler UX
-      quality: 0.7,
-    });
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: false, // Skip crop screen for simpler UX
+        quality: 0.7,
+      });
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setPhoto({ uri: result.assets[0].uri });
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setPhoto({ uri: result.assets[0].uri });
+      }
+    } catch (error) {
+      console.error('Error picking from gallery:', error);
+      Alert.alert('Error', 'Failed to open photo library. Please try again.');
     }
   };
 

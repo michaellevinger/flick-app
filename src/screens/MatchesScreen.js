@@ -6,6 +6,10 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
+  SafeAreaView,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useMatches } from '../lib/matchesContext';
@@ -44,9 +48,10 @@ export default function MatchesScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+        <Text style={styles.logo}>♥ flick</Text>
         <Text style={styles.headerTitle}>Matches</Text>
       </View>
 
@@ -55,7 +60,10 @@ export default function MatchesScreen({ navigation }) {
         data={matches}
         renderItem={renderMatch}
         keyExtractor={(item) => item.matchId}
-        contentContainerStyle={matches.length === 0 ? styles.emptyList : null}
+        contentContainerStyle={[
+          styles.listContent,
+          matches.length === 0 && styles.emptyList,
+        ]}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -65,26 +73,49 @@ export default function MatchesScreen({ navigation }) {
           />
         }
       />
-    </View>
+
+      {/* Bottom Tab Bar */}
+      <View style={styles.tabBar}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
+          <Text style={styles.tabIcon}>👥</Text>
+          <Text style={styles.tabLabel}>Discover</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem}>
+          <Text style={styles.tabIconActive}>💬</Text>
+          <Text style={styles.tabLabelActive}>Matches</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('ProfileTab')}>
+          <Text style={styles.tabIcon}>👤</Text>
+          <Text style={styles.tabLabel}>Profile</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
-    paddingTop: 60,
-    paddingHorizontal: SPACING.lg,
-    paddingBottom: SPACING.md,
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.grayLight,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  logo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: COLORS.green,
+    marginBottom: 8,
   },
   headerTitle: {
-    ...TYPOGRAPHY.title,
-    fontSize: 28,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  listContent: {
+    paddingBottom: 80,
   },
   emptyList: {
     flex: 1,
@@ -107,5 +138,40 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.body,
     color: COLORS.gray,
     textAlign: 'center',
+  },
+  tabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#EEEEEE',
+    paddingBottom: Platform.OS === 'android' ? 50 : 24,
+    paddingTop: 10,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+    opacity: 0.5,
+  },
+  tabIconActive: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  tabLabel: {
+    fontSize: 12,
+    color: '#888888',
+  },
+  tabLabelActive: {
+    fontSize: 12,
+    color: COLORS.green,
+    fontWeight: '600',
   },
 });
