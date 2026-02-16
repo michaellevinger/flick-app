@@ -14,13 +14,14 @@ function generateFestivalId() {
  * Create a new event/festival
  * @param {Object} eventData - Event details
  * @param {string} eventData.name - Event name (required)
+ * @param {string} eventData.venue - Venue/location (required)
  * @param {Date} eventData.startDate - Event start date (required)
  * @param {Date} eventData.endDate - Event end date (required)
  * @param {string} eventData.sponsorName - Sponsor name (optional)
  * @param {string} eventData.hostUserId - Host user ID (optional, for auth tracking)
  * @returns {Promise<Object>} Created festival object with id, name, dates, etc.
  */
-export async function createEvent({ name, startDate, endDate, sponsorName, hostUserId }) {
+export async function createEvent({ name, venue, startDate, endDate, sponsorName, hostUserId }) {
   try {
     // Generate unique festival ID
     const festivalId = generateFestivalId();
@@ -31,6 +32,7 @@ export async function createEvent({ name, startDate, endDate, sponsorName, hostU
       .insert({
         id: festivalId,
         name: name.trim(),
+        venue: venue?.trim() || null,
         start_date: startDate.toISOString(),
         end_date: endDate.toISOString(),
         sponsor_name: sponsorName?.trim() || null,
@@ -48,6 +50,7 @@ export async function createEvent({ name, startDate, endDate, sponsorName, hostU
     return {
       id: data.id,
       name: data.name,
+      venue: data.venue,
       startDate: new Date(data.start_date),
       endDate: new Date(data.end_date),
       sponsorName: data.sponsor_name,
@@ -134,7 +137,7 @@ export async function getHostEvents(hostUserId) {
  * @param {Object} eventData - Event details to validate
  * @returns {Object} { isValid: boolean, errors: Object }
  */
-export function validateEventData({ name, startDate, endDate }) {
+export function validateEventData({ name, venue, startDate, endDate }) {
   const errors = {};
 
   // Name validation
@@ -144,6 +147,15 @@ export function validateEventData({ name, startDate, endDate }) {
 
   if (name && name.trim().length > 100) {
     errors.name = 'Event name must be less than 100 characters';
+  }
+
+  // Venue validation
+  if (!venue || venue.trim().length < 3) {
+    errors.venue = 'Venue must be at least 3 characters';
+  }
+
+  if (venue && venue.trim().length > 200) {
+    errors.venue = 'Venue must be less than 200 characters';
   }
 
   // Start date validation

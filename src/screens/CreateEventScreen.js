@@ -23,6 +23,7 @@ import { useUser } from '../lib/userContext';
 export default function CreateEventScreen({ navigation }) {
   const { user } = useUser();
   const [eventName, setEventName] = useState('');
+  const [venue, setVenue] = useState('');
   const [sponsorName, setSponsorName] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)); // 1 week from now
@@ -34,6 +35,7 @@ export default function CreateEventScreen({ navigation }) {
   // Validate form
   const validation = validateEventData({
     name: eventName,
+    venue,
     startDate,
     endDate,
   });
@@ -64,6 +66,7 @@ export default function CreateEventScreen({ navigation }) {
     // Validate again before submission
     const finalValidation = validateEventData({
       name: eventName,
+      venue,
       startDate,
       endDate,
     });
@@ -79,6 +82,7 @@ export default function CreateEventScreen({ navigation }) {
     try {
       const event = await createEvent({
         name: eventName,
+        venue: venue.trim(),
         startDate,
         endDate,
         sponsorName: sponsorName.trim() || null,
@@ -140,6 +144,21 @@ export default function CreateEventScreen({ navigation }) {
                     returnKeyType="next"
                   />
                   {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+                </View>
+
+                {/* Venue/Location */}
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Venue/Location *</Text>
+                  <TextInput
+                    style={[styles.input, errors.venue && styles.inputError]}
+                    value={venue}
+                    onChangeText={setVenue}
+                    placeholder="Empire Polo Club, Indio, CA"
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    maxLength={200}
+                    returnKeyType="next"
+                  />
+                  {errors.venue && <Text style={styles.errorText}>{errors.venue}</Text>}
                 </View>
 
                 {/* Start Date */}
