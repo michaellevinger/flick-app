@@ -66,7 +66,8 @@ export default function QRScannerScreen({ navigation }) {
               {
                 text: 'Create Profile',
                 onPress: () => {
-                  navigation.replace('Setup', { festivalId: data });
+                  // Navigate to new onboarding flow
+                  navigation.replace('NameScreen', { festivalId: data });
                 },
               },
             ]

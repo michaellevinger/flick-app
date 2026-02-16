@@ -15,6 +15,11 @@ import CameraScreen from './src/screens/CameraScreen';
 import Setup1Screen from './src/screens/Setup1Screen';
 import Setup2Screen from './src/screens/Setup2Screen';
 import Setup3Screen from './src/screens/Setup3Screen';
+import NameScreen from './src/screens/NameScreen';
+import BirthdayScreen from './src/screens/BirthdayScreen';
+import GenderScreen from './src/screens/GenderScreen';
+import LookingForScreen from './src/screens/LookingForScreen';
+import BioScreen from './src/screens/BioScreen';
 import PhotosScreen from './src/screens/PhotosScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import MatchesScreen from './src/screens/MatchesScreen';
@@ -114,11 +119,20 @@ export default function App() {
               {/* Onboarding Flow */}
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
               <Stack.Screen name="QRScanner" component={QRScannerScreen} />
+
+              {/* New Onboarding */}
+              <Stack.Screen name="NameScreen" component={NameScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="BirthdayScreen" component={BirthdayScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="GenderScreen" component={GenderScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="LookingForScreen" component={LookingForScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="BioScreen" component={BioScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Photos" component={PhotosScreen} options={{ headerShown: false }} />
+
+              {/* Old Onboarding (kept for backward compatibility) */}
               <Stack.Screen name="Camera" component={CameraScreen} />
               <Stack.Screen name="Setup" component={Setup1Screen} />
               <Stack.Screen name="Setup2" component={Setup2Screen} />
               <Stack.Screen name="Setup3" component={Setup3Screen} />
-              <Stack.Screen name="Photos" component={PhotosScreen} />
 
               {/* Host Event Flow */}
               <Stack.Screen name="HostOnboarding1" component={HostOnboarding1Screen} />

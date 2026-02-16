@@ -162,28 +162,26 @@ export default function PhotosScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <LinearGradient
-        colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+        colors={['#FFD166', '#FFB84D']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
           >
-            {/* Progress Dots */}
-            <View style={styles.progressContainer}>
-              <View style={styles.progressDot} />
-              <View style={styles.progressDot} />
-              <View style={[styles.progressDot, styles.progressDotActive]} />
+            {/* Progress Bar */}
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: '85%' }]} />
             </View>
 
-            <Text style={styles.title}>Add your best photos</Text>
+            <Text style={styles.title}>Add your best{'\n'}photos</Text>
             <Text style={styles.subtitle}>
-              First photo will be your main profile picture
+              Add 1-3 photos • First will be your main
             </Text>
 
             {/* Photo Grid - 3 columns */}
@@ -229,23 +227,26 @@ export default function PhotosScreen({ route, navigation }) {
               )}
             </View>
 
-            {/* Tip Text */}
-            <Text style={styles.tipText}>
-              💡 Tip: Profiles with 3 photos get better matches
-            </Text>
+            {/* Info Box */}
+            <View style={styles.infoBox}>
+              <Text style={styles.infoIcon}>💡</Text>
+              <Text style={styles.infoText}>
+                Profiles with 3 photos get 5x more matches!
+              </Text>
+            </View>
 
             <View style={styles.spacer} />
 
             {/* Finish Button */}
             <TouchableOpacity
-              style={[styles.button, (!hasMinimum || isCreating) && styles.buttonDisabled]}
+              style={[styles.nextButton, (!hasMinimum || isCreating) && styles.nextButtonDisabled]}
               onPress={handleFinish}
               disabled={!hasMinimum || isCreating}
             >
               {isCreating ? (
-                <ActivityIndicator color="#C44CE0" />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text style={styles.buttonText}>Create Profile</Text>
+                <Text style={styles.nextButtonText}>→</Text>
               )}
             </TouchableOpacity>
           </ScrollView>
@@ -273,32 +274,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 120,
   },
-  progressContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
+  progressBar: {
+    height: 4,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderRadius: 2,
     marginBottom: 40,
   },
-  progressDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  progressDotActive: {
-    backgroundColor: '#FFFFFF',
-    width: 30,
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#000000',
+    borderRadius: 2,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: '#000000',
     marginBottom: 8,
+    lineHeight: 40,
   },
   subtitle: {
     fontSize: 16,
-    color: '#FFFFFF',
-    opacity: 0.9,
+    color: '#000000',
+    opacity: 0.6,
     marginBottom: 32,
   },
   photoGrid: {
@@ -310,10 +307,10 @@ const styles = StyleSheet.create({
   photoTile: {
     width: '30%',
     aspectRatio: 1,
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   photo: {
     width: '100%',
@@ -354,11 +351,11 @@ const styles = StyleSheet.create({
   addPhotoTile: {
     width: '30%',
     aspectRatio: 1,
-    borderRadius: 16,
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: 'rgba(0,0,0,0.2)',
     borderStyle: 'dashed',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -374,7 +371,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#C44CE0',
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -384,29 +381,43 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     lineHeight: 18,
   },
-  tipText: {
+  infoBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: 12,
+    padding: 16,
+    gap: 12,
+    marginTop: 8,
+  },
+  infoIcon: {
+    fontSize: 20,
+  },
+  infoText: {
+    flex: 1,
     fontSize: 14,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    opacity: 0.9,
-    marginBottom: 16,
+    color: '#000000',
+    lineHeight: 20,
   },
   spacer: {
     height: 40,
   },
-  button: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 18,
+  nextButton: {
+    width: 60,
+    height: 60,
     borderRadius: 30,
+    backgroundColor: '#000000',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    alignSelf: 'flex-end',
+    marginBottom: 40,
   },
-  buttonDisabled: {
-    opacity: 0.5,
+  nextButtonDisabled: {
+    opacity: 0.3,
   },
-  buttonText: {
-    fontSize: 18,
-    color: '#C44CE0',
+  nextButtonText: {
+    fontSize: 28,
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
   // Camera styles
