@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { enableScreens } from 'react-native-screens';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator, Text, Platform } from 'react-native';
 
 // WORKAROUND: Disable native screens for Expo SDK 54 compatibility
 enableScreens(false);
