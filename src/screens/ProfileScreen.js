@@ -13,11 +13,13 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio } from '../lib/database';
 
 export default function ProfileScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const { user, updateSelfie, leaveEvent, logout, refreshUser } = useUser();
   const [bio, setBio] = useState(user?.bio || '');
   const [isSaving, setIsSaving] = useState(false);
@@ -222,7 +224,7 @@ export default function ProfileScreen({ navigation }) {
         </ScrollView>
 
         {/* Bottom Tab Bar */}
-        <View style={styles.tabBar}>
+        <View style={[styles.tabBar, { paddingBottom: insets.bottom + 10 }]}>
           <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
             <Text style={styles.tabIcon}>📡</Text>
             <Text style={styles.tabLabel}>Radar</Text>
@@ -425,7 +427,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#EEEEEE',
-    paddingBottom: Platform.OS === 'android' ? 16 : 24,
     paddingTop: 10,
   },
   tabItem: {
