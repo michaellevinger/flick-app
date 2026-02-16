@@ -252,6 +252,39 @@ export function UserProvider({ children }) {
     }
   };
 
+  const leaveEvent = async () => {
+    if (!user) return;
+
+    // Stop heartbeat
+    stopHeartbeat();
+
+    try {
+      // Clear festival association but keep profile
+      await AsyncStorage.removeItem('festivalId');
+
+      // Update user status to inactive
+      const updatedUser = { ...user, status: false, festivalId: null };
+      await saveUser(updatedUser);
+
+      // Delete all flicks for this user (since they're leaving the event)
+      try {
+        await deleteAllFlicksForUser(user.id);
+      } catch (error) {
+        console.warn('Failed to delete flicks:', error.message);
+      }
+
+      // Update user status in database
+      try {
+        await updateUserStatus(user.id, false);
+      } catch (error) {
+        console.warn('Failed to update status in database:', error.message);
+      }
+    } catch (error) {
+      console.error('Error leaving event:', error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     if (!user) return;
 
@@ -343,6 +376,7 @@ export function UserProvider({ children }) {
         toggleStatus,
         updateLocation,
         updateSelfie,
+        leaveEvent,
         logout,
         refreshUser,
       }}

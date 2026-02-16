@@ -17,7 +17,7 @@ import { validateAndJoinFestival } from '../lib/database';
 import { useUser } from '../lib/userContext';
 
 export default function QRScannerScreen({ navigation }) {
-  const { user } = useUser();
+  const { user, updateUser, toggleStatus } = useUser();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -44,7 +44,12 @@ export default function QRScannerScreen({ navigation }) {
 
         // Check if user already has a profile
         if (user) {
-          // User exists - just join the festival and go to dashboard
+          // User exists - update festival ID and activate status
+          await updateUser({ festivalId: data });
+          if (!user.status) {
+            await toggleStatus();
+          }
+
           Alert.alert(
             'Joined Event!',
             `You've joined ${festival.name}${festival.sponsor_name ? ` sponsored by ${festival.sponsor_name}` : ''}`,

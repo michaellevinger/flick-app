@@ -303,16 +303,18 @@ const styles = StyleSheet.create({
   photoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
     marginBottom: 24,
+    marginHorizontal: -6,
   },
   photoTile: {
-    width: '30%',
+    width: '31.33%',
     aspectRatio: 1,
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
     backgroundColor: 'rgba(255,255,255,0.9)',
+    marginHorizontal: 6,
+    marginBottom: 12,
   },
   photo: {
     width: '100%',
@@ -351,7 +353,7 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   addPhotoTile: {
-    width: '30%',
+    width: '31.33%',
     aspectRatio: 1,
     borderRadius: 12,
     borderWidth: 2,
@@ -360,6 +362,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 6,
+    marginBottom: 12,
   },
   plusButton: {
     width: 60,

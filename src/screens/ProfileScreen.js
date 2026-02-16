@@ -18,7 +18,7 @@ import { useUser } from '../lib/userContext';
 import { updateUserBio } from '../lib/database';
 
 export default function ProfileScreen({ navigation }) {
-  const { user, updateSelfie, logout, refreshUser } = useUser();
+  const { user, updateSelfie, leaveEvent, logout, refreshUser } = useUser();
   const [bio, setBio] = useState(user?.bio || '');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -53,28 +53,32 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleLogout = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Sign Out',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await logout();
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Welcome' }],
-            });
-          } catch (error) {
-            console.error('Error during logout:', error);
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Welcome' }],
-            });
-          }
+    Alert.alert(
+      'Leave Event',
+      'Leave this event? Your profile will be saved and you can join another event anytime.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Leave Event',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await leaveEvent();
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Welcome' }],
+              });
+            } catch (error) {
+              console.error('Error leaving event:', error);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Welcome' }],
+              });
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const handleDeleteAccount = () => {
@@ -203,7 +207,7 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.menuCard}>
             <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
               <Text style={styles.menuIcon}>↪</Text>
-              <Text style={styles.menuText}>Sign Out</Text>
+              <Text style={styles.menuText}>Leave Event</Text>
               <Text style={styles.menuChevron}>›</Text>
             </TouchableOpacity>
           </View>
