@@ -14,6 +14,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
@@ -35,6 +36,7 @@ const CARD_GAP = 8;
 const CARD_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (CARD_GAP * 2)) / 3;
 
 export default function DashboardScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const { user, toggleStatus, updateLocation, updateSelfie, logout } = useUser();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -429,10 +431,10 @@ export default function DashboardScreen({ navigation }) {
       />
 
       {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: insets.bottom + 10 }]}>
         <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIconActive}>👥</Text>
-          <Text style={styles.tabLabelActive}>Discover</Text>
+          <Text style={styles.tabIconActive}>📡</Text>
+          <Text style={styles.tabLabelActive}>Radar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('MatchesTab')}>
           <Text style={styles.tabIcon}>💬</Text>
@@ -642,7 +644,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#EEEEEE',
-    paddingBottom: Platform.OS === 'android' ? 16 : 24,
     paddingTop: 10,
   },
   tabItem: {

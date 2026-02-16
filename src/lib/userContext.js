@@ -8,6 +8,7 @@ import {
   updateUserStatus,
   updateUserLocation,
   uploadSelfie,
+  uploadPhotos,
   deleteSelfie,
   deleteUser,
 } from './database';
@@ -62,7 +63,7 @@ export function UserProvider({ children }) {
     }
   };
 
-  const createUser = async ({ name, age, height, photoUri, phoneNumber, gender, lookingFor, festivalId, bio }) => {
+  const createUser = async ({ name, age, height, photoUri, photoUris, phoneNumber, gender, lookingFor, festivalId, bio }) => {
     try {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -77,8 +78,19 @@ export function UserProvider({ children }) {
         // Continue without location - it will be set on first heartbeat
       }
 
-      // Upload selfie
-      const selfieUrl = await uploadSelfie(userId, photoUri);
+      // Upload photos (support both single photoUri and multiple photoUris)
+      let photoUrls = [];
+      if (photoUris && photoUris.length > 0) {
+        // New flow: multiple photos
+        photoUrls = await uploadPhotos(userId, photoUris);
+      } else if (photoUri) {
+        // Old flow: single photo (backward compatibility)
+        const url = await uploadSelfie(userId, photoUri);
+        photoUrls = [url];
+      }
+
+      // First photo is the main selfie
+      const selfieUrl = photoUrls[0];
 
       // Create user in database
       const userData = await upsertUser({
@@ -87,6 +99,7 @@ export function UserProvider({ children }) {
         age,
         height,
         selfieUrl,
+        photos: photoUrls, // Store all photo URLs
         status: true, // Default to ON
         location,
         phoneNumber,
@@ -103,6 +116,7 @@ export function UserProvider({ children }) {
         age,
         height,
         selfieUrl,
+        photos: photoUrls,
         status: true,
         location,
         phoneNumber,
@@ -238,6 +252,39 @@ export function UserProvider({ children }) {
     }
   };
 
+  const leaveEvent = async () => {
+    if (!user) return;
+
+    // Stop heartbeat
+    stopHeartbeat();
+
+    try {
+      // Clear festival association but keep profile
+      await AsyncStorage.removeItem('festivalId');
+
+      // Update user status to inactive
+      const updatedUser = { ...user, status: false, festivalId: null };
+      await saveUser(updatedUser);
+
+      // Delete all flicks for this user (since they're leaving the event)
+      try {
+        await deleteAllFlicksForUser(user.id);
+      } catch (error) {
+        console.warn('Failed to delete flicks:', error.message);
+      }
+
+      // Update user status in database
+      try {
+        await updateUserStatus(user.id, false);
+      } catch (error) {
+        console.warn('Failed to update status in database:', error.message);
+      }
+    } catch (error) {
+      console.error('Error leaving event:', error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     if (!user) return;
 
@@ -329,6 +376,7 @@ export function UserProvider({ children }) {
         toggleStatus,
         updateLocation,
         updateSelfie,
+        leaveEvent,
         logout,
         refreshUser,
       }}

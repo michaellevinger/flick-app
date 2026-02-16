@@ -11,11 +11,13 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useMatches } from '../lib/matchesContext';
 import MatchCard from '../components/MatchCard';
 
 export default function MatchesScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const { matches, loading, loadMatches } = useMatches();
 
   const handleMatchPress = (match) => {
@@ -75,10 +77,10 @@ export default function MatchesScreen({ navigation }) {
       />
 
       {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: insets.bottom + 10 }]}>
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
-          <Text style={styles.tabIcon}>👥</Text>
-          <Text style={styles.tabLabel}>Discover</Text>
+          <Text style={styles.tabIcon}>📡</Text>
+          <Text style={styles.tabLabel}>Radar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem}>
           <Text style={styles.tabIconActive}>💬</Text>
@@ -148,7 +150,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#EEEEEE',
-    paddingBottom: Platform.OS === 'android' ? 16 : 24,
     paddingTop: 10,
   },
   tabItem: {

@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { enableScreens } from 'react-native-screens';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator, Text, Platform } from 'react-native';
 
 // WORKAROUND: Disable native screens for Expo SDK 54 compatibility
 enableScreens(false);
@@ -15,6 +15,12 @@ import CameraScreen from './src/screens/CameraScreen';
 import Setup1Screen from './src/screens/Setup1Screen';
 import Setup2Screen from './src/screens/Setup2Screen';
 import Setup3Screen from './src/screens/Setup3Screen';
+import NameScreen from './src/screens/NameScreen';
+import BirthdayScreen from './src/screens/BirthdayScreen';
+import GenderScreen from './src/screens/GenderScreen';
+import LookingForScreen from './src/screens/LookingForScreen';
+import BioScreen from './src/screens/BioScreen';
+import PhotosScreen from './src/screens/PhotosScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import MatchesScreen from './src/screens/MatchesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
@@ -28,6 +34,8 @@ import HostOnboarding2Screen from './src/screens/HostOnboarding2Screen';
 import HostOnboarding3Screen from './src/screens/HostOnboarding3Screen';
 import CreateEventScreen from './src/screens/CreateEventScreen';
 import EventSuccessScreen from './src/screens/EventSuccessScreen';
+import HelpSupportScreen from './src/screens/HelpSupportScreen';
+import NotificationSettingsScreen from './src/screens/NotificationSettingsScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
@@ -113,6 +121,16 @@ export default function App() {
               {/* Onboarding Flow */}
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
               <Stack.Screen name="QRScanner" component={QRScannerScreen} />
+
+              {/* New Onboarding */}
+              <Stack.Screen name="NameScreen" component={NameScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="BirthdayScreen" component={BirthdayScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="GenderScreen" component={GenderScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="LookingForScreen" component={LookingForScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="BioScreen" component={BioScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Photos" component={PhotosScreen} options={{ headerShown: false }} />
+
+              {/* Old Onboarding (kept for backward compatibility) */}
               <Stack.Screen name="Camera" component={CameraScreen} />
               <Stack.Screen name="Setup" component={Setup1Screen} />
               <Stack.Screen name="Setup2" component={Setup2Screen} />
@@ -148,6 +166,20 @@ export default function App() {
                 component={VaultScreen}
                 options={{
                   presentation: 'modal',
+                }}
+              />
+              <Stack.Screen
+                name="HelpSupport"
+                component={HelpSupportScreen}
+                options={{
+                  presentation: 'card',
+                }}
+              />
+              <Stack.Screen
+                name="NotificationSettings"
+                component={NotificationSettingsScreen}
+                options={{
+                  presentation: 'card',
                 }}
               />
             </Stack.Navigator>

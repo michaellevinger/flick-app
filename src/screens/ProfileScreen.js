@@ -13,12 +13,14 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio } from '../lib/database';
 
 export default function ProfileScreen({ navigation }) {
-  const { user, updateSelfie, logout, refreshUser } = useUser();
+  const insets = useSafeAreaInsets();
+  const { user, updateSelfie, leaveEvent, logout, refreshUser } = useUser();
   const [bio, setBio] = useState(user?.bio || '');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -53,28 +55,32 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleLogout = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Sign Out',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await logout();
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Welcome' }],
-            });
-          } catch (error) {
-            console.error('Error during logout:', error);
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Welcome' }],
-            });
-          }
+    Alert.alert(
+      'Leave Event',
+      'Leave this event? Your profile will be saved and you can join another event anytime.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Leave Event',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await leaveEvent();
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Welcome' }],
+              });
+            } catch (error) {
+              console.error('Error leaving event:', error);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Welcome' }],
+              });
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const handleDeleteAccount = () => {
@@ -100,6 +106,14 @@ export default function ProfileScreen({ navigation }) {
         },
       ]
     );
+  };
+
+  const handleHelpSupport = () => {
+    navigation.navigate('HelpSupport');
+  };
+
+  const handleNotificationSettings = () => {
+    navigation.navigate('NotificationSettings');
   };
 
   if (!user) {
@@ -177,7 +191,7 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Account</Text>
 
           <View style={styles.menuCard}>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
               <Text style={styles.menuIcon}>?</Text>
               <Text style={styles.menuText}>Help & Support</Text>
               <Text style={styles.menuChevron}>›</Text>
@@ -185,7 +199,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
 
           <View style={styles.menuCard}>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleNotificationSettings}>
               <Text style={styles.menuIcon}>🔔</Text>
               <Text style={styles.menuText}>Notification Settings</Text>
               <Text style={styles.menuChevron}>›</Text>
@@ -195,7 +209,7 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.menuCard}>
             <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
               <Text style={styles.menuIcon}>↪</Text>
-              <Text style={styles.menuText}>Sign Out</Text>
+              <Text style={styles.menuText}>Leave Event</Text>
               <Text style={styles.menuChevron}>›</Text>
             </TouchableOpacity>
           </View>
@@ -210,10 +224,10 @@ export default function ProfileScreen({ navigation }) {
         </ScrollView>
 
         {/* Bottom Tab Bar */}
-        <View style={styles.tabBar}>
+        <View style={[styles.tabBar, { paddingBottom: insets.bottom + 10 }]}>
           <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
-            <Text style={styles.tabIcon}>👥</Text>
-            <Text style={styles.tabLabel}>Discover</Text>
+            <Text style={styles.tabIcon}>📡</Text>
+            <Text style={styles.tabLabel}>Radar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('MatchesTab')}>
             <Text style={styles.tabIcon}>💬</Text>
@@ -413,7 +427,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#EEEEEE',
-    paddingBottom: Platform.OS === 'android' ? 16 : 24,
     paddingTop: 10,
   },
   tabItem: {

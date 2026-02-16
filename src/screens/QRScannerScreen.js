@@ -14,8 +14,10 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { validateAndJoinFestival } from '../lib/database';
+import { useUser } from '../lib/userContext';
 
 export default function QRScannerScreen({ navigation }) {
+  const { user, updateUser, toggleStatus } = useUser();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -40,18 +42,42 @@ export default function QRScannerScreen({ navigation }) {
       if (festival) {
         await AsyncStorage.setItem('festivalId', data);
 
-        Alert.alert(
-          'Welcome!',
-          `You're now in ${festival.name}${festival.sponsor_name ? ` sponsored by ${festival.sponsor_name}` : ''}`,
-          [
-            {
-              text: 'Create Profile',
-              onPress: () => {
-                navigation.replace('Camera', { festivalId: data });
+        // Check if user already has a profile
+        if (user) {
+          // User exists - update festival ID and activate status
+          await updateUser({ festivalId: data });
+          if (!user.status) {
+            await toggleStatus();
+          }
+
+          Alert.alert(
+            'Joined Event!',
+            `You've joined ${festival.name}${festival.sponsor_name ? ` sponsored by ${festival.sponsor_name}` : ''}`,
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.replace('Dashboard');
+                },
               },
-            },
-          ]
-        );
+            ]
+          );
+        } else {
+          // No user - need to create profile (start with Setup1, not Camera)
+          Alert.alert(
+            'Welcome!',
+            `You're now in ${festival.name}${festival.sponsor_name ? ` sponsored by ${festival.sponsor_name}` : ''}`,
+            [
+              {
+                text: 'Create Profile',
+                onPress: () => {
+                  // Navigate to new onboarding flow
+                  navigation.replace('NameScreen', { festivalId: data });
+                },
+              },
+            ]
+          );
+        }
       } else {
         Alert.alert('Invalid QR Code', 'This event code is not valid or has expired.', [
           {

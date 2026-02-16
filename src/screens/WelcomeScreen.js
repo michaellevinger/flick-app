@@ -24,10 +24,10 @@ export default function WelcomeScreen({ navigation }) {
     if (!user) {
       Alert.alert(
         'Create Profile First',
-        'You need to create a profile before hosting an event.',
+        'You need to create a profile before hosting an event. Scan any event QR code to get started!',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Create Profile', onPress: () => navigation.navigate('QRScanner') },
+          { text: 'Scan QR Code', onPress: () => navigation.navigate('QRScanner') },
         ]
       );
       return;
