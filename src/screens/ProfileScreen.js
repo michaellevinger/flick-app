@@ -212,8 +212,8 @@ export default function ProfileScreen({ navigation }) {
         {/* Bottom Tab Bar */}
         <View style={styles.tabBar}>
           <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
-            <Text style={styles.tabIcon}>👥</Text>
-            <Text style={styles.tabLabel}>Discover</Text>
+            <Text style={styles.tabIcon}>📡</Text>
+            <Text style={styles.tabLabel}>Radar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('MatchesTab')}>
             <Text style={styles.tabIcon}>💬</Text>
