@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service - Flick</title>
+  <meta name="description" content="Terms of service for Flick - Turn a Look into Hello">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Terms of Service - Flick">
+  <meta property="og:description" content="Terms and conditions for using Flick">
+  <meta property="og:image" content="https://helloflick.com/images/og-image.png">
+  <meta property="og:url" content="https://helloflick.com/terms">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #FFFFFF;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #FF6B9D 0%, #C44CE0 50%, #7B5EE3 100%);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 32px;
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+    }
+
+    .back-link {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 25px;
+      transition: all 0.3s;
+    }
+
+    .back-link:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 800;
+      color: #000;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .last-updated {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #000;
+      margin-top: 48px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    strong {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(255,107,157,0.1) 0%, rgba(196,76,224,0.1) 100%);
+      border-left: 4px solid #C44CE0;
+      padding: 20px;
+      margin: 32px 0;
+      border-radius: 8px;
+    }
+
+    .highlight-box p {
+      margin-bottom: 0;
+    }
+
+    .contact-box {
+      background: #F5F5F5;
+      padding: 24px;
+      border-radius: 12px;
+      margin: 40px 0;
+      text-align: center;
+    }
+
+    .contact-box h3 {
+      margin-top: 0;
+      color: #C44CE0;
+    }
+
+    .contact-email {
+      font-size: 18px;
+      color: #C44CE0;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-email:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    .footer {
+      background: #000;
+      color: #FFF;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #FFF;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .footer-links a:hover {
+      color: #FF6B9D;
+    }
+
+    .footer-text {
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 32px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .container {
+        padding: 40px 20px;
+      }
+
+      .logo-text {
+        font-size: 24px;
+      }
+
+      .back-link {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="nav">
+      <a href="/" class="logo">
+        <span class="logo-icon">♥</span>
+        <span class="logo-text">flick</span>
+      </a>
+      <a href="/" class="back-link">← Back to Home</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Terms of Service</h1>
+    <p class="last-updated">Last Updated: February 16, 2026</p>
+
+    <p>Welcome to Flick! These Terms of Service ("Terms") govern your use of the Flick mobile application and services. By using Flick, you agree to these Terms.</p>
+
+    <div class="highlight-box">
+      <p><strong>In Plain English:</strong> Be respectful, be yourself, and have fun meeting people at events. Don't be creepy, don't harass anyone, and don't misuse the platform.</p>
+    </div>
+
+    <h2>1. Eligibility</h2>
+
+    <p>To use Flick, you must:</p>
+    <ul>
+      <li>Be at least <strong>18 years old</strong></li>
+      <li>Have the legal capacity to enter into these Terms</li>
+      <li>Not be prohibited from using Flick under applicable laws</li>
+      <li>Not have been previously banned from Flick</li>
+    </ul>
+
+    <p>By creating an account, you represent and warrant that you meet these requirements.</p>
+
+    <h2>2. Account and Profile</h2>
+
+    <h3>2.1 Profile Information</h3>
+    <p>You agree to:</p>
+    <ul>
+      <li>Provide accurate information (real first name, correct age)</li>
+      <li>Use recent, authentic photos of yourself</li>
+      <li>Keep your profile information updated</li>
+      <li>Not impersonate anyone else</li>
+      <li>Not create multiple accounts</li>
+    </ul>
+
+    <h3>2.2 Account Security</h3>
+    <p>You are responsible for:</p>
+    <ul>
+      <li>Maintaining the security of your device</li>
+      <li>All activity that occurs under your account</li>
+      <li>Notifying us immediately of any unauthorized use</li>
+    </ul>
+
+    <h2>3. Acceptable Use</h2>
+
+    <h3>3.1 You May</h3>
+    <ul>
+      <li>Create a profile and attend events</li>
+      <li>Flick other users to show interest</li>
+      <li>Chat with your matches</li>
+      <li>Share your phone number with matches (optional)</li>
+      <li>Report inappropriate behavior</li>
+    </ul>
+
+    <h3>3.2 You May Not</h3>
+    <ul>
+      <li><strong>Harass, bully, or threaten</strong> other users</li>
+      <li><strong>Send unsolicited sexual content</strong> or make unwanted advances</li>
+      <li><strong>Impersonate</strong> anyone or misrepresent your identity</li>
+      <li><strong>Solicit money</strong> or promote commercial services</li>
+      <li><strong>Use Flick for prostitution</strong> or human trafficking</li>
+      <li><strong>Post illegal content</strong> (child exploitation, violence, hate speech)</li>
+      <li><strong>Scrape or harvest</strong> user data</li>
+      <li><strong>Reverse engineer</strong> or attempt to hack the app</li>
+      <li><strong>Create spam accounts</strong> or automate interactions</li>
+      <li><strong>Discriminate</strong> based on race, religion, gender, or sexual orientation</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p><strong>Zero Tolerance:</strong> We have zero tolerance for harassment, abuse, or illegal activity. Violators will be immediately and permanently banned.</p>
+    </div>
+
+    <h2>4. Content</h2>
+
+    <h3>4.1 Your Content</h3>
+    <p>You retain ownership of content you upload (photos, bio, messages). By using Flick, you grant us a license to:</p>
+    <ul>
+      <li>Display your profile to other users at the same event</li>
+      <li>Store your content on our servers</li>
+      <li>Process your data to provide the service</li>
+    </ul>
+
+    <p>This license ends when you delete your content or account.</p>
+
+    <h3>4.2 Content Guidelines</h3>
+    <p>Your photos and bio must not contain:</p>
+    <ul>
+      <li>Nudity or sexually explicit material</li>
+      <li>Violence, gore, or disturbing imagery</li>
+      <li>Hate symbols or discriminatory content</li>
+      <li>Contact information (Instagram, Snapchat, etc.) – use matches to connect</li>
+      <li>Promotion of drugs, weapons, or illegal services</li>
+    </ul>
+
+    <h3>4.3 Moderation</h3>
+    <p>We reserve the right to:</p>
+    <ul>
+      <li>Review and remove content that violates these Terms</li>
+      <li>Suspend or ban accounts for violations</li>
+      <li>Report illegal activity to law enforcement</li>
+    </ul>
+
+    <h2>5. Events and Festivals</h2>
+
+    <h3>5.1 Event Access</h3>
+    <p>Flick is designed for use at specific events. You must:</p>
+    <ul>
+      <li>Scan the event's official QR code to join</li>
+      <li>Be physically present at the event location</li>
+      <li>Comply with the event's own terms and conduct rules</li>
+    </ul>
+
+    <h3>5.2 Event Organizers</h3>
+    <p>Flick partners with event organizers to provide the service. Event organizers:</p>
+    <ul>
+      <li>Do not have access to your personal profile data</li>
+      <li>Receive only anonymized, aggregated usage statistics</li>
+      <li>Are separate from Flick and have their own terms</li>
+    </ul>
+
+    <h2>6. Safety and Reporting</h2>
+
+    <h3>6.1 Reporting</h3>
+    <p>If you experience or witness:</p>
+    <ul>
+      <li>Harassment or inappropriate behavior</li>
+      <li>Fake profiles or scams</li>
+      <li>Safety concerns</li>
+    </ul>
+    <p>Please report immediately via the app or email <a href="mailto:safety@helloflick.com" class="contact-email">safety@helloflick.com</a>.</p>
+
+    <h3>6.2 Our Response</h3>
+    <p>We take reports seriously and will:</p>
+    <ul>
+      <li>Investigate within 24-48 hours</li>
+      <li>Remove violating content</li>
+      <li>Ban users who violate policies</li>
+      <li>Cooperate with law enforcement when necessary</li>
+    </ul>
+
+    <h3>6.3 Meet Safely</h3>
+    <p>When meeting matches in person:</p>
+    <ul>
+      <li>Meet in public, well-lit places</li>
+      <li>Tell a friend where you're going</li>
+      <li>Trust your instincts – if something feels off, leave</li>
+      <li>Don't share personal information (address, financial details) until you're comfortable</li>
+    </ul>
+
+    <h2>7. Privacy and Data</h2>
+
+    <p>Your privacy matters. Please read our <a href="/privacy" style="color: #C44CE0;">Privacy Policy</a> to understand:</p>
+    <ul>
+      <li>What data we collect and why</li>
+      <li>How we use and protect your information</li>
+      <li>Your rights regarding your data</li>
+      <li>How long we keep your data</li>
+    </ul>
+
+    <h2>8. Disclaimers</h2>
+
+    <h3>8.1 No Guarantees</h3>
+    <p>Flick is provided "as is" without warranties of any kind. We do not guarantee:</p>
+    <ul>
+      <li>That you'll meet someone or make matches</li>
+      <li>The accuracy of user profiles (users provide their own information)</li>
+      <li>Uninterrupted or error-free service</li>
+      <li>The behavior or intentions of other users</li>
+    </ul>
+
+    <h3>8.2 User Interactions</h3>
+    <p>Flick is not responsible for:</p>
+    <ul>
+      <li>Interactions between users (online or offline)</li>
+      <li>User conduct or content</li>
+      <li>Disputes between users</li>
+      <li>Any harm resulting from user interactions</li>
+    </ul>
+
+    <p><strong>You use Flick at your own risk.</strong> Always exercise caution when meeting strangers.</p>
+
+    <h2>9. Limitation of Liability</h2>
+
+    <p>To the fullest extent permitted by law:</p>
+    <ul>
+      <li>Flick and its affiliates are not liable for indirect, incidental, consequential, or punitive damages</li>
+      <li>Our total liability is limited to the amount you paid us (which is $0, as Flick is free)</li>
+      <li>We are not liable for user conduct, content, or third-party actions</li>
+    </ul>
+
+    <h2>10. Termination</h2>
+
+    <h3>10.1 You Can</h3>
+    <ul>
+      <li>Delete your account anytime via the app</li>
+      <li>Leave an event anytime (keeps your profile for future events)</li>
+    </ul>
+
+    <h3>10.2 We Can</h3>
+    <ul>
+      <li>Suspend or terminate your account for violating these Terms</li>
+      <li>Remove content that violates our policies</li>
+      <li>Discontinue the service at any time (with notice)</li>
+    </ul>
+
+    <p>Upon termination:</p>
+    <ul>
+      <li>Your access to Flick ends immediately</li>
+      <li>Your data is deleted according to our Privacy Policy</li>
+      <li>These Terms continue to apply to past conduct</li>
+    </ul>
+
+    <h2>11. Changes to These Terms</h2>
+
+    <p>We may update these Terms from time to time. When we do:</p>
+    <ul>
+      <li>We'll update the "Last Updated" date</li>
+      <li>We'll notify you in-app for significant changes</li>
+      <li>Continued use means you accept the new Terms</li>
+    </ul>
+
+    <p>If you don't agree with the updated Terms, please stop using Flick and delete your account.</p>
+
+    <h2>12. Dispute Resolution</h2>
+
+    <h3>12.1 Governing Law</h3>
+    <p>These Terms are governed by the laws of [Your State/Country], without regard to conflict of law principles.</p>
+
+    <h3>12.2 Arbitration</h3>
+    <p>Any disputes will be resolved through binding arbitration, not court proceedings. You waive your right to a jury trial or class action lawsuit.</p>
+
+    <p><strong>Exception:</strong> You may bring claims in small claims court if they qualify.</p>
+
+    <h2>13. General Provisions</h2>
+
+    <ul>
+      <li><strong>Entire Agreement:</strong> These Terms constitute the entire agreement between you and Flick</li>
+      <li><strong>Severability:</strong> If any provision is invalid, the rest remains in effect</li>
+      <li><strong>No Waiver:</strong> Our failure to enforce any right doesn't waive that right</li>
+      <li><strong>Assignment:</strong> You can't transfer these Terms; we can</li>
+      <li><strong>Force Majeure:</strong> We're not liable for delays due to events beyond our control</li>
+    </ul>
+
+    <h2>14. Contact Us</h2>
+
+    <div class="contact-box">
+      <h3>Questions About These Terms?</h3>
+      <p>We're happy to help clarify:</p>
+      <p><a href="mailto:legal@helloflick.com" class="contact-email">legal@helloflick.com</a></p>
+      <p style="margin-top: 16px; font-size: 14px; color: #666;">
+        Flick<br>
+        [Your Company Address]<br>
+        [City, State ZIP]
+      </p>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 60px;">
+      <p><strong>Thank you for using Flick!</strong> We're excited to help you turn a look into hello. Use the platform respectfully, stay safe, and have fun meeting people at events.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="mailto:support@helloflick.com">Contact</a>
+      </div>
+      <p class="footer-text">© 2026 Flick. Turn a Look into Hello.</p>
+    </div>
+  </div>
+</body>
+</html>
