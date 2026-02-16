@@ -15,6 +15,7 @@ import CameraScreen from './src/screens/CameraScreen';
 import Setup1Screen from './src/screens/Setup1Screen';
 import Setup2Screen from './src/screens/Setup2Screen';
 import Setup3Screen from './src/screens/Setup3Screen';
+import PhotosScreen from './src/screens/PhotosScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import MatchesScreen from './src/screens/MatchesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
@@ -117,6 +118,7 @@ export default function App() {
               <Stack.Screen name="Setup" component={Setup1Screen} />
               <Stack.Screen name="Setup2" component={Setup2Screen} />
               <Stack.Screen name="Setup3" component={Setup3Screen} />
+              <Stack.Screen name="Photos" component={PhotosScreen} />
 
               {/* Host Event Flow */}
               <Stack.Screen name="HostOnboarding1" component={HostOnboarding1Screen} />

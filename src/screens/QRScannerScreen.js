@@ -58,7 +58,7 @@ export default function QRScannerScreen({ navigation }) {
             ]
           );
         } else {
-          // No user - need to create profile
+          // No user - need to create profile (start with Setup1, not Camera)
           Alert.alert(
             'Welcome!',
             `You're now in ${festival.name}${festival.sponsor_name ? ` sponsored by ${festival.sponsor_name}` : ''}`,
@@ -66,7 +66,7 @@ export default function QRScannerScreen({ navigation }) {
               {
                 text: 'Create Profile',
                 onPress: () => {
-                  navigation.replace('Camera', { festivalId: data });
+                  navigation.replace('Setup', { festivalId: data });
                 },
               },
             ]

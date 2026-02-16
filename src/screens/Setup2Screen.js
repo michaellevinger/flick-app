@@ -16,22 +16,23 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Setup2Screen({ route, navigation }) {
-  const { photoUri, name, gender } = route.params;
-  const [lookingFor, setLookingFor] = useState('');
-  const [age, setAge] = useState('');
-  const [height, setHeight] = useState('');
+  const { festivalId, name, gender, lookingFor, age, height } = route.params;
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [bio, setBio] = useState('');
 
-  const isValid = lookingFor && age.length > 0 && parseInt(age) >= 18 && height.length > 0;
+  // Phone and bio are optional, so always valid
+  const isValid = true;
 
   const handleNext = () => {
-    if (!isValid) return;
-    navigation.navigate('Setup3', {
-      photoUri,
+    navigation.navigate('Photos', {
+      festivalId,
       name,
       gender,
       lookingFor,
-      age: parseInt(age),
-      height: parseInt(height),
+      age,
+      height,
+      phoneNumber: phoneNumber.trim(),
+      bio: bio.trim(),
     });
   };
 
@@ -62,69 +63,40 @@ export default function Setup2Screen({ route, navigation }) {
                   <View style={styles.progressDot} />
                 </View>
 
-                <Text style={styles.title}>I'm looking for...</Text>
-
-                <View style={styles.optionButtons}>
-                  <TouchableOpacity
-                    style={[styles.optionButton, lookingFor === 'male' && styles.optionButtonSelected]}
-                    onPress={() => setLookingFor('male')}
-                  >
-                    <Text style={[styles.optionButtonText, lookingFor === 'male' && styles.optionButtonTextSelected]}>
-                      Men
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.optionButton, lookingFor === 'female' && styles.optionButtonSelected]}
-                    onPress={() => setLookingFor('female')}
-                  >
-                    <Text style={[styles.optionButtonText, lookingFor === 'female' && styles.optionButtonTextSelected]}>
-                      Women
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.optionButton, lookingFor === 'both' && styles.optionButtonSelected]}
-                    onPress={() => setLookingFor('both')}
-                  >
-                    <Text style={[styles.optionButtonText, lookingFor === 'both' && styles.optionButtonTextSelected]}>
-                      Everyone
-                    </Text>
-                  </TouchableOpacity>
+                {/* Phone Number (Optional) */}
+                <Text style={styles.title}>What's your number?</Text>
+                <Text style={styles.subtitle}>Optional - helps people reach you after matching</Text>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.inputText}
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    placeholder="+1 (555) 123-4567"
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    keyboardType="phone-pad"
+                    maxLength={20}
+                    returnKeyType="next"
+                  />
                 </View>
 
-                <View style={styles.rowInputs}>
-                  <View style={styles.inputHalf}>
-                    <Text style={styles.label}>Age</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={age}
-                      onChangeText={setAge}
-                      placeholder="25"
-                      placeholderTextColor="rgba(255,255,255,0.5)"
-                      keyboardType="number-pad"
-                      maxLength={2}
-                      returnKeyType="done"
-                      onSubmitEditing={Keyboard.dismiss}
-                    />
-                  </View>
-                  <View style={styles.inputHalf}>
-                    <Text style={styles.label}>Height (cm)</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={height}
-                      onChangeText={setHeight}
-                      placeholder="170"
-                      placeholderTextColor="rgba(255,255,255,0.5)"
-                      keyboardType="number-pad"
-                      maxLength={3}
-                      returnKeyType="done"
-                      onSubmitEditing={Keyboard.dismiss}
-                    />
-                  </View>
+                {/* Bio (Optional) */}
+                <Text style={styles.title}>Tell us about yourself</Text>
+                <Text style={styles.subtitle}>Optional - a quick bio to stand out</Text>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={[styles.inputText, styles.textArea]}
+                    value={bio}
+                    onChangeText={setBio}
+                    placeholder="I love music festivals and meeting new people..."
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    multiline
+                    numberOfLines={4}
+                    maxLength={200}
+                    returnKeyType="done"
+                    onSubmitEditing={Keyboard.dismiss}
+                  />
+                  <Text style={styles.charCount}>{bio.length}/200</Text>
                 </View>
-
-                {age.length > 0 && parseInt(age) < 18 && (
-                  <Text style={styles.errorText}>You must be 18 or older</Text>
-                )}
 
                 <TouchableOpacity
                   style={[styles.button, !isValid && styles.buttonDisabled]}
@@ -181,63 +153,43 @@ const styles = StyleSheet.create({
     width: 30,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 20,
-  },
-  optionButtons: {
-    gap: 12,
-    marginBottom: 32,
-  },
-  optionButton: {
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
-    borderRadius: 30,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: 'transparent',
-  },
-  optionButtonSelected: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#FFFFFF',
-  },
-  optionButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  optionButtonTextSelected: {
-    color: '#C44CE0',
-  },
-  rowInputs: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  inputHalf: {
-    flex: 1,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
     marginBottom: 8,
+    marginTop: 24,
   },
-  input: {
-    fontSize: 24,
+  subtitle: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    opacity: 0.8,
+    marginBottom: 16,
+  },
+  inputContainer: {
+    marginBottom: 24,
+  },
+  inputText: {
+    fontSize: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: 'rgba(255,255,255,0.5)',
+    paddingVertical: 12,
+    color: '#FFFFFF',
+  },
+  textArea: {
+    borderBottomWidth: 0,
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.5)',
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    color: '#FFFFFF',
-    textAlign: 'center',
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
-  errorText: {
-    color: '#FFCCCC',
-    fontSize: 14,
-    marginTop: 8,
+  charCount: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.6)',
+    textAlign: 'right',
+    marginTop: 4,
   },
   button: {
     marginTop: 40,

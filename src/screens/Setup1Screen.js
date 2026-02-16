@@ -8,22 +8,38 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
+  KeyboardAvoidingView,
+  ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Setup1Screen({ route, navigation }) {
-  const { photoUri } = route.params;
+  const { festivalId } = route.params;
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
+  const [lookingFor, setLookingFor] = useState('');
+  const [age, setAge] = useState('');
+  const [height, setHeight] = useState('');
 
-  const isValid = name.trim().length > 0 && gender;
+  const isValid =
+    name.trim().length > 0 &&
+    gender &&
+    lookingFor &&
+    age.length > 0 &&
+    parseInt(age) >= 18 &&
+    height.length > 0;
 
   const handleNext = () => {
     if (!isValid) return;
     navigation.navigate('Setup2', {
-      photoUri,
+      festivalId,
       name: name.trim(),
       gender,
+      lookingFor,
+      age: parseInt(age),
+      height: parseInt(height),
     });
   };
 
@@ -37,66 +53,142 @@ export default function Setup1Screen({ route, navigation }) {
         end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
-          {/* Progress */}
-          <View style={styles.progressContainer}>
-            <View style={[styles.progressDot, styles.progressDotActive]} />
-            <View style={styles.progressDot} />
-            <View style={styles.progressDot} />
-          </View>
-
-          <Text style={styles.title}>What's your name?</Text>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Your first name"
-              placeholderTextColor="rgba(255,255,255,0.5)"
-              autoCapitalize="words"
-              maxLength={20}
-              autoFocus
-            />
-          </View>
-
-          <Text style={styles.title}>I am a...</Text>
-
-          <View style={styles.optionButtons}>
-            <TouchableOpacity
-              style={[styles.optionButton, gender === 'male' && styles.optionButtonSelected]}
-              onPress={() => setGender('male')}
-            >
-              <Text style={[styles.optionButtonText, gender === 'male' && styles.optionButtonTextSelected]}>
-                Man
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.optionButton, gender === 'female' && styles.optionButtonSelected]}
-              onPress={() => setGender('female')}
-            >
-              <Text style={[styles.optionButtonText, gender === 'female' && styles.optionButtonTextSelected]}>
-                Woman
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.optionButton, gender === 'other' && styles.optionButtonSelected]}
-              onPress={() => setGender('other')}
-            >
-              <Text style={[styles.optionButtonText, gender === 'other' && styles.optionButtonTextSelected]}>
-                Other
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.spacer} />
-
-          <TouchableOpacity
-            style={[styles.button, !isValid && styles.buttonDisabled]}
-            onPress={handleNext}
-            disabled={!isValid}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardView}
           >
-            <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+              >
+                {/* Progress */}
+                <View style={styles.progressContainer}>
+                  <View style={[styles.progressDot, styles.progressDotActive]} />
+                  <View style={styles.progressDot} />
+                  <View style={styles.progressDot} />
+                </View>
+
+                {/* Name */}
+                <Text style={styles.title}>What's your name?</Text>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    value={name}
+                    onChangeText={setName}
+                    placeholder="Your first name"
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    autoCapitalize="words"
+                    maxLength={20}
+                    returnKeyType="next"
+                  />
+                </View>
+
+                {/* Gender */}
+                <Text style={styles.title}>I am a...</Text>
+                <View style={styles.optionButtons}>
+                  <TouchableOpacity
+                    style={[styles.optionButton, gender === 'male' && styles.optionButtonSelected]}
+                    onPress={() => setGender('male')}
+                  >
+                    <Text style={[styles.optionButtonText, gender === 'male' && styles.optionButtonTextSelected]}>
+                      Man
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.optionButton, gender === 'female' && styles.optionButtonSelected]}
+                    onPress={() => setGender('female')}
+                  >
+                    <Text style={[styles.optionButtonText, gender === 'female' && styles.optionButtonTextSelected]}>
+                      Woman
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.optionButton, gender === 'other' && styles.optionButtonSelected]}
+                    onPress={() => setGender('other')}
+                  >
+                    <Text style={[styles.optionButtonText, gender === 'other' && styles.optionButtonTextSelected]}>
+                      Other
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Looking For */}
+                <Text style={styles.title}>I'm looking for...</Text>
+                <View style={styles.optionButtons}>
+                  <TouchableOpacity
+                    style={[styles.optionButton, lookingFor === 'male' && styles.optionButtonSelected]}
+                    onPress={() => setLookingFor('male')}
+                  >
+                    <Text style={[styles.optionButtonText, lookingFor === 'male' && styles.optionButtonTextSelected]}>
+                      Men
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.optionButton, lookingFor === 'female' && styles.optionButtonSelected]}
+                    onPress={() => setLookingFor('female')}
+                  >
+                    <Text style={[styles.optionButtonText, lookingFor === 'female' && styles.optionButtonTextSelected]}>
+                      Women
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.optionButton, lookingFor === 'both' && styles.optionButtonSelected]}
+                    onPress={() => setLookingFor('both')}
+                  >
+                    <Text style={[styles.optionButtonText, lookingFor === 'both' && styles.optionButtonTextSelected]}>
+                      Everyone
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Age and Height */}
+                <View style={styles.rowInputs}>
+                  <View style={styles.inputHalf}>
+                    <Text style={styles.label}>Age</Text>
+                    <TextInput
+                      style={styles.inputSmall}
+                      value={age}
+                      onChangeText={setAge}
+                      placeholder="25"
+                      placeholderTextColor="rgba(255,255,255,0.5)"
+                      keyboardType="number-pad"
+                      maxLength={2}
+                      returnKeyType="done"
+                      onSubmitEditing={Keyboard.dismiss}
+                    />
+                  </View>
+                  <View style={styles.inputHalf}>
+                    <Text style={styles.label}>Height (cm)</Text>
+                    <TextInput
+                      style={styles.inputSmall}
+                      value={height}
+                      onChangeText={setHeight}
+                      placeholder="170"
+                      placeholderTextColor="rgba(255,255,255,0.5)"
+                      keyboardType="number-pad"
+                      maxLength={3}
+                      returnKeyType="done"
+                      onSubmitEditing={Keyboard.dismiss}
+                    />
+                  </View>
+                </View>
+
+                {age.length > 0 && parseInt(age) < 18 && (
+                  <Text style={styles.errorText}>You must be 18 or older</Text>
+                )}
+
+                <TouchableOpacity
+                  style={[styles.button, !isValid && styles.buttonDisabled]}
+                  onPress={handleNext}
+                  disabled={!isValid}
+                >
+                  <Text style={styles.buttonText}>Next</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -112,8 +204,18 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -132,16 +234,17 @@ const styles = StyleSheet.create({
     width: 30,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 20,
+    marginBottom: 16,
+    marginTop: 24,
   },
   inputContainer: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   input: {
-    fontSize: 24,
+    fontSize: 20,
     borderBottomWidth: 2,
     borderBottomColor: 'rgba(255,255,255,0.5)',
     paddingVertical: 12,
@@ -149,12 +252,13 @@ const styles = StyleSheet.create({
   },
   optionButtons: {
     gap: 12,
+    marginBottom: 8,
   },
   optionButton: {
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.5)',
     borderRadius: 30,
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     backgroundColor: 'transparent',
   },
@@ -163,7 +267,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   optionButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
     textAlign: 'center',
@@ -171,15 +275,44 @@ const styles = StyleSheet.create({
   optionButtonTextSelected: {
     color: '#C44CE0',
   },
-  spacer: {
+  rowInputs: {
+    flexDirection: 'row',
+    gap: 16,
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  inputHalf: {
     flex: 1,
   },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  inputSmall: {
+    fontSize: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  errorText: {
+    color: '#FFCCCC',
+    fontSize: 14,
+    marginTop: 8,
+    marginBottom: 16,
+  },
   button: {
+    marginTop: 32,
     backgroundColor: '#FFFFFF',
     paddingVertical: 18,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 20,
   },
   buttonDisabled: {
     opacity: 0.5,

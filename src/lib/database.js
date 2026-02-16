@@ -18,7 +18,7 @@ function normalizeUserData(user) {
 /**
  * Create or update a user in the database
  */
-export async function upsertUser({ id, name, age, height, selfieUrl, status, location, phoneNumber, gender, lookingFor, festivalId, bio }) {
+export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, location, phoneNumber, gender, lookingFor, festivalId, bio }) {
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -28,6 +28,7 @@ export async function upsertUser({ id, name, age, height, selfieUrl, status, loc
         age,
         height: height || null,
         selfie_url: selfieUrl,
+        photos: photos || null, // Array of photo URLs
         status,
         location: location ? `POINT(${location.longitude} ${location.latitude})` : null,
         phone_number: phoneNumber || null,
@@ -152,7 +153,97 @@ export async function deleteUser(userId) {
 }
 
 /**
+ * Upload multiple photos to Supabase Storage
+ */
+export async function uploadPhotos(userId, photoUris) {
+  try {
+    console.log('uploadPhotos: Starting upload for', userId, 'with', photoUris.length, 'photos');
+
+    const uploadPromises = photoUris.map((uri, index) =>
+      uploadSinglePhoto(userId, uri, index)
+    );
+
+    const urls = await Promise.all(uploadPromises);
+    console.log('uploadPhotos: All photos uploaded successfully');
+    return urls;
+  } catch (error) {
+    console.error('uploadPhotos: Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Upload a single photo to Supabase Storage
+ */
+async function uploadSinglePhoto(userId, photoUri, index = 0) {
+  try {
+    console.log(`uploadSinglePhoto: Uploading photo ${index} for`, userId);
+
+    // Create a unique filename
+    const filename = `${userId}-${index}-${Date.now()}.jpg`;
+
+    // Read file as base64
+    const base64 = await FileSystem.readAsStringAsync(photoUri, {
+      encoding: 'base64',
+    });
+
+    // Convert base64 to binary
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    // Get Supabase credentials
+    const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL;
+    const supabaseKey = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase credentials not configured');
+    }
+
+    // Upload using XMLHttpRequest
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/selfies/${filename}`;
+
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+          resolve(JSON.parse(xhr.responseText));
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status} - ${xhr.responseText}`));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Network error - please check your internet connection'));
+      xhr.ontimeout = () => reject(new Error('Upload timeout - please try again'));
+
+      xhr.open('POST', uploadUrl);
+      xhr.setRequestHeader('apikey', supabaseKey);
+      xhr.setRequestHeader('Authorization', `Bearer ${supabaseKey}`);
+      xhr.setRequestHeader('Content-Type', 'image/jpeg');
+      xhr.timeout = 60000;
+
+      xhr.send(bytes.buffer);
+    });
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('selfies')
+      .getPublicUrl(filename);
+
+    console.log(`uploadSinglePhoto: Photo ${index} uploaded successfully`);
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error(`uploadSinglePhoto: Error uploading photo ${index}:`, error);
+    throw error;
+  }
+}
+
+/**
  * Upload selfie to Supabase Storage using direct HTTP upload
+ * @deprecated Use uploadPhotos for multiple photos or uploadSinglePhoto for single
  */
 export async function uploadSelfie(userId, photoUri) {
   try {

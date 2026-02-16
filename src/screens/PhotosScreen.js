@@ -1,0 +1,452 @@
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
+} from 'react';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useUser } from '../lib/userContext';
+
+export default function PhotosScreen({ route, navigation }) {
+  const { createUser } = useUser();
+  const { name, gender, age, height, lookingFor, phoneNumber, bio, festivalId } = route.params;
+
+  const [photos, setPhotos] = useState([]);
+  const [showCamera, setShowCamera] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef(null);
+
+  const canAddMore = photos.length < 3;
+  const hasMinimum = photos.length >= 1;
+
+  const takePicture = async () => {
+    if (!cameraRef.current) {
+      Alert.alert('Error', 'Camera not ready. Please try again.');
+      return;
+    }
+
+    try {
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 0.7,
+        base64: false,
+        exif: true,
+      });
+
+      // Fix orientation for front-facing camera
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        photo.uri,
+        [{ flip: ImageManipulator.FlipType.Horizontal }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      setPhotos([...photos, manipulatedImage.uri]);
+      setShowCamera(false);
+    } catch (error) {
+      console.error('Error taking picture:', error);
+      Alert.alert('Error', 'Failed to take photo. Please try again.');
+    }
+  };
+
+  const pickFromGallery = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'We need photo library access to select photos.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: false,
+        quality: 0.7,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setPhotos([...photos, result.assets[0].uri]);
+      }
+    } catch (error) {
+      console.error('Error picking from gallery:', error);
+      Alert.alert('Error', 'Failed to open photo library. Please try again.');
+    }
+  };
+
+  const removePhoto = (index) => {
+    setPhotos(photos.filter((_, i) => i !== index));
+  };
+
+  const handleFinish = async () => {
+    if (!hasMinimum) {
+      Alert.alert('Add at least 1 photo', 'Please add at least one photo to continue.');
+      return;
+    }
+
+    if (isCreating) return;
+
+    setIsCreating(true);
+    try {
+      await createUser({
+        name,
+        gender,
+        age,
+        height,
+        lookingFor,
+        phoneNumber: phoneNumber?.trim() || null,
+        bio: bio?.trim() || null,
+        festivalId,
+        photoUris: photos, // Array of photo URIs
+      });
+      navigation.replace('Dashboard');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      Alert.alert('Error', 'Failed to create profile. Please try again.');
+      setIsCreating(false);
+    }
+  };
+
+  const handleOpenCamera = async () => {
+    if (!permission) {
+      await requestPermission();
+      return;
+    }
+    if (!permission.granted) {
+      await requestPermission();
+      return;
+    }
+    setShowCamera(true);
+  };
+
+  if (showCamera) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <CameraView
+          style={styles.camera}
+          facing="front"
+          ref={cameraRef}
+        />
+
+        {/* Top Bar */}
+        <View style={styles.cameraTopBar}>
+          <TouchableOpacity style={styles.backButton} onPress={() => setShowCamera(false)}>
+            <Text style={styles.backButtonText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Bottom Actions */}
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.8)']}
+          style={styles.cameraBottomGradient}
+        >
+          <View style={styles.cameraActions}>
+            <Text style={styles.cameraTitle}>Take a Photo</Text>
+            <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+              <View style={styles.captureButtonInner} />
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <LinearGradient
+        colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <SafeAreaView style={styles.safeArea}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* Progress Dots */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressDot} />
+              <View style={styles.progressDot} />
+              <View style={[styles.progressDot, styles.progressDotActive]} />
+            </View>
+
+            <Text style={styles.title}>Add Your Photos</Text>
+            <Text style={styles.subtitle}>
+              Add 1-3 photos. First photo will be your main profile picture.
+            </Text>
+
+            {/* Photo Grid */}
+            <View style={styles.photoGrid}>
+              {photos.map((uri, index) => (
+                <View key={index} style={styles.photoContainer}>
+                  <Image source={{ uri }} style={styles.photo} />
+                  {index === 0 && (
+                    <View style={styles.mainBadge}>
+                      <Text style={styles.mainBadgeText}>Main</Text>
+                    </View>
+                  )}
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => removePhoto(index)}
+                  >
+                    <Text style={styles.removeButtonText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              {/* Add Photo Buttons */}
+              {canAddMore && (
+                <View style={styles.addButtonsContainer}>
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleOpenCamera}
+                  >
+                    <Text style={styles.addButtonIcon}>📷</Text>
+                    <Text style={styles.addButtonText}>Take Photo</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={pickFromGallery}
+                  >
+                    <Text style={styles.addButtonIcon}>🖼</Text>
+                    <Text style={styles.addButtonText}>Choose Photo</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            {/* Photo Count */}
+            <Text style={styles.photoCount}>
+              {photos.length}/3 photos {hasMinimum ? '✓' : '(minimum 1 required)'}
+            </Text>
+
+            <View style={styles.spacer} />
+
+            {/* Finish Button */}
+            <TouchableOpacity
+              style={[styles.button, (!hasMinimum || isCreating) && styles.buttonDisabled]}
+              onPress={handleFinish}
+              disabled={!hasMinimum || isCreating}
+            >
+              {isCreating ? (
+                <ActivityIndicator color="#C44CE0" />
+              ) : (
+                <Text style={styles.buttonText}>Create Profile</Text>
+              )}
+            </TouchableOpacity>
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 20,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 40,
+  },
+  progressDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
+  progressDotActive: {
+    backgroundColor: '#FFFFFF',
+    width: 30,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    opacity: 0.9,
+    marginBottom: 32,
+  },
+  photoGrid: {
+    gap: 12,
+    marginBottom: 16,
+  },
+  photoContainer: {
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 16,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  mainBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  mainBadgeText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#C44CE0',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  addButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  addButton: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 16,
+    paddingVertical: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButtonIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  photoCount: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    opacity: 0.9,
+  },
+  spacer: {
+    height: 40,
+  },
+  button: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 18,
+    borderRadius: 30,
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#C44CE0',
+    fontWeight: 'bold',
+  },
+  // Camera styles
+  camera: {
+    flex: 1,
+  },
+  cameraTopBar: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  cameraBottomGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: Platform.OS === 'ios' ? 50 : 30,
+    paddingTop: 60,
+  },
+  cameraActions: {
+    alignItems: 'center',
+    gap: 16,
+  },
+  cameraTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  captureButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#FFFFFF',
+  },
+  captureButtonInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#FFFFFF',
+  },
+});
