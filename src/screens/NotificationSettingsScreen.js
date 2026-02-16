@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
-  Alert,
 } from 'react-native';
 
 export default function NotificationSettingsScreen({ navigation }) {
@@ -24,14 +23,6 @@ export default function NotificationSettingsScreen({ navigation }) {
   const handleToggle = (setter, value, title) => {
     setter(!value);
     // In a real app, you'd save this to backend or AsyncStorage
-  };
-
-  const handleNotificationPermissions = () => {
-    Alert.alert(
-      'Notification Permissions',
-      'To change notification permissions, please go to your device Settings → Flick → Notifications',
-      [{ text: 'OK' }]
-    );
   };
 
   return (
@@ -159,17 +150,6 @@ export default function NotificationSettingsScreen({ navigation }) {
             />
           </View>
         </View>
-
-        {/* System Settings */}
-        <Text style={styles.sectionTitle}>System</Text>
-
-        <TouchableOpacity style={styles.menuCard} onPress={handleNotificationPermissions}>
-          <View style={styles.menuItem}>
-            <Text style={styles.menuIcon}>⚙️</Text>
-            <Text style={styles.menuText}>Notification Permissions</Text>
-            <Text style={styles.menuChevron}>›</Text>
-          </View>
-        </TouchableOpacity>
 
         {/* Info Box */}
         <View style={styles.infoBox}>
