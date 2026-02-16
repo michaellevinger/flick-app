@@ -49,7 +49,7 @@ export default function DashboardScreen({ navigation }) {
 
   useEffect(() => {
     if (!user) {
-      navigation.replace('QRScanner');
+      navigation.replace('Welcome');
       return;
     }
 
@@ -304,13 +304,13 @@ export default function DashboardScreen({ navigation }) {
       await logout();
       navigation.reset({
         index: 0,
-        routes: [{ name: 'QRScanner' }],
+        routes: [{ name: 'Welcome' }],
       });
     } catch (error) {
       console.error('Error during logout:', error);
       navigation.reset({
         index: 0,
-        routes: [{ name: 'QRScanner' }],
+        routes: [{ name: 'Welcome' }],
       });
     }
   };
@@ -416,7 +416,7 @@ export default function DashboardScreen({ navigation }) {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={COLORS.green}
+            tintColor="#C44CE0"
           />
         }
         ListEmptyComponent={
@@ -488,14 +488,14 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: COLORS.green,
+    color: '#C44CE0',
   },
   headerAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: COLORS.green,
+    borderColor: '#C44CE0',
   },
   titleSection: {
     flexDirection: 'row',
@@ -547,8 +547,8 @@ const styles = StyleSheet.create({
   },
   gridCardInterested: {
     borderWidth: 3,
-    borderColor: COLORS.green,
-    shadowColor: COLORS.green,
+    borderColor: '#FF6B9D',
+    shadowColor: '#FF6B9D',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 8,
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: COLORS.green,
+    backgroundColor: '#C44CE0',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
   },
   tabLabelActive: {
     fontSize: 12,
-    color: COLORS.green,
+    color: '#C44CE0',
     fontWeight: '600',
   },
   photoModalOverlay: {

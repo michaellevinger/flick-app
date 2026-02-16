@@ -22,6 +22,7 @@ import ChatScreen from './src/screens/ChatScreen';
 import GreenLightScreen from './src/screens/GreenLightScreen';
 import VaultScreen from './src/screens/VaultScreen';
 import QRScannerScreen from './src/screens/QRScannerScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
@@ -99,12 +100,13 @@ export default function App() {
           <StatusBar style="dark" />
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="QRScanner"
+              initialRouteName="Welcome"
               screenOptions={{
                 headerShown: false,
               }}
             >
               {/* Onboarding Flow */}
+              <Stack.Screen name="Welcome" component={WelcomeScreen} />
               <Stack.Screen name="QRScanner" component={QRScannerScreen} />
               <Stack.Screen name="Camera" component={CameraScreen} />
               <Stack.Screen name="Setup" component={Setup1Screen} />

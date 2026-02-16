@@ -16,7 +16,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 
 export default function Setup3Screen({ route, navigation }) {
@@ -63,88 +63,103 @@ export default function Setup3Screen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <LinearGradient
+        colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
+        <SafeAreaView style={styles.safeArea}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardView}
           >
-            {/* Progress */}
-            <View style={styles.progressContainer}>
-              <View style={styles.progressDot} />
-              <View style={styles.progressDot} />
-              <View style={[styles.progressDot, styles.progressDotActive]} />
-            </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+              >
+                {/* Progress */}
+                <View style={styles.progressContainer}>
+                  <View style={styles.progressDot} />
+                  <View style={styles.progressDot} />
+                  <View style={[styles.progressDot, styles.progressDotActive]} />
+                </View>
 
-            <Text style={styles.title}>About you</Text>
-            <Text style={styles.subtitle}>Optional but helps you stand out!</Text>
+                <Text style={styles.title}>About you</Text>
+                <Text style={styles.subtitle}>Optional but helps you stand out!</Text>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Bio</Text>
-              <TextInput
-                style={styles.bioInput}
-                value={bio}
-                onChangeText={setBio}
-                placeholder="Tell others something interesting about yourself..."
-                placeholderTextColor="#999"
-                multiline
-                maxLength={150}
-                textAlignVertical="top"
-              />
-              <Text style={styles.charCount}>{bio.length}/150</Text>
-            </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Bio</Text>
+                  <TextInput
+                    style={styles.bioInput}
+                    value={bio}
+                    onChangeText={setBio}
+                    placeholder="Tell others something interesting about yourself..."
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    multiline
+                    maxLength={150}
+                    textAlignVertical="top"
+                  />
+                  <Text style={styles.charCount}>{bio.length}/150</Text>
+                </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Phone Number</Text>
-              <Text style={styles.helperText}>For sharing after you match</Text>
-              <TextInput
-                style={styles.input}
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                placeholder="(555) 123-4567"
-                placeholderTextColor="#999"
-                keyboardType="phone-pad"
-                maxLength={20}
-                returnKeyType="done"
-                onSubmitEditing={Keyboard.dismiss}
-              />
-            </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Phone Number</Text>
+                  <Text style={styles.helperText}>For sharing after you match</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    placeholder="(555) 123-4567"
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    keyboardType="phone-pad"
+                    maxLength={20}
+                    returnKeyType="done"
+                    onSubmitEditing={Keyboard.dismiss}
+                  />
+                </View>
 
-            <TouchableOpacity
-              style={[styles.button, isCreating && styles.buttonDisabled]}
-              onPress={handleFinish}
-              disabled={isCreating}
-            >
-              {isCreating ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <Text style={styles.buttonText}>Let's Go!</Text>
-              )}
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, isCreating && styles.buttonDisabled]}
+                  onPress={handleFinish}
+                  disabled={isCreating}
+                >
+                  {isCreating ? (
+                    <ActivityIndicator color="#C44CE0" />
+                  ) : (
+                    <Text style={styles.buttonText}>Let's Go!</Text>
+                  )}
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.skipButton}
-              onPress={handleFinish}
-              disabled={isCreating}
-            >
-              <Text style={styles.skipButtonText}>Skip for now</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+                <TouchableOpacity
+                  style={styles.skipButton}
+                  onPress={handleFinish}
+                  disabled={isCreating}
+                >
+                  <Text style={styles.skipButtonText}>Skip for now</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   keyboardView: {
@@ -168,21 +183,21 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: 'rgba(255,255,255,0.3)',
   },
   progressDotActive: {
-    backgroundColor: COLORS.green,
+    backgroundColor: '#FFFFFF',
     width: 30,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#888888',
+    color: 'rgba(255,255,255,0.8)',
     marginBottom: 24,
   },
   inputGroup: {
@@ -191,44 +206,44 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333333',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   helperText: {
     fontSize: 14,
-    color: '#888888',
+    color: 'rgba(255,255,255,0.7)',
     marginBottom: 8,
   },
   bioInput: {
     fontSize: 16,
     borderWidth: 2,
-    borderColor: '#EEEEEE',
-    borderRadius: 12,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 16,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    color: '#000000',
+    color: '#FFFFFF',
     minHeight: 100,
   },
   charCount: {
     fontSize: 12,
-    color: '#999999',
+    color: 'rgba(255,255,255,0.7)',
     textAlign: 'right',
     marginTop: 4,
   },
   input: {
     fontSize: 18,
     borderWidth: 2,
-    borderColor: '#EEEEEE',
-    borderRadius: 12,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 16,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    color: '#000000',
+    color: '#FFFFFF',
   },
   button: {
     marginTop: 32,
-    backgroundColor: COLORS.green,
-    paddingVertical: 16,
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 18,
+    borderRadius: 30,
     alignItems: 'center',
     marginBottom: 12,
   },
@@ -237,7 +252,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: '#FFFFFF',
+    color: '#C44CE0',
     fontWeight: 'bold',
   },
   skipButton: {
@@ -247,6 +262,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     fontSize: 16,
-    color: '#888888',
+    color: 'rgba(255,255,255,0.8)',
+    textDecorationLine: 'underline',
   },
 });

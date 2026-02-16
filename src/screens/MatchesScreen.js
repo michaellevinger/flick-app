@@ -33,7 +33,7 @@ export default function MatchesScreen({ navigation }) {
     if (loading) {
       return (
         <View style={styles.emptyContainer}>
-          <ActivityIndicator size="large" color={COLORS.green} />
+          <ActivityIndicator size="large" color="#C44CE0" />
         </View>
       );
     }
@@ -69,7 +69,7 @@ export default function MatchesScreen({ navigation }) {
           <RefreshControl
             refreshing={loading}
             onRefresh={loadMatches}
-            tintColor={COLORS.green}
+            tintColor="#C44CE0"
           />
         }
       />
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.green,
+    color: '#C44CE0',
     marginBottom: 8,
   },
   headerTitle: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   tabLabelActive: {
     fontSize: 12,
-    color: COLORS.green,
+    color: '#C44CE0',
     fontWeight: '600',
   },
 });

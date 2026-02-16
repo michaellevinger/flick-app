@@ -13,28 +13,33 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
-import { COLORS, SPACING } from '../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio } from '../lib/database';
 
 export default function ProfileScreen({ navigation }) {
   const { user, updateSelfie, logout, refreshUser } = useUser();
-  const [isEditingBio, setIsEditingBio] = useState(false);
   const [bio, setBio] = useState(user?.bio || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const handleSaveBio = async () => {
-    if (!user) return;
+  const handleBioChange = (text) => {
+    setBio(text);
+    setHasChanges(text !== (user?.bio || ''));
+  };
+
+  const handleSaveChanges = async () => {
+    if (!user || !hasChanges) return;
 
     setIsSaving(true);
     try {
       await updateUserBio(user.id, bio);
       await refreshUser();
-      setIsEditingBio(false);
-      Alert.alert('Success', 'Bio updated!');
+      setHasChanges(false);
+      Alert.alert('Success', 'Profile updated!');
     } catch (error) {
-      console.error('Error saving bio:', error);
-      Alert.alert('Error', 'Failed to save bio. Please try again.');
+      console.error('Error saving profile:', error);
+      Alert.alert('Error', 'Failed to save changes. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -58,18 +63,43 @@ export default function ProfileScreen({ navigation }) {
             await logout();
             navigation.reset({
               index: 0,
-              routes: [{ name: 'QRScanner' }],
+              routes: [{ name: 'Welcome' }],
             });
           } catch (error) {
             console.error('Error during logout:', error);
             navigation.reset({
               index: 0,
-              routes: [{ name: 'QRScanner' }],
+              routes: [{ name: 'Welcome' }],
             });
           }
         },
       },
     ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await logout();
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Welcome' }],
+              });
+            } catch (error) {
+              console.error('Error deleting account:', error);
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (!user) {
@@ -78,127 +108,123 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backIcon}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <View style={styles.headerSpacer} />
+        </View>
+
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.logo}>♥ flick</Text>
-            <Text style={styles.headerTitle}>Profile</Text>
-          </View>
-
-          {/* Profile Photo */}
-          <TouchableOpacity style={styles.photoContainer} onPress={handleChangePhoto}>
+          {/* Profile Photo Section */}
+          <TouchableOpacity style={styles.photoSection} onPress={handleChangePhoto}>
             <Image source={{ uri: user.selfieUrl }} style={styles.profilePhoto} />
-            <View style={styles.editPhotoOverlay}>
-              <Text style={styles.editPhotoText}>Change Photo</Text>
+            <View style={styles.editPhotoButton}>
+              <Text style={styles.editPhotoIcon}>✎</Text>
             </View>
           </TouchableOpacity>
 
-          {/* Name & Age */}
-          <View style={styles.nameSection}>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userAge}>{user.age} years old</Text>
-            {user.height && (
-              <Text style={styles.userHeight}>{user.height} cm</Text>
-            )}
-          </View>
+          {/* Name Display */}
+          <Text style={styles.userName}>{user.name}, {user.age}</Text>
 
-          {/* Bio Section */}
-          <View style={styles.bioSection}>
-            <View style={styles.bioHeader}>
-              <Text style={styles.bioLabel}>About me</Text>
-              {!isEditingBio && (
-                <TouchableOpacity onPress={() => setIsEditingBio(true)}>
-                  <Text style={styles.editButton}>Edit</Text>
-                </TouchableOpacity>
-              )}
+          {/* Profile Card */}
+          <View style={styles.card}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Bio</Text>
+              <TextInput
+                style={styles.input}
+                value={bio}
+                onChangeText={handleBioChange}
+                placeholder="Tell others about yourself..."
+                placeholderTextColor="#999"
+                multiline
+                maxLength={150}
+              />
+              <Text style={styles.charCount}>{bio.length}/150</Text>
             </View>
 
-            {isEditingBio ? (
-              <View style={styles.bioEditContainer}>
-                <TextInput
-                  style={styles.bioInput}
-                  value={bio}
-                  onChangeText={setBio}
-                  placeholder="Tell others about yourself..."
-                  placeholderTextColor="#999"
-                  multiline
-                  maxLength={150}
-                  autoFocus
-                />
-                <Text style={styles.charCount}>{bio.length}/150</Text>
-                <View style={styles.bioActions}>
-                  <TouchableOpacity
-                    style={styles.cancelButton}
-                    onPress={() => {
-                      setBio(user?.bio || '');
-                      setIsEditingBio(false);
-                    }}
-                  >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.saveButton, isSaving && styles.saveButtonDisabled]}
-                    onPress={handleSaveBio}
-                    disabled={isSaving}
-                  >
-                    <Text style={styles.saveButtonText}>
-                      {isSaving ? 'Saving...' : 'Save'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ) : (
-              <TouchableOpacity onPress={() => setIsEditingBio(true)}>
-                <Text style={styles.bioText}>
-                  {user.bio || 'Tap to add a bio...'}
+            {/* Save Button */}
+            <TouchableOpacity
+              style={[styles.saveButton, (!hasChanges || isSaving) && styles.saveButtonDisabled]}
+              onPress={handleSaveChanges}
+              disabled={!hasChanges || isSaving}
+            >
+              <LinearGradient
+                colors={hasChanges ? ['#FF6B9D', '#C44CE0'] : ['#CCCCCC', '#AAAAAA']}
+                style={styles.saveButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.saveButtonText}>
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </Text>
-              </TouchableOpacity>
-            )}
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
 
-          {/* Stats */}
-          <View style={styles.statsSection}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{user.gender || '—'}</Text>
-              <Text style={styles.statLabel}>Gender</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{user.lookingFor || '—'}</Text>
-              <Text style={styles.statLabel}>Looking for</Text>
-            </View>
+          {/* Account Section */}
+          <Text style={styles.sectionTitle}>Account</Text>
+
+          <View style={styles.menuCard}>
+            <TouchableOpacity style={styles.menuItem}>
+              <Text style={styles.menuIcon}>?</Text>
+              <Text style={styles.menuText}>Help & Support</Text>
+              <Text style={styles.menuChevron}>›</Text>
+            </TouchableOpacity>
           </View>
 
-          {/* Sign Out Button */}
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutButtonText}>Sign Out</Text>
-          </TouchableOpacity>
+          <View style={styles.menuCard}>
+            <TouchableOpacity style={styles.menuItem}>
+              <Text style={styles.menuIcon}>🔔</Text>
+              <Text style={styles.menuText}>Notification Settings</Text>
+              <Text style={styles.menuChevron}>›</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.menuCard}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+              <Text style={styles.menuIcon}>↪</Text>
+              <Text style={styles.menuText}>Sign Out</Text>
+              <Text style={styles.menuChevron}>›</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.menuCard, styles.menuCardDanger]}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleDeleteAccount}>
+              <Text style={[styles.menuIcon, styles.menuIconDanger]}>🗑</Text>
+              <Text style={[styles.menuText, styles.menuTextDanger]}>Delete Account</Text>
+              <Text style={[styles.menuChevron, styles.menuChevronDanger]}>›</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
-      </KeyboardAvoidingView>
 
-      {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
-          <Text style={styles.tabIcon}>👥</Text>
-          <Text style={styles.tabLabel}>Discover</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('MatchesTab')}>
-          <Text style={styles.tabIcon}>💬</Text>
-          <Text style={styles.tabLabel}>Matches</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIconActive}>👤</Text>
-          <Text style={styles.tabLabelActive}>Profile</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Bottom Tab Bar */}
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
+            <Text style={styles.tabIcon}>👥</Text>
+            <Text style={styles.tabLabel}>Discover</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('MatchesTab')}>
+            <Text style={styles.tabIcon}>💬</Text>
+            <Text style={styles.tabLabel}>Matches</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem}>
+            <Text style={styles.tabIconActive}>👤</Text>
+            <Text style={styles.tabLabelActive}>Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -206,116 +232,107 @@ export default function ProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   keyboardView: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backIcon: {
+    fontSize: 32,
+    color: '#000000',
+    fontWeight: '300',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  headerSpacer: {
+    width: 40,
+  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Platform.OS === 'android' ? 160 : 120,
-  },
-  header: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingTop: 24,
+    paddingBottom: Platform.OS === 'android' ? 100 : 120,
   },
-  logo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLORS.green,
-    marginBottom: 8,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#000000',
-  },
-  photoContainer: {
+  photoSection: {
     alignSelf: 'center',
-    marginTop: 20,
+    marginBottom: 16,
     position: 'relative',
   },
   profilePhoto: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    borderWidth: 4,
-    borderColor: COLORS.green,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: '#C44CE0',
   },
-  editPhotoOverlay: {
+  editPhotoButton: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingVertical: 8,
-    borderBottomLeftRadius: 70,
-    borderBottomRightRadius: 70,
-  },
-  editPhotoText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  nameSection: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#C44CE0',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 16,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  editPhotoIcon: {
+    fontSize: 14,
+    color: '#FFFFFF',
   },
   userName: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#000000',
+    textAlign: 'center',
+    marginBottom: 24,
   },
-  userAge: {
-    fontSize: 18,
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#666666',
-    marginTop: 4,
-  },
-  userHeight: {
-    fontSize: 16,
-    color: '#888888',
-    marginTop: 2,
-  },
-  bioSection: {
-    marginTop: 24,
-    marginHorizontal: 16,
-    padding: 16,
-    backgroundColor: '#F8F8F8',
-    borderRadius: 12,
-  },
-  bioHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 8,
   },
-  bioLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666666',
-    textTransform: 'uppercase',
-  },
-  editButton: {
-    fontSize: 14,
-    color: COLORS.green,
-    fontWeight: '600',
-  },
-  bioText: {
+  input: {
     fontSize: 16,
     color: '#333333',
-    lineHeight: 22,
-  },
-  bioEditContainer: {
-    marginTop: 4,
-  },
-  bioInput: {
-    fontSize: 16,
-    color: '#333333',
-    lineHeight: 22,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    borderRadius: 12,
+    padding: 14,
     minHeight: 80,
     textAlignVertical: 'top',
   },
@@ -325,81 +342,67 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 4,
   },
-  bioActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-    marginTop: 12,
-  },
-  cancelButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#EEEEEE',
-  },
-  cancelButtonText: {
-    fontSize: 14,
-    color: '#666666',
-    fontWeight: '600',
-  },
   saveButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: COLORS.green,
+    borderRadius: 30,
+    overflow: 'hidden',
   },
   saveButtonDisabled: {
     opacity: 0.6,
   },
-  saveButtonText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  statsSection: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-    marginHorizontal: 16,
-    padding: 16,
-    backgroundColor: '#F8F8F8',
-    borderRadius: 12,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333333',
-    textTransform: 'capitalize',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#888888',
-    marginTop: 4,
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: '#DDDDDD',
-  },
-  logoutButton: {
-    marginTop: 32,
-    marginHorizontal: 16,
+  saveButtonGradient: {
     paddingVertical: 14,
-    borderRadius: 12,
-    backgroundColor: '#FFF0F0',
-    borderWidth: 1,
-    borderColor: '#FFCCCC',
+    alignItems: 'center',
   },
-  logoutButtonText: {
+  saveButtonText: {
     fontSize: 16,
-    color: '#FF4444',
     fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 16,
+  },
+  menuCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  menuCardDanger: {
+    borderColor: '#FF4444',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  menuIcon: {
+    fontSize: 18,
+    width: 30,
     textAlign: 'center',
+    color: '#666666',
+  },
+  menuIconDanger: {
+    color: '#FF4444',
+  },
+  menuText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333333',
+    marginLeft: 8,
+  },
+  menuTextDanger: {
+    color: '#FF4444',
+  },
+  menuChevron: {
+    fontSize: 20,
+    color: '#CCCCCC',
+  },
+  menuChevronDanger: {
+    color: '#FF4444',
   },
   tabBar: {
     position: 'absolute',
@@ -433,7 +436,7 @@ const styles = StyleSheet.create({
   },
   tabLabelActive: {
     fontSize: 12,
-    color: COLORS.green,
+    color: '#C44CE0',
     fontWeight: '600',
   },
 });

@@ -9,7 +9,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Setup1Screen({ route, navigation }) {
   const { photoUri } = route.params;
@@ -28,83 +28,92 @@ export default function Setup1Screen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {/* Progress */}
-        <View style={styles.progressContainer}>
-          <View style={[styles.progressDot, styles.progressDotActive]} />
-          <View style={styles.progressDot} />
-          <View style={styles.progressDot} />
-        </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <LinearGradient
+        colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <SafeAreaView style={styles.safeArea}>
+          {/* Progress */}
+          <View style={styles.progressContainer}>
+            <View style={[styles.progressDot, styles.progressDotActive]} />
+            <View style={styles.progressDot} />
+            <View style={styles.progressDot} />
+          </View>
 
-        <Text style={styles.title}>What's your name?</Text>
+          <Text style={styles.title}>What's your name?</Text>
 
-        <View style={styles.inputGroup}>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Your first name"
-            placeholderTextColor="#999"
-            autoCapitalize="words"
-            maxLength={20}
-            autoFocus
-          />
-        </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="Your first name"
+              placeholderTextColor="rgba(255,255,255,0.5)"
+              autoCapitalize="words"
+              maxLength={20}
+              autoFocus
+            />
+          </View>
 
-        <Text style={styles.title}>I am a...</Text>
+          <Text style={styles.title}>I am a...</Text>
 
-        <View style={styles.optionButtons}>
+          <View style={styles.optionButtons}>
+            <TouchableOpacity
+              style={[styles.optionButton, gender === 'male' && styles.optionButtonSelected]}
+              onPress={() => setGender('male')}
+            >
+              <Text style={[styles.optionButtonText, gender === 'male' && styles.optionButtonTextSelected]}>
+                Man
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.optionButton, gender === 'female' && styles.optionButtonSelected]}
+              onPress={() => setGender('female')}
+            >
+              <Text style={[styles.optionButtonText, gender === 'female' && styles.optionButtonTextSelected]}>
+                Woman
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.optionButton, gender === 'other' && styles.optionButtonSelected]}
+              onPress={() => setGender('other')}
+            >
+              <Text style={[styles.optionButtonText, gender === 'other' && styles.optionButtonTextSelected]}>
+                Other
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.spacer} />
+
           <TouchableOpacity
-            style={[styles.optionButton, gender === 'male' && styles.optionButtonSelected]}
-            onPress={() => setGender('male')}
+            style={[styles.button, !isValid && styles.buttonDisabled]}
+            onPress={handleNext}
+            disabled={!isValid}
           >
-            <Text style={[styles.optionButtonText, gender === 'male' && styles.optionButtonTextSelected]}>
-              Man
-            </Text>
+            <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.optionButton, gender === 'female' && styles.optionButtonSelected]}
-            onPress={() => setGender('female')}
-          >
-            <Text style={[styles.optionButtonText, gender === 'female' && styles.optionButtonTextSelected]}>
-              Woman
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.optionButton, gender === 'other' && styles.optionButtonSelected]}
-            onPress={() => setGender('other')}
-          >
-            <Text style={[styles.optionButtonText, gender === 'other' && styles.optionButtonTextSelected]}>
-              Other
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.spacer} />
-
-        <TouchableOpacity
-          style={[styles.button, !isValid && styles.buttonDisabled]}
-          onPress={handleNext}
-          disabled={!isValid}
-        >
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  content: {
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 20,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 20,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -116,67 +125,68 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: 'rgba(255,255,255,0.3)',
   },
   progressDotActive: {
-    backgroundColor: COLORS.green,
+    backgroundColor: '#FFFFFF',
     width: 30,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 20,
   },
-  inputGroup: {
+  inputContainer: {
     marginBottom: 32,
   },
   input: {
     fontSize: 24,
     borderBottomWidth: 2,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: 'rgba(255,255,255,0.5)',
     paddingVertical: 12,
-    color: '#000000',
+    color: '#FFFFFF',
   },
   optionButtons: {
     gap: 12,
   },
   optionButton: {
     borderWidth: 2,
-    borderColor: '#EEEEEE',
-    borderRadius: 12,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 30,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
   },
   optionButtonSelected: {
-    backgroundColor: COLORS.green,
-    borderColor: COLORS.green,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FFFFFF',
   },
   optionButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#666666',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
   optionButtonTextSelected: {
-    color: '#FFFFFF',
+    color: '#C44CE0',
   },
   spacer: {
     flex: 1,
   },
   button: {
-    backgroundColor: COLORS.green,
-    paddingVertical: 16,
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 18,
+    borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 40,
   },
   buttonDisabled: {
-    backgroundColor: '#DDDDDD',
+    opacity: 0.5,
   },
   buttonText: {
     fontSize: 18,
-    color: '#FFFFFF',
+    color: '#C44CE0',
     fontWeight: 'bold',
   },
 });
