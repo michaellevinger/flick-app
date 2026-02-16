@@ -181,15 +181,15 @@ export default function PhotosScreen({ route, navigation }) {
               <View style={[styles.progressDot, styles.progressDotActive]} />
             </View>
 
-            <Text style={styles.title}>Add Your Photos</Text>
+            <Text style={styles.title}>Add your best photos</Text>
             <Text style={styles.subtitle}>
-              Add 1-3 photos. First photo will be your main profile picture.
+              First photo will be your main profile picture
             </Text>
 
-            {/* Photo Grid */}
+            {/* Photo Grid - 3 columns */}
             <View style={styles.photoGrid}>
               {photos.map((uri, index) => (
-                <View key={index} style={styles.photoContainer}>
+                <View key={index} style={styles.photoTile}>
                   <Image source={{ uri }} style={styles.photo} />
                   {index === 0 && (
                     <View style={styles.mainBadge}>
@@ -205,31 +205,33 @@ export default function PhotosScreen({ route, navigation }) {
                 </View>
               ))}
 
-              {/* Add Photo Buttons */}
+              {/* Add Photo Tile (Camera Icon) */}
               {canAddMore && (
-                <View style={styles.addButtonsContainer}>
-                  <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={handleOpenCamera}
-                  >
-                    <Text style={styles.addButtonIcon}>📷</Text>
-                    <Text style={styles.addButtonText}>Take Photo</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={pickFromGallery}
-                  >
-                    <Text style={styles.addButtonIcon}>🖼</Text>
-                    <Text style={styles.addButtonText}>Choose Photo</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  style={styles.addPhotoTile}
+                  onPress={() => {
+                    Alert.alert(
+                      'Add Photo',
+                      'Choose how to add a photo',
+                      [
+                        { text: 'Take Photo', onPress: handleOpenCamera },
+                        { text: 'Choose from Gallery', onPress: pickFromGallery },
+                        { text: 'Cancel', style: 'cancel' }
+                      ]
+                    );
+                  }}
+                >
+                  <Text style={styles.cameraIcon}>📷</Text>
+                  <View style={styles.plusButton}>
+                    <Text style={styles.plusText}>+</Text>
+                  </View>
+                </TouchableOpacity>
               )}
             </View>
 
-            {/* Photo Count */}
-            <Text style={styles.photoCount}>
-              {photos.length}/3 photos {hasMinimum ? '✓' : '(minimum 1 required)'}
+            {/* Tip Text */}
+            <Text style={styles.tipText}>
+              💡 Tip: Profiles with 3 photos get better matches
             </Text>
 
             <View style={styles.spacer} />
@@ -300,15 +302,18 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   photoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
-    marginBottom: 16,
+    marginBottom: 24,
   },
-  photoContainer: {
-    width: '100%',
+  photoTile: {
+    width: '30%',
     aspectRatio: 1,
     borderRadius: 16,
     overflow: 'hidden',
     position: 'relative',
+    backgroundColor: '#F5F5F5',
   },
   photo: {
     width: '100%',
@@ -317,62 +322,74 @@ const styles = StyleSheet.create({
   },
   mainBadge: {
     position: 'absolute',
-    top: 12,
-    left: 12,
+    top: 6,
+    left: 6,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
   },
   mainBadgeText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#C44CE0',
   },
   removeButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    top: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   removeButtonText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    lineHeight: 14,
+  },
+  addPhotoTile: {
+    width: '30%',
+    aspectRatio: 1,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderStyle: 'dashed',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  cameraIcon: {
+    fontSize: 36,
+    marginBottom: 8,
+  },
+  plusButton: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#C44CE0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  plusText: {
     fontSize: 18,
     color: '#FFFFFF',
     fontWeight: 'bold',
+    lineHeight: 18,
   },
-  addButtonsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  addButton: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
-    borderRadius: 16,
-    paddingVertical: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addButtonIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  addButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  photoCount: {
+  tipText: {
     fontSize: 14,
     color: '#FFFFFF',
     textAlign: 'center',
     opacity: 0.9,
+    marginBottom: 16,
   },
   spacer: {
     height: 40,
