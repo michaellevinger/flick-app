@@ -23,6 +23,11 @@ import GreenLightScreen from './src/screens/GreenLightScreen';
 import VaultScreen from './src/screens/VaultScreen';
 import QRScannerScreen from './src/screens/QRScannerScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
+import HostOnboarding1Screen from './src/screens/HostOnboarding1Screen';
+import HostOnboarding2Screen from './src/screens/HostOnboarding2Screen';
+import HostOnboarding3Screen from './src/screens/HostOnboarding3Screen';
+import CreateEventScreen from './src/screens/CreateEventScreen';
+import EventSuccessScreen from './src/screens/EventSuccessScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
@@ -112,6 +117,13 @@ export default function App() {
               <Stack.Screen name="Setup" component={Setup1Screen} />
               <Stack.Screen name="Setup2" component={Setup2Screen} />
               <Stack.Screen name="Setup3" component={Setup3Screen} />
+
+              {/* Host Event Flow */}
+              <Stack.Screen name="HostOnboarding1" component={HostOnboarding1Screen} />
+              <Stack.Screen name="HostOnboarding2" component={HostOnboarding2Screen} />
+              <Stack.Screen name="HostOnboarding3" component={HostOnboarding3Screen} />
+              <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
+              <Stack.Screen name="EventSuccess" component={EventSuccessScreen} />
 
               {/* Main App (Tabs) */}
               <Stack.Screen name="Dashboard" component={MainTabs} />

@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
@@ -19,8 +20,21 @@ export default function WelcomeScreen({ navigation }) {
   };
 
   const handleHostEvent = () => {
-    // Future feature
-    alert('Coming soon!');
+    // Check if user is authenticated
+    if (!user) {
+      Alert.alert(
+        'Create Profile First',
+        'You need to create a profile before hosting an event.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Create Profile', onPress: () => navigation.navigate('QRScanner') },
+        ]
+      );
+      return;
+    }
+
+    // User is authenticated, proceed to host onboarding
+    navigation.navigate('HostOnboarding1');
   };
 
   return (

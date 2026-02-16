@@ -6,9 +6,13 @@ CREATE TABLE IF NOT EXISTS festivals (
   sponsor_logo_url TEXT,                  -- Sponsor logo URL
   start_date TIMESTAMP WITH TIME ZONE,    -- Festival start
   end_date TIMESTAMP WITH TIME ZONE,      -- Festival end
+  host_user_id TEXT,                      -- User ID of event creator (for auth tracking)
   is_active BOOLEAN DEFAULT true,         -- Can users join?
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add host_user_id column if upgrading existing table
+ALTER TABLE festivals ADD COLUMN IF NOT EXISTS host_user_id TEXT;
 
 -- Add festival_id to users table
 ALTER TABLE users ADD COLUMN IF NOT EXISTS festival_id TEXT REFERENCES festivals(id);
