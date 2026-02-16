@@ -162,12 +162,12 @@ export default function PhotosScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['#FFD166', '#FFB84D']}
+        colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
           <ScrollView
@@ -276,26 +276,26 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 2,
     marginBottom: 40,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#000000',
+    backgroundColor: '#FFFFFF',
     borderRadius: 2,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 8,
     lineHeight: 40,
   },
   subtitle: {
     fontSize: 16,
-    color: '#000000',
-    opacity: 0.6,
+    color: '#FFFFFF',
+    opacity: 0.9,
     marginBottom: 32,
   },
   photoGrid: {
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.9)',
   },
   photo: {
     width: '100%',
@@ -353,9 +353,9 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: 'rgba(0,0,0,0.2)',
+    borderColor: 'rgba(255,255,255,0.5)',
     borderStyle: 'dashed',
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -371,20 +371,20 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#000000',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
   plusText: {
     fontSize: 18,
-    color: '#FFFFFF',
+    color: '#C44CE0',
     fontWeight: 'bold',
     lineHeight: 18,
   },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 12,
     padding: 16,
     gap: 12,
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#000000',
+    color: '#FFFFFF',
     lineHeight: 20,
   },
   spacer: {
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#000000',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 28,
-    color: '#FFFFFF',
+    color: '#C44CE0',
     fontWeight: 'bold',
   },
   // Camera styles

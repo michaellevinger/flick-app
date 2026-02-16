@@ -29,12 +29,12 @@ export default function LookingForScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['#FFD166', '#FFB84D']}
+        colors={["#FF6B9D", "#C44CE0", "#7B5EE3"]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.content}>
@@ -120,19 +120,19 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 2,
     marginBottom: 40,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#000000',
+    backgroundColor: "#FFFFFF",
     borderRadius: 2,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#000000',
+    color: "#FFFFFF",
     marginBottom: 40,
     lineHeight: 40,
   },
@@ -140,7 +140,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   option: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
     borderRadius: 12,
     padding: 20,
   },
@@ -154,22 +156,22 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#000000',
+    borderColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
   radioSelected: {
-    borderColor: '#FFD166',
+    borderColor: '#FFFFFF',
   },
   radioInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#FFD166',
+    backgroundColor: '#FFFFFF',
   },
   optionText: {
     fontSize: 18,
-    color: '#000000',
+    color: '#FFFFFF',
     fontWeight: '500',
   },
   spacer: {
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#000000',
+    backgroundColor: "#FFFFFF",
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 28,
-    color: '#FFFFFF',
+    color: '#C44CE0',
     fontWeight: 'bold',
   },
 });

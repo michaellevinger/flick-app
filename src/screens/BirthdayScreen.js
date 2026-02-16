@@ -45,12 +45,12 @@ export default function BirthdayScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['#FFD166', '#FFB84D']}
+        colors={["#FF6B9D", "#C44CE0", "#7B5EE3"]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -151,19 +151,19 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 2,
     marginBottom: 40,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#000000',
+    backgroundColor: "#FFFFFF",
     borderRadius: 2,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#000000',
+    color: "#FFFFFF",
     marginBottom: 40,
     lineHeight: 40,
   },
@@ -177,23 +177,25 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     fontSize: 14,
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 8,
     fontWeight: '500',
   },
   dateField: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
     borderRadius: 12,
     paddingVertical: 16,
     paddingHorizontal: 16,
     fontSize: 18,
-    color: '#000000',
+    color: '#FFFFFF',
     textAlign: 'center',
   },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: "rgba(255,255,255,0.15)",
     borderRadius: 12,
     padding: 16,
     gap: 12,
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#000000',
+    color: "#FFFFFF",
     lineHeight: 20,
   },
   errorText: {
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#000000',
+    backgroundColor: "#FFFFFF",
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 28,
-    color: '#FFFFFF',
+    color: '#C44CE0',
     fontWeight: 'bold',
   },
 });
