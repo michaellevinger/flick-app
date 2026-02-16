@@ -2,26 +2,31 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   Platform,
   StatusBar,
-  Keyboard,
-  TouchableWithoutFeedback,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+const YEARS = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+
 export default function BirthdayScreen({ route, navigation }) {
   const { festivalId, name } = route.params;
-  const [day, setDay] = useState('');
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState(5); // June (index 5)
+  const [selectedDay, setSelectedDay] = useState(15);
+  const [selectedYear, setSelectedYear] = useState(1998);
 
   const calculateAge = () => {
-    if (!day || !month || !year) return null;
-    const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    const birthDate = new Date(selectedYear, selectedMonth, selectedDay);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
@@ -32,7 +37,7 @@ export default function BirthdayScreen({ route, navigation }) {
   };
 
   const age = calculateAge();
-  const isValid = age !== null && age >= 18;
+  const isValid = age >= 18;
 
   const handleNext = () => {
     if (!isValid) return;
@@ -41,6 +46,19 @@ export default function BirthdayScreen({ route, navigation }) {
       name,
       age,
     });
+  };
+
+  const renderPickerItem = (item, isSelected, type) => {
+    let displayText = item;
+    if (type === 'month') {
+      displayText = MONTHS[item];
+    }
+
+    return (
+      <Text style={[styles.pickerItem, isSelected && styles.pickerItemSelected]}>
+        {displayText}
+      </Text>
+    );
   };
 
   return (
@@ -53,80 +71,113 @@ export default function BirthdayScreen({ route, navigation }) {
         end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.content}>
-              {/* Progress Bar */}
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: '14%' }]} />
-              </View>
-
-              {/* Title */}
-              <Text style={styles.title}>When's your{'\n'}birthday?</Text>
-
-              {/* Date Inputs */}
-              <View style={styles.dateInputs}>
-                <View style={styles.dateInput}>
-                  <Text style={styles.dateLabel}>Day</Text>
-                  <TextInput
-                    style={styles.dateField}
-                    value={day}
-                    onChangeText={(text) => setDay(text.replace(/[^0-9]/g, ''))}
-                    placeholder="DD"
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    maxLength={2}
-                  />
-                </View>
-                <View style={styles.dateInput}>
-                  <Text style={styles.dateLabel}>Month</Text>
-                  <TextInput
-                    style={styles.dateField}
-                    value={month}
-                    onChangeText={(text) => setMonth(text.replace(/[^0-9]/g, ''))}
-                    placeholder="MM"
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    maxLength={2}
-                  />
-                </View>
-                <View style={styles.dateInput}>
-                  <Text style={styles.dateLabel}>Year</Text>
-                  <TextInput
-                    style={styles.dateField}
-                    value={year}
-                    onChangeText={(text) => setYear(text.replace(/[^0-9]/g, ''))}
-                    placeholder="YYYY"
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    maxLength={4}
-                  />
-                </View>
-              </View>
-
-              {/* Info Text */}
-              <View style={styles.infoBox}>
-                <Text style={styles.infoIcon}>👁</Text>
-                <Text style={styles.infoText}>
-                  We only show your age to potential matches, not your birthday.
-                </Text>
-              </View>
-
-              {age !== null && age < 18 && (
-                <Text style={styles.errorText}>You must be 18 or older</Text>
-              )}
-
-              <View style={styles.spacer} />
-
-              {/* Next Button */}
-              <TouchableOpacity
-                style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
-                onPress={handleNext}
-                disabled={!isValid}
-              >
-                <Text style={styles.nextButtonText}>→</Text>
-              </TouchableOpacity>
+          <View style={styles.content}>
+            {/* Progress Bar */}
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: '14%' }]} />
             </View>
-          </TouchableWithoutFeedback>
+
+            {/* Title */}
+            <Text style={styles.title}>When's your{'\n'}birthday?</Text>
+
+            <View style={styles.spacer} />
+
+            {/* Date Picker Container */}
+            <View style={styles.pickerContainer}>
+              <View style={styles.pickerOverlay}>
+                <View style={styles.pickerHighlight} />
+              </View>
+
+              <View style={styles.pickersRow}>
+                {/* Month Picker */}
+                <View style={styles.pickerColumn}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.pickerScrollContent}
+                    snapToInterval={40}
+                    decelerationRate="fast"
+                    onMomentumScrollEnd={(e) => {
+                      const index = Math.round(e.nativeEvent.contentOffset.y / 40);
+                      setSelectedMonth(index);
+                    }}
+                  >
+                    {MONTHS.map((month, index) => (
+                      <TouchableOpacity
+                        key={month}
+                        onPress={() => setSelectedMonth(index)}
+                        style={styles.pickerItemContainer}
+                      >
+                        {renderPickerItem(index, index === selectedMonth, 'month')}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+
+                {/* Day Picker */}
+                <View style={styles.pickerColumn}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.pickerScrollContent}
+                    snapToInterval={40}
+                    decelerationRate="fast"
+                    onMomentumScrollEnd={(e) => {
+                      const index = Math.round(e.nativeEvent.contentOffset.y / 40);
+                      setSelectedDay(DAYS[index]);
+                    }}
+                  >
+                    {DAYS.map((day) => (
+                      <TouchableOpacity
+                        key={day}
+                        onPress={() => setSelectedDay(day)}
+                        style={styles.pickerItemContainer}
+                      >
+                        {renderPickerItem(day, day === selectedDay, 'day')}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+
+                {/* Year Picker */}
+                <View style={styles.pickerColumn}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.pickerScrollContent}
+                    snapToInterval={40}
+                    decelerationRate="fast"
+                    onMomentumScrollEnd={(e) => {
+                      const index = Math.round(e.nativeEvent.contentOffset.y / 40);
+                      setSelectedYear(YEARS[index]);
+                    }}
+                  >
+                    {YEARS.map((year) => (
+                      <TouchableOpacity
+                        key={year}
+                        onPress={() => setSelectedYear(year)}
+                        style={styles.pickerItemContainer}
+                      >
+                        {renderPickerItem(year, year === selectedYear, 'year')}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </View>
+
+            {age < 18 && (
+              <Text style={styles.errorText}>You must be 18 or older</Text>
+            )}
+
+            <View style={styles.spacer} />
+
+            {/* Done Button */}
+            <TouchableOpacity
+              style={[styles.doneButton, !isValid && styles.doneButtonDisabled]}
+              onPress={handleNext}
+              disabled={!isValid}
+            >
+              <Text style={styles.doneButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -163,76 +214,86 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: "#FFFFFF",
-    marginBottom: 40,
+    color: '#FFFFFF',
+    marginBottom: 20,
     lineHeight: 40,
   },
-  dateInputs: {
+  pickerContainer: {
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: 16,
+    height: 200,
+    overflow: 'hidden',
+    position: 'relative',
+    marginVertical: 20,
+  },
+  pickerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+    pointerEvents: 'none',
+  },
+  pickerHighlight: {
+    position: 'absolute',
+    top: 80,
+    left: 0,
+    right: 0,
+    height: 40,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  pickersRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 32,
+    height: '100%',
   },
-  dateInput: {
+  pickerColumn: {
     flex: 1,
+    height: '100%',
   },
-  dateLabel: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    marginBottom: 8,
-    fontWeight: '500',
+  pickerScrollContent: {
+    paddingVertical: 80,
   },
-  dateField: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+  pickerItemContainer: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pickerItem: {
     fontSize: 18,
-    color: '#FFFFFF',
-    textAlign: 'center',
+    color: '#999999',
+    fontWeight: '400',
   },
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 12,
-    padding: 16,
-    gap: 12,
-  },
-  infoIcon: {
+  pickerItemSelected: {
     fontSize: 20,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#FFFFFF",
-    lineHeight: 20,
+    color: '#000000',
+    fontWeight: '600',
   },
   errorText: {
     color: '#FF3B30',
     fontSize: 14,
-    marginTop: 16,
+    marginTop: 8,
     textAlign: 'center',
+    fontWeight: '500',
   },
   spacer: {
     flex: 1,
   },
-  nextButton: {
-    width: 60,
-    height: 60,
+  doneButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
     borderRadius: 30,
-    backgroundColor: "#FFFFFF",
-    justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-end',
     marginBottom: 40,
   },
-  nextButtonDisabled: {
-    opacity: 0.3,
+  doneButtonDisabled: {
+    opacity: 0.5,
   },
-  nextButtonText: {
-    fontSize: 28,
+  doneButtonText: {
+    fontSize: 18,
     color: '#C44CE0',
     fontWeight: 'bold',
   },
