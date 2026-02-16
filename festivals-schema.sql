@@ -2,13 +2,19 @@
 CREATE TABLE IF NOT EXISTS festivals (
   id TEXT PRIMARY KEY,                    -- Unique festival code (e.g., "coachella2024")
   name TEXT NOT NULL,                     -- Display name (e.g., "Coachella 2024")
+  venue TEXT,                             -- Venue/location (e.g., "Empire Polo Club, Indio, CA")
   sponsor_name TEXT,                      -- Sponsor (e.g., "Heineken")
   sponsor_logo_url TEXT,                  -- Sponsor logo URL
   start_date TIMESTAMP WITH TIME ZONE,    -- Festival start
   end_date TIMESTAMP WITH TIME ZONE,      -- Festival end
+  host_user_id TEXT,                      -- User ID of event creator (for auth tracking)
   is_active BOOLEAN DEFAULT true,         -- Can users join?
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add columns if upgrading existing table
+ALTER TABLE festivals ADD COLUMN IF NOT EXISTS host_user_id TEXT;
+ALTER TABLE festivals ADD COLUMN IF NOT EXISTS venue TEXT;
 
 -- Add festival_id to users table
 ALTER TABLE users ADD COLUMN IF NOT EXISTS festival_id TEXT REFERENCES festivals(id);

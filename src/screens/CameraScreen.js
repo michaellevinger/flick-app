@@ -1,19 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+} from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useFocusEffect } from '@react-navigation/native';
-import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
+import { uploadSelfie, deleteSelfie } from '../lib/database';
 
 export default function CameraScreen({ navigation, route }) {
   const { user, isLoading, updateSelfie } = useUser();
   const forceReset = route?.params?.forceReset;
   const updatePhoto = route?.params?.updatePhoto;
 
-  // Initialize photo state - if forceReset is present, start with null
-  const [photo, setPhoto] = useState(forceReset ? null : null);
+  // Initialize photo state
+  const [photo, setPhoto] = useState(null);
   const [key, setKey] = useState(Date.now()); // Unique key for camera remount
   const [isUpdating, setIsUpdating] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
@@ -61,7 +73,14 @@ export default function CameraScreen({ navigation, route }) {
   if (isLoading || !permission) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color={COLORS.green} />
+        <LinearGradient
+          colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+          style={styles.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </LinearGradient>
       </View>
     );
   }
@@ -69,21 +88,37 @@ export default function CameraScreen({ navigation, route }) {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.permissionText}>
-          Flick needs camera access to take your selfie
-        </Text>
-        <TouchableOpacity style={styles.button} onPress={requestPermission}>
-          <Text style={styles.buttonText}>Grant Access</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.skipButton} onPress={pickFromGallery}>
-          <Text style={styles.skipButtonText}>Choose from Gallery Instead</Text>
-        </TouchableOpacity>
+        <StatusBar barStyle="light-content" />
+        <LinearGradient
+          colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+          style={styles.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <SafeAreaView style={styles.permissionContent}>
+            <Text style={styles.permissionTitle}>Camera Access</Text>
+            <Text style={styles.permissionText}>
+              flick needs camera access to take your selfie
+            </Text>
+            <TouchableOpacity style={styles.grantButton} onPress={requestPermission}>
+              <Text style={styles.grantButtonText}>Grant Camera Access</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.skipLink} onPress={pickFromGallery}>
+              <Text style={styles.skipLinkText}>Choose from Gallery Instead</Text>
+            </TouchableOpacity>
+          </SafeAreaView>
+        </LinearGradient>
       </View>
     );
   }
 
   const takePicture = async () => {
-    if (cameraRef.current) {
+    if (!cameraRef.current) {
+      Alert.alert('Error', 'Camera not ready. Please try again.');
+      return;
+    }
+
+    try {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 0.7,
         base64: false,
@@ -100,6 +135,13 @@ export default function CameraScreen({ navigation, route }) {
 
       hasResetRef.current = false; // Clear reset flag when taking new photo
       setPhoto(manipulatedImage);
+    } catch (error) {
+      console.error('Error taking picture:', error);
+      Alert.alert(
+        'Camera Not Available',
+        'Camera capture is not working on this device. Please use "Choose from Gallery" instead.',
+        [{ text: 'OK' }]
+      );
     }
   };
 
@@ -113,8 +155,6 @@ export default function CameraScreen({ navigation, route }) {
     if (updatePhoto && user) {
       setIsUpdating(true);
       try {
-        const { uploadSelfie, deleteSelfie } = require('../lib/database');
-
         // Delete old selfie
         if (user.selfieUrl) {
           await deleteSelfie(user.selfieUrl);
@@ -140,21 +180,26 @@ export default function CameraScreen({ navigation, route }) {
   };
 
   const pickFromGallery = async () => {
-    // Request media library permissions first
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to select photos!');
-      return;
-    }
+    try {
+      // Request media library permissions first
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'We need photo library access to select photos.');
+        return;
+      }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: false, // Skip crop screen for simpler UX
-      quality: 0.7,
-    });
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: false, // Skip crop screen for simpler UX
+        quality: 0.7,
+      });
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setPhoto({ uri: result.assets[0].uri });
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setPhoto({ uri: result.assets[0].uri });
+      }
+    } catch (error) {
+      console.error('Error picking from gallery:', error);
+      Alert.alert('Error', 'Failed to open photo library. Please try again.');
     }
   };
 
@@ -165,53 +210,71 @@ export default function CameraScreen({ navigation, route }) {
   if (shouldShowPreview) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
         <Image source={{ uri: photo.uri }} style={styles.preview} />
-        <View style={styles.previewActions}>
-          <TouchableOpacity
-            style={styles.retakeButton}
-            onPress={retakePicture}
-            disabled={isUpdating}
-          >
-            <Text style={styles.buttonText}>Retake</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.confirmButton, isUpdating && { opacity: 0.6 }]}
-            onPress={confirmPicture}
-            disabled={isUpdating}
-          >
-            {isUpdating ? (
-              <ActivityIndicator color={COLORS.black} />
-            ) : (
-              <Text style={styles.buttonText}>Looks Good</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.8)']}
+          style={styles.previewOverlay}
+        >
+          <View style={styles.previewActions}>
+            <TouchableOpacity
+              style={styles.retakeButton}
+              onPress={retakePicture}
+              disabled={isUpdating}
+            >
+              <Text style={styles.retakeButtonText}>Retake</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.confirmButton, isUpdating && { opacity: 0.6 }]}
+              onPress={confirmPicture}
+              disabled={isUpdating}
+            >
+              {isUpdating ? (
+                <ActivityIndicator color="#C44CE0" />
+              ) : (
+                <Text style={styles.confirmButtonText}>Looks Good</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <CameraView
         key={key}
         style={styles.camera}
         facing="front"
         ref={cameraRef}
       />
-      <View style={styles.cameraOverlay}>
-        <View style={styles.header}>
-          <Text style={styles.title}>You are beautiful!</Text>
-          <Text style={styles.subtitle}>Take a fresh selfie</Text>
-        </View>
+
+      {/* Top Gradient */}
+      <LinearGradient
+        colors={['#FF6B9D', '#C44CE0', 'transparent']}
+        style={styles.topGradient}
+      />
+
+      {/* Bottom Gradient */}
+      <LinearGradient
+        colors={['transparent', 'rgba(0,0,0,0.8)']}
+        style={styles.bottomGradient}
+      >
         <View style={styles.actions}>
+          <Text style={styles.title}>Show Your Real Self</Text>
+          <Text style={styles.subtitle}>Take a fresh selfie</Text>
+
           <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
             <View style={styles.captureButtonInner} />
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.galleryButton} onPress={pickFromGallery}>
             <Text style={styles.galleryButtonText}>Choose from Gallery</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
     </View>
   );
 }
@@ -219,117 +282,154 @@ export default function CameraScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.black,
+    backgroundColor: '#000000',
+  },
+  gradient: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  permissionText: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.white,
-    textAlign: 'center',
-    paddingHorizontal: SPACING.xl,
-    marginBottom: SPACING.lg,
+  permissionContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
   },
-  button: {
-    backgroundColor: COLORS.green,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    borderRadius: 8,
-  },
-  buttonText: {
-    ...TYPOGRAPHY.subtitle,
-    color: COLORS.black,
+  permissionTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 16,
   },
-  skipButton: {
-    marginTop: SPACING.md,
-    paddingVertical: SPACING.sm,
+  permissionText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    opacity: 0.9,
+    marginBottom: 32,
+    lineHeight: 24,
   },
-  skipButtonText: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.gray,
+  grantButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 30,
+  },
+  grantButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#C44CE0',
+  },
+  skipLink: {
+    marginTop: 24,
+    paddingVertical: 12,
+  },
+  skipLinkText: {
+    fontSize: 16,
+    color: '#FFFFFF',
     textDecorationLine: 'underline',
   },
   camera: {
     flex: 1,
-    width: '100%',
   },
-  cameraOverlay: {
+  topGradient: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
+    height: Platform.OS === 'ios' ? 120 : 80,
+  },
+  bottomGradient: {
+    position: 'absolute',
     bottom: 0,
-    backgroundColor: 'transparent',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: SPACING.xxl,
-  },
-  header: {
-    alignItems: 'center',
-  },
-  title: {
-    ...TYPOGRAPHY.title,
-    color: COLORS.white,
-  },
-  subtitle: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.white,
-    marginTop: SPACING.sm,
+    left: 0,
+    right: 0,
+    paddingBottom: Platform.OS === 'ios' ? 50 : 30,
+    paddingTop: 60,
   },
   actions: {
     alignItems: 'center',
-    gap: SPACING.lg,
+    gap: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.8)',
+    marginBottom: 16,
   },
   captureButton: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: COLORS.green,
+    borderColor: '#FFFFFF',
   },
   captureButtonInner: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: COLORS.green,
+    backgroundColor: '#FFFFFF',
   },
   galleryButton: {
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
+    borderColor: 'rgba(255,255,255,0.4)',
   },
   galleryButtonText: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.white,
+    fontSize: 14,
+    color: '#FFFFFF',
     fontWeight: '500',
   },
   preview: {
+    flex: 1,
     width: '100%',
-    height: '80%',
     resizeMode: 'cover',
+  },
+  previewOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: Platform.OS === 'ios' ? 50 : 30,
+    paddingTop: 40,
   },
   previewActions: {
     flexDirection: 'row',
-    gap: SPACING.md,
-    paddingVertical: SPACING.lg,
+    justifyContent: 'center',
+    gap: 16,
   },
   retakeButton: {
-    backgroundColor: COLORS.gray,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.4)',
+  },
+  retakeButtonText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   confirmButton: {
-    backgroundColor: COLORS.green,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 30,
+  },
+  confirmButtonText: {
+    fontSize: 16,
+    color: '#C44CE0',
+    fontWeight: '600',
   },
 });

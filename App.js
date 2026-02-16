@@ -12,13 +12,22 @@ import { View, ActivityIndicator, Text } from 'react-native';
 enableScreens(false);
 
 import CameraScreen from './src/screens/CameraScreen';
-import SetupScreen from './src/screens/SetupScreen';
+import Setup1Screen from './src/screens/Setup1Screen';
+import Setup2Screen from './src/screens/Setup2Screen';
+import Setup3Screen from './src/screens/Setup3Screen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import MatchesScreen from './src/screens/MatchesScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import GreenLightScreen from './src/screens/GreenLightScreen';
 import VaultScreen from './src/screens/VaultScreen';
 import QRScannerScreen from './src/screens/QRScannerScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import HostOnboarding1Screen from './src/screens/HostOnboarding1Screen';
+import HostOnboarding2Screen from './src/screens/HostOnboarding2Screen';
+import HostOnboarding3Screen from './src/screens/HostOnboarding3Screen';
+import CreateEventScreen from './src/screens/CreateEventScreen';
+import EventSuccessScreen from './src/screens/EventSuccessScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
@@ -34,13 +43,7 @@ function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.green,
-        tabBarInactiveTintColor: COLORS.gray,
-        tabBarStyle: {
-          backgroundColor: COLORS.white,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.grayLight,
-        },
+        tabBarStyle: { display: 'none' },
       }}
     >
       <Tab.Screen
@@ -67,6 +70,16 @@ function MainTabs() {
           ),
         }}
       />
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size, color }}>👤</Text>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -80,7 +93,7 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0B0F0E' }}>
-        <ActivityIndicator size="large" color="#2EFF4D" />
+        <ActivityIndicator size="large" color="#FF6B9D" />
       </View>
     );
   }
@@ -92,15 +105,25 @@ export default function App() {
           <StatusBar style="dark" />
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="QRScanner"
+              initialRouteName="Welcome"
               screenOptions={{
                 headerShown: false,
               }}
             >
               {/* Onboarding Flow */}
+              <Stack.Screen name="Welcome" component={WelcomeScreen} />
               <Stack.Screen name="QRScanner" component={QRScannerScreen} />
               <Stack.Screen name="Camera" component={CameraScreen} />
-              <Stack.Screen name="Setup" component={SetupScreen} />
+              <Stack.Screen name="Setup" component={Setup1Screen} />
+              <Stack.Screen name="Setup2" component={Setup2Screen} />
+              <Stack.Screen name="Setup3" component={Setup3Screen} />
+
+              {/* Host Event Flow */}
+              <Stack.Screen name="HostOnboarding1" component={HostOnboarding1Screen} />
+              <Stack.Screen name="HostOnboarding2" component={HostOnboarding2Screen} />
+              <Stack.Screen name="HostOnboarding3" component={HostOnboarding3Screen} />
+              <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
+              <Stack.Screen name="EventSuccess" component={EventSuccessScreen} />
 
               {/* Main App (Tabs) */}
               <Stack.Screen name="Dashboard" component={MainTabs} />
