@@ -1,7 +1,7 @@
 ---
 title: Host Event Onboarding Carousel + Event Creation
 type: feat
-status: active
+status: completed
 date: 2026-02-16
 ---
 
