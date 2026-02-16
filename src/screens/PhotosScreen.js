@@ -219,7 +219,9 @@ export default function PhotosScreen({ route, navigation }) {
                     );
                   }}
                 >
-                  <Text style={styles.plusIcon}>+</Text>
+                  <View style={styles.plusButton}>
+                    <Text style={styles.plusIcon}>+</Text>
+                  </View>
                 </TouchableOpacity>
               )}
             </View>
@@ -359,11 +361,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  plusButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   plusIcon: {
-    fontSize: 48,
-    color: '#FFFFFF',
+    fontSize: 36,
+    color: '#C44CE0',
     fontWeight: '300',
-    lineHeight: 48,
+    lineHeight: 36,
   },
   infoBox: {
     flexDirection: 'row',

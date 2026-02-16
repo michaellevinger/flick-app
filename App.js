@@ -34,6 +34,8 @@ import HostOnboarding2Screen from './src/screens/HostOnboarding2Screen';
 import HostOnboarding3Screen from './src/screens/HostOnboarding3Screen';
 import CreateEventScreen from './src/screens/CreateEventScreen';
 import EventSuccessScreen from './src/screens/EventSuccessScreen';
+import HelpSupportScreen from './src/screens/HelpSupportScreen';
+import NotificationSettingsScreen from './src/screens/NotificationSettingsScreen';
 import { COLORS } from './src/constants/theme';
 import { UserProvider } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
@@ -164,6 +166,20 @@ export default function App() {
                 component={VaultScreen}
                 options={{
                   presentation: 'modal',
+                }}
+              />
+              <Stack.Screen
+                name="HelpSupport"
+                component={HelpSupportScreen}
+                options={{
+                  presentation: 'card',
+                }}
+              />
+              <Stack.Screen
+                name="NotificationSettings"
+                component={NotificationSettingsScreen}
+                options={{
+                  presentation: 'card',
                 }}
               />
             </Stack.Navigator>

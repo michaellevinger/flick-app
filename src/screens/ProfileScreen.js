@@ -102,6 +102,14 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+  const handleHelpSupport = () => {
+    navigation.navigate('HelpSupport');
+  };
+
+  const handleNotificationSettings = () => {
+    navigation.navigate('NotificationSettings');
+  };
+
   if (!user) {
     return null;
   }
@@ -177,7 +185,7 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Account</Text>
 
           <View style={styles.menuCard}>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
               <Text style={styles.menuIcon}>?</Text>
               <Text style={styles.menuText}>Help & Support</Text>
               <Text style={styles.menuChevron}>›</Text>
@@ -185,7 +193,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
 
           <View style={styles.menuCard}>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleNotificationSettings}>
               <Text style={styles.menuIcon}>🔔</Text>
               <Text style={styles.menuText}>Notification Settings</Text>
               <Text style={styles.menuChevron}>›</Text>
