@@ -117,6 +117,24 @@ export async function updateUserBio(userId, bio) {
 }
 
 /**
+ * Update user's photos (array of photo URLs)
+ */
+export async function updateUserPhotos(userId, photos) {
+  const { error } = await supabase
+    .from('users')
+    .update({
+      photos: photos,
+      selfie_url: photos[0] // First photo is the main selfie
+    })
+    .eq('id', userId);
+
+  if (error) {
+    console.error('Error updating photos:', error);
+    throw error;
+  }
+}
+
+/**
  * Find users within a given radius (in meters) of a location
  * Uses PostGIS ST_DWithin for efficient geospatial queries
  */

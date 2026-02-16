@@ -48,10 +48,7 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleChangePhoto = () => {
-    navigation.navigate('Camera', {
-      updatePhoto: true,
-      forceReset: Date.now()
-    });
+    navigation.navigate('ManagePhotos');
   };
 
   const handleLogout = () => {
