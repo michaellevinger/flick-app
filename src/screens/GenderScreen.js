@@ -92,7 +92,10 @@ export default function GenderScreen({ route, navigation }) {
               onPress={handleNext}
               disabled={!isValid}
             >
-              <Text style={styles.nextButtonText}>→</Text>
+              <View style={styles.arrowContainer}>
+                  <View style={styles.arrowLine} />
+                  <View style={styles.arrowHead} />
+                </View>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -180,18 +183,41 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
     marginBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   nextButtonDisabled: {
     opacity: 0.3,
   },
-  nextButtonText: {
-    fontSize: 28,
-    color: '#C44CE0',
-    fontWeight: 'bold',
+  arrowContainer: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  arrowLine: {
+    width: 20,
+    height: 2.5,
+    backgroundColor: '#C44CE0',
+    borderRadius: 2,
+  },
+  arrowHead: {
+    position: 'absolute',
+    right: 0,
+    width: 8,
+    height: 8,
+    borderTopWidth: 2.5,
+    borderRightWidth: 2.5,
+    borderColor: '#C44CE0',
+    transform: [{ rotate: '45deg' }],
   },
 });
