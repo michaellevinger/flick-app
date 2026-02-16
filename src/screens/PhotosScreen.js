@@ -203,7 +203,7 @@ export default function PhotosScreen({ route, navigation }) {
                 </View>
               ))}
 
-              {/* Add Photo Tile (Camera Icon) */}
+              {/* Add Photo Tile */}
               {canAddMore && (
                 <TouchableOpacity
                   style={styles.addPhotoTile}
@@ -219,10 +219,7 @@ export default function PhotosScreen({ route, navigation }) {
                     );
                   }}
                 >
-                  <Text style={styles.cameraIcon}>📷</Text>
-                  <View style={styles.plusButton}>
-                    <Text style={styles.plusText}>+</Text>
-                  </View>
+                  <Text style={styles.plusIcon}>+</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -361,28 +358,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
-  cameraIcon: {
-    fontSize: 36,
-    marginBottom: 8,
-  },
-  plusButton: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  plusText: {
-    fontSize: 18,
-    color: '#C44CE0',
-    fontWeight: 'bold',
-    lineHeight: 18,
+  plusIcon: {
+    fontSize: 48,
+    color: '#FFFFFF',
+    fontWeight: '300',
+    lineHeight: 48,
   },
   infoBox: {
     flexDirection: 'row',
