@@ -17,11 +17,11 @@ export default function HelpSupportScreen({ navigation }) {
   };
 
   const handlePrivacyPolicy = () => {
-    Linking.openURL('https://helloflick.com/privacy');
+    Linking.openURL('https://helloflick.com/privacy.html');
   };
 
   const handleTermsOfService = () => {
-    Linking.openURL('https://helloflick.com/terms');
+    Linking.openURL('https://helloflick.com/terms.html');
   };
 
   return (
