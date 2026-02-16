@@ -401,7 +401,7 @@ export default function DashboardScreen({ navigation }) {
           )}
         </View>
         <TouchableOpacity style={styles.filterButton} onPress={handleFilterPress}>
-          <Text style={styles.filterIcon}>⚙</Text>
+          <Text style={styles.filterIcon}>☰</Text>
         </TouchableOpacity>
       </View>
 
