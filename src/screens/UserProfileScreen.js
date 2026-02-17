@@ -10,7 +10,6 @@ import {
   Alert,
   Platform,
   StatusBar,
-  Modal,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,7 +22,6 @@ export default function UserProfileScreen({ route, navigation }) {
   const { user, onFlick } = route.params;
   const { user: currentUser } = useUser();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [showMoreOptions, setShowMoreOptions] = useState(false);
   const insets = useSafeAreaInsets();
 
   // Check if this is a matched user (viewing from chat)
@@ -45,39 +43,31 @@ export default function UserProfileScreen({ route, navigation }) {
     navigation.goBack();
   };
 
-  const handleMorePress = () => {
-    setShowMoreOptions(true);
-  };
-
   const handleUnmatch = () => {
-    setShowMoreOptions(false);
-    // Show unmatch confirmation after a brief delay
-    setTimeout(() => {
-      Alert.alert(
-        'Unmatch?',
-        "You won't be able to see or message one another.",
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
+    Alert.alert(
+      'Unmatch?',
+      "You won't be able to see or message one another.",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Unmatch',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await unmatchUser(currentUser.id, user.id);
+              // Go back to matches list
+              navigation.navigate('MatchesTab');
+            } catch (error) {
+              console.error('Error unmatching:', error);
+              Alert.alert('Error', 'Failed to unmatch. Please try again.');
+            }
           },
-          {
-            text: 'Unmatch',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await unmatchUser(currentUser.id, user.id);
-                // Go back to matches list
-                navigation.navigate('MatchesTab');
-              } catch (error) {
-                console.error('Error unmatching:', error);
-                Alert.alert('Error', 'Failed to unmatch. Please try again.');
-              }
-            },
-          },
-        ]
-      );
-    }, 300);
+        },
+      ]
+    );
   };
 
   const nextPhoto = () => {
@@ -222,10 +212,24 @@ export default function UserProfileScreen({ route, navigation }) {
 
           {/* Action Buttons */}
           {isMatched ? (
-            // Matched user - show "More" button
-            <View style={[styles.matchedActions, { paddingBottom: insets.bottom + 20 }]}>
-              <TouchableOpacity style={styles.moreButton} onPress={handleMorePress}>
-                <Text style={styles.moreButtonText}>More</Text>
+            // Matched user - show Close button with Unmatch link
+            <View style={styles.matchedActions}>
+              <TouchableOpacity style={styles.closeButton} onPress={handlePass}>
+                <LinearGradient
+                  colors={['#FF6B9D', '#C44CE0']}
+                  style={styles.closeButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.unmatchLink, { paddingBottom: insets.bottom + 20 }]}
+                onPress={handleUnmatch}
+              >
+                <Text style={styles.unmatchLinkText}>Unmatch</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -249,38 +253,6 @@ export default function UserProfileScreen({ route, navigation }) {
           )}
         </ScrollView>
       </SafeAreaView>
-
-      {/* More Options Modal */}
-      <Modal
-        visible={showMoreOptions}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowMoreOptions(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowMoreOptions(false)}
-        >
-          <View style={styles.moreOptionsSheet}>
-            <View style={styles.sheetHandle} />
-
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={handleUnmatch}
-            >
-              <Text style={styles.optionButtonText}>💔 Unmatch</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setShowMoreOptions(false)}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </View>
   );
 }
@@ -470,60 +442,36 @@ const styles = StyleSheet.create({
   matchedActions: {
     paddingTop: 24,
     paddingHorizontal: 24,
-  },
-  moreButton: {
-    width: '100%',
-    paddingVertical: 16,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: '#C44CE0',
-    backgroundColor: 'transparent',
     alignItems: 'center',
   },
-  moreButtonText: {
+  closeButton: {
+    width: '100%',
+    borderRadius: 30,
+    overflow: 'hidden',
+    shadowColor: '#C44CE0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  closeButtonGradient: {
+    width: '100%',
+    paddingVertical: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#C44CE0',
+    color: '#FFFFFF',
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+  unmatchLink: {
+    paddingTop: 16,
+    paddingBottom: 20,
   },
-  moreOptionsSheet: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-    paddingTop: 12,
-  },
-  sheetHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  optionButton: {
-    paddingVertical: 18,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  optionButtonText: {
-    fontSize: 16,
-    color: '#000000',
-  },
-  cancelButton: {
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  cancelButtonText: {
+  unmatchLinkText: {
     fontSize: 16,
     color: '#888888',
-    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });
