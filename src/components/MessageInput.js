@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
+  Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -32,58 +33,65 @@ export default function MessageInput({ onSendText, onSendImage, onSendLocation }
   const handleCameraPress = async () => {
     if (sending) return;
 
-    // Request permissions
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Camera permission is required to take photos.');
-      return;
+    try {
+      // Request permissions
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission needed', 'Camera permission is required to take photos.');
+        return;
+      }
+
+      Alert.alert('Send Image', 'Choose an option', [
+        {
+          text: 'Take Photo',
+          onPress: async () => {
+            try {
+              const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ['images'],
+                quality: 0.7,
+                allowsEditing: false,
+              });
+
+              if (!result.canceled && result.assets && result.assets[0]) {
+                setSending(true);
+                await onSendImage(result.assets[0].uri);
+                setSending(false);
+              }
+            } catch (error) {
+              console.error('Camera error:', error);
+              setSending(false);
+              Alert.alert('Error', 'Failed to send image. Please try again.');
+            }
+          },
+        },
+        {
+          text: 'Choose from Library',
+          onPress: async () => {
+            try {
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                quality: 0.7,
+                allowsEditing: false,
+              });
+
+              if (!result.canceled && result.assets && result.assets[0]) {
+                setSending(true);
+                await onSendImage(result.assets[0].uri);
+                setSending(false);
+              }
+            } catch (error) {
+              console.error('Gallery error:', error);
+              setSending(false);
+              Alert.alert('Error', 'Failed to send image. Please try again.');
+            }
+          },
+        },
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+    } catch (error) {
+      console.error('Permission error:', error);
+      Alert.alert('Error', 'Camera permission error. Please check your settings.');
     }
-
-    Alert.alert('Send Image', 'Choose an option', [
-      {
-        text: 'Take Photo',
-        onPress: async () => {
-          const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.7,
-            allowsEditing: true,
-          });
-
-          if (!result.canceled && result.assets[0]) {
-            setSending(true);
-            try {
-              await onSendImage(result.assets[0].uri);
-            } catch (error) {
-              Alert.alert('Error', 'Failed to send image');
-            } finally {
-              setSending(false);
-            }
-          }
-        },
-      },
-      {
-        text: 'Choose from Library',
-        onPress: async () => {
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.7,
-            allowsEditing: true,
-          });
-
-          if (!result.canceled && result.assets[0]) {
-            setSending(true);
-            try {
-              await onSendImage(result.assets[0].uri);
-            } catch (error) {
-              Alert.alert('Error', 'Failed to send image');
-            } finally {
-              setSending(false);
-            }
-          }
-        },
-      },
-      { text: 'Cancel', style: 'cancel' },
-    ]);
   };
 
   const handleLocationPress = async () => {

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
@@ -64,10 +65,23 @@ export default function MessageBubble({ message, isSender, onLongPress }) {
         onLongPress={() => onLongPress && onLongPress(message)}
         delayLongPress={500}
       >
-        <View style={[styles.bubble, isSender ? styles.senderBubble : styles.recipientBubble]}>
+        <View style={[
+          styles.bubble,
+          isSender ? styles.senderBubble : styles.recipientBubble,
+          message.sending && styles.sendingBubble
+        ]}>
           {renderContent()}
+          {message.sending && (
+            <ActivityIndicator
+              size="small"
+              color={isSender ? COLORS.white : COLORS.gray}
+              style={styles.sendingIndicator}
+            />
+          )}
         </View>
-        <Text style={styles.timestamp}>{formatTimestamp(message.created_at)}</Text>
+        <Text style={styles.timestamp}>
+          {message.sending ? 'Sending...' : formatTimestamp(message.created_at)}
+        </Text>
       </TouchableOpacity>
 
       {/* Image Full-Screen Modal */}
@@ -121,6 +135,12 @@ const styles = StyleSheet.create({
   recipientBubble: {
     backgroundColor: COLORS.grayLight,
     borderBottomLeftRadius: 4,
+  },
+  sendingBubble: {
+    opacity: 0.7,
+  },
+  sendingIndicator: {
+    marginTop: SPACING.xs,
   },
   text: {
     ...TYPOGRAPHY.body,

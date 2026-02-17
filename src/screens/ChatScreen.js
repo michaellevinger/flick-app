@@ -64,7 +64,22 @@ export default function ChatScreen({ route, navigation }) {
 
   const setupSubscription = () => {
     subscriptionRef.current = subscribeToMessages(matchId, (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => {
+        // Check if this message is already in the list (from optimistic update)
+        const exists = prev.some((msg) => msg.id === newMessage.id);
+        if (exists) {
+          // Replace temp message with real one
+          return prev.map((msg) =>
+            msg.sender_id === newMessage.sender_id &&
+            msg.message_type === newMessage.message_type &&
+            msg.sending
+              ? newMessage
+              : msg
+          );
+        }
+        // New message from other user
+        return [...prev, newMessage];
+      });
       // Mark as read when receiving new messages while chat is open
       markAsRead();
       // Scroll to bottom
@@ -85,19 +100,76 @@ export default function ChatScreen({ route, navigation }) {
 
   const handleSendText = async (text) => {
     if (!user) return;
-    await sendTextMessage(user.id, otherUser.id, text);
-    // Scroll to bottom after sending
+
+    // Optimistic update - add message to UI immediately
+    const tempId = `temp_${Date.now()}`;
+    const optimisticMessage = {
+      id: tempId,
+      match_id: matchId,
+      sender_id: user.id,
+      recipient_id: otherUser.id,
+      message_type: 'text',
+      content: text,
+      created_at: new Date().toISOString(),
+      sending: true, // Flag to show sending state
+    };
+
+    setMessages((prev) => [...prev, optimisticMessage]);
+
+    // Scroll immediately
     setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
+    }, 50);
+
+    try {
+      const sentMessage = await sendTextMessage(user.id, otherUser.id, text);
+
+      // Replace optimistic message with real one
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === tempId ? sentMessage : msg))
+      );
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Remove failed message
+      setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
+    }
   };
 
   const handleSendImage = async (imageUri) => {
     if (!user) return;
-    await sendImageMessage(user.id, otherUser.id, imageUri);
+
+    // Optimistic update - show image immediately
+    const tempId = `temp_${Date.now()}`;
+    const optimisticMessage = {
+      id: tempId,
+      match_id: matchId,
+      sender_id: user.id,
+      recipient_id: otherUser.id,
+      message_type: 'image',
+      image_url: imageUri, // Show local URI temporarily
+      created_at: new Date().toISOString(),
+      sending: true,
+    };
+
+    setMessages((prev) => [...prev, optimisticMessage]);
+
+    // Scroll immediately
     setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
+    }, 50);
+
+    try {
+      const sentMessage = await sendImageMessage(user.id, otherUser.id, imageUri);
+
+      // Replace with uploaded image URL
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === tempId ? sentMessage : msg))
+      );
+    } catch (error) {
+      console.error('Failed to send image:', error);
+      // Remove failed message
+      setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
+    }
   };
 
   const handleSendLocation = async (location) => {
@@ -121,12 +193,23 @@ export default function ChatScreen({ route, navigation }) {
     />
   );
 
+  const handleProfilePress = () => {
+    navigation.navigate('UserProfile', {
+      user: otherUser,
+      onFlick: null, // Already matched, no need to flick
+    });
+  };
+
   const renderHeader = () => (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Text style={styles.backText}>←</Text>
       </TouchableOpacity>
-      <View style={styles.headerUser}>
+      <TouchableOpacity
+        style={styles.headerUser}
+        onPress={handleProfilePress}
+        activeOpacity={0.7}
+      >
         {otherUser.selfie_url ? (
           <Image source={{ uri: otherUser.selfie_url }} style={styles.headerAvatar} />
         ) : (
@@ -135,7 +218,7 @@ export default function ChatScreen({ route, navigation }) {
           </View>
         )}
         <Text style={styles.headerName}>{otherUser.name}</Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 

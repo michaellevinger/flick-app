@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { enableScreens } from 'react-native-screens';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 import { View, ActivityIndicator, Text, Platform } from 'react-native';
 
@@ -24,6 +25,7 @@ import PhotosScreen from './src/screens/PhotosScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import MatchesScreen from './src/screens/MatchesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import UserProfileScreen from './src/screens/UserProfileScreen';
 import ManagePhotosScreen from './src/screens/ManagePhotosScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import GreenLightScreen from './src/screens/GreenLightScreen';
@@ -109,10 +111,11 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <UserProvider>
-        <MatchesProvider>
-          <StatusBar style="dark" />
-          <NavigationContainer>
+      <SafeAreaProvider>
+        <UserProvider>
+          <MatchesProvider>
+            <StatusBar style="dark" />
+            <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Welcome"
               screenOptions={{
@@ -148,6 +151,14 @@ export default function App() {
               <Stack.Screen name="Dashboard" component={MainTabs} />
 
               {/* Modals */}
+              <Stack.Screen
+                name="UserProfile"
+                component={UserProfileScreen}
+                options={{
+                  presentation: 'card',
+                  headerShown: false,
+                }}
+              />
               <Stack.Screen
                 name="Chat"
                 component={ChatScreen}
@@ -194,6 +205,7 @@ export default function App() {
           </NavigationContainer>
         </MatchesProvider>
       </UserProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

@@ -48,23 +48,35 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
 
     // Upload image to Supabase Storage
     const fileName = `${matchId}_${Date.now()}.jpg`;
-    const base64 = await FileSystem.readAsStringAsync(imageUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+
+    console.log('Starting image upload for:', fileName);
+
+    // Use fetch to upload the file directly from local URI
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+
+    console.log('Blob created, size:', blob.size);
 
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('chat-images')
-      .upload(fileName, decode(base64), {
+      .upload(fileName, blob, {
         contentType: 'image/jpeg',
         upsert: false,
       });
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw uploadError;
+    }
+
+    console.log('Upload successful:', uploadData);
 
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('chat-images')
       .getPublicUrl(fileName);
+
+    console.log('Public URL:', urlData.publicUrl);
 
     // Create message record
     const { data, error } = await supabase
@@ -79,7 +91,12 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Message insert error:', error);
+      throw error;
+    }
+
+    console.log('Message saved:', data);
 
     // Update match metadata
     await updateMatchMetadata(matchId, senderId, recipientId);
@@ -199,10 +216,10 @@ export async function fetchMatches(userId) {
       match.user1_id === userId ? match.user2_id : match.user1_id
     );
 
-    // Fetch other users' data
+    // Fetch other users' data with full profile info
     const { data: usersData, error: usersError } = await supabase
       .from('users')
-      .select('id, name, age, selfie_url')
+      .select('id, name, age, selfie_url, photos, gender, looking_for, height, bio')
       .in('id', otherUserIds);
 
     if (usersError) throw usersError;
@@ -355,35 +372,3 @@ async function updateMatchMetadata(matchId, senderId, recipientId) {
   }
 }
 
-/**
- * Helper to decode base64 for image upload
- */
-function decode(base64) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  let bufferLength = base64.length * 0.75;
-  const len = base64.length;
-  let p = 0;
-  let encoded1, encoded2, encoded3, encoded4;
-
-  if (base64[base64.length - 1] === '=') {
-    bufferLength--;
-    if (base64[base64.length - 2] === '=') {
-      bufferLength--;
-    }
-  }
-
-  const bytes = new Uint8Array(bufferLength);
-
-  for (let i = 0; i < len; i += 4) {
-    encoded1 = chars.indexOf(base64[i]);
-    encoded2 = chars.indexOf(base64[i + 1]);
-    encoded3 = chars.indexOf(base64[i + 2]);
-    encoded4 = chars.indexOf(base64[i + 3]);
-
-    bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
-    bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
-    bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
-  }
-
-  return bytes;
-}
