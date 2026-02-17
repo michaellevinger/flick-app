@@ -1,4 +1,8 @@
 import { supabase } from './supabase';
+import Constants from 'expo-constants';
+
+const SUPABASE_URL = Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 /**
  * Generate match ID (alphabetically sorted)
@@ -49,26 +53,40 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
     console.log('Starting image upload for:', fileName);
     console.log('Image URI:', imageUri);
 
-    // Fetch the local file as a blob (works in React Native)
-    const response = await fetch(imageUri);
-    const blob = await response.blob();
+    // Create FormData (more reliable in React Native)
+    const formData = new FormData();
+    formData.append('', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: fileName,
+    });
 
-    console.log('Blob size:', blob.size, 'type:', blob.type);
+    console.log('FormData created, uploading to Supabase...');
 
-    // Upload blob to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('chat-images')
-      .upload(fileName, blob, {
-        contentType: 'image/jpeg',
-        upsert: false,
-      });
+    // Direct upload to Supabase Storage API
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/chat-images/${fileName}`;
 
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      throw uploadError;
+    console.log('Upload URL:', uploadUrl);
+
+    // Upload using fetch with FormData
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+      },
+      body: formData,
+    });
+
+    const responseText = await uploadResponse.text();
+    console.log('Upload response:', uploadResponse.status, responseText);
+
+    if (!uploadResponse.ok) {
+      console.error('Upload failed:', uploadResponse.status, responseText);
+      throw new Error(`Upload failed: ${uploadResponse.status} - ${responseText}`);
     }
 
-    console.log('Upload successful:', uploadData);
+    console.log('Upload successful');
 
     // Get public URL
     const { data: urlData } = supabase.storage
