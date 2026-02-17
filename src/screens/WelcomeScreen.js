@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  Image,
   StatusBar,
   Alert,
 } from 'react-native';
@@ -47,13 +46,6 @@ export default function WelcomeScreen({ navigation }) {
         end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea}>
-          {/* Profile Avatar (if logged in before) */}
-          {user?.selfieUrl && (
-            <TouchableOpacity style={styles.avatarContainer}>
-              <Image source={{ uri: user.selfieUrl }} style={styles.avatar} />
-            </TouchableOpacity>
-          )}
-
           {/* Logo */}
           <View style={styles.logoContainer}>
             <Text style={styles.heartIcon}>♥</Text>
@@ -92,18 +84,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 32,
-  },
-  avatarContainer: {
-    position: 'absolute',
-    top: 60,
-    right: 24,
-  },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
   },
   logoContainer: {
     alignItems: 'center',

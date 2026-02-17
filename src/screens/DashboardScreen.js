@@ -10,15 +10,13 @@ import {
   Modal,
   FlatList,
   Dimensions,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
-import { findNearbyUsers, subscribeToNearbyUsers, uploadSelfie, deleteSelfie, getCurrentFestival, findUsersInFestival } from '../lib/database';
+import { findNearbyUsers, subscribeToNearbyUsers, getCurrentFestival, findUsersInFestival } from '../lib/database';
 import { requestLocationPermission, formatDistance } from '../lib/location';
 import {
   sendFlick,
@@ -37,7 +35,7 @@ const CARD_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (CARD_GAP * 2)) / 3;
 
 export default function DashboardScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const { user, toggleStatus, updateLocation, updateSelfie, logout } = useUser();
+  const { user, updateLocation } = useUser();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [flickedUsers, setFlickdUsers] = useState(new Set());
@@ -277,46 +275,6 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const handleProfilePress = () => {
-    Alert.alert('Profile', 'Choose an option', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'View Photo',
-        onPress: () => setSelectedPhoto(user.selfieUrl),
-      },
-      {
-        text: 'Take New Selfie',
-        onPress: () => {
-          navigation.navigate('Camera', {
-            updatePhoto: true,
-            forceReset: Date.now()
-          });
-        },
-      },
-      {
-        text: 'Sign Out',
-        style: 'destructive',
-        onPress: handleLogout,
-      },
-    ]);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Welcome' }],
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Welcome' }],
-      });
-    }
-  };
-
   const handleFilterPress = () => {
     Alert.alert('Filters', 'Filter options coming soon!');
   };
@@ -331,7 +289,10 @@ export default function DashboardScreen({ navigation }) {
           styles.gridCard,
           theyFlickdMe && styles.gridCardInterested,
         ]}
-        onPress={() => handleFlick(nearbyUser)}
+        onPress={() => navigation.navigate('UserProfile', {
+          user: nearbyUser,
+          onFlick: handleFlick,
+        })}
         onLongPress={() => setSelectedPhoto(nearbyUser.selfie_url)}
         activeOpacity={0.8}
       >
@@ -380,12 +341,7 @@ export default function DashboardScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Text style={styles.logo}>♥ flick</Text>
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileTab')}>
-          <Image source={{ uri: user.selfieUrl }} style={styles.headerAvatar} />
-        </TouchableOpacity>
+        <Text style={styles.logo}>♥ flick</Text>
       </View>
 
       {/* Title Section */}
@@ -476,28 +432,14 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: GRID_PADDING,
     paddingTop: 8,
     paddingBottom: 8,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   logo: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#C44CE0',
-  },
-  headerAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#C44CE0',
   },
   titleSection: {
     flexDirection: 'row',
