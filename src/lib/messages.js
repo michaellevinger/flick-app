@@ -45,21 +45,42 @@ export async function sendTextMessage(senderId, recipientId, content) {
 export async function sendImageMessage(senderId, recipientId, imageUri) {
   try {
     const matchId = getMatchId(senderId, recipientId);
-
-    // Upload image to Supabase Storage
     const fileName = `${matchId}_${Date.now()}.jpg`;
 
     console.log('Starting image upload for:', fileName);
+    console.log('Image URI:', imageUri);
 
-    // Use fetch to upload the file directly from local URI
-    const response = await fetch(imageUri);
-    const blob = await response.blob();
+    // Read file as base64
+    const base64 = await FileSystem.readAsStringAsync(imageUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
 
-    console.log('Blob created, size:', blob.size);
+    console.log('Base64 length:', base64.length);
 
+    // Decode base64 to byte array manually (no atob in RN)
+    const binaryString = base64.replace(/[^A-Za-z0-9+/]/g, '');
+    const len = binaryString.length;
+    const bytes = new Uint8Array(Math.ceil(len * 3 / 4));
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let p = 0;
+    for (let i = 0; i < len; i += 4) {
+      const enc1 = chars.indexOf(binaryString[i]);
+      const enc2 = chars.indexOf(binaryString[i + 1]);
+      const enc3 = chars.indexOf(binaryString[i + 2]);
+      const enc4 = chars.indexOf(binaryString[i + 3]);
+
+      bytes[p++] = (enc1 << 2) | (enc2 >> 4);
+      if (enc3 !== 64) bytes[p++] = ((enc2 & 15) << 4) | (enc3 >> 2);
+      if (enc4 !== 64) bytes[p++] = ((enc3 & 3) << 6) | enc4;
+    }
+
+    console.log('Decoded bytes length:', bytes.length);
+
+    // Upload binary data
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('chat-images')
-      .upload(fileName, blob, {
+      .upload(fileName, bytes.buffer, {
         contentType: 'image/jpeg',
         upsert: false,
       });
