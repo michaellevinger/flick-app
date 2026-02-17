@@ -10,6 +10,7 @@ import {
   Alert,
   Platform,
   StatusBar,
+  Modal,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,6 +23,7 @@ export default function UserProfileScreen({ route, navigation }) {
   const { user, onFlick } = route.params;
   const { user: currentUser } = useUser();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [showMoreOptions, setShowMoreOptions] = useState(false);
   const insets = useSafeAreaInsets();
 
   // Check if this is a matched user (viewing from chat)
@@ -43,31 +45,39 @@ export default function UserProfileScreen({ route, navigation }) {
     navigation.goBack();
   };
 
+  const handleMorePress = () => {
+    setShowMoreOptions(true);
+  };
+
   const handleUnmatch = () => {
-    Alert.alert(
-      'Unmatch?',
-      "You won't be able to see or message one another.",
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Unmatch',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await unmatchUser(currentUser.id, user.id);
-              // Go back to matches list
-              navigation.navigate('MatchesTab');
-            } catch (error) {
-              console.error('Error unmatching:', error);
-              Alert.alert('Error', 'Failed to unmatch. Please try again.');
-            }
+    setShowMoreOptions(false);
+    // Show unmatch confirmation after a brief delay
+    setTimeout(() => {
+      Alert.alert(
+        'Unmatch?',
+        "You won't be able to see or message one another.",
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
           },
-        },
-      ]
-    );
+          {
+            text: 'Unmatch',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await unmatchUser(currentUser.id, user.id);
+                // Go back to matches list
+                navigation.navigate('MatchesTab');
+              } catch (error) {
+                console.error('Error unmatching:', error);
+                Alert.alert('Error', 'Failed to unmatch. Please try again.');
+              }
+            },
+          },
+        ]
+      );
+    }, 300);
   };
 
   const nextPhoto = () => {
@@ -211,47 +221,66 @@ export default function UserProfileScreen({ route, navigation }) {
           )}
 
           {/* Action Buttons */}
-          <View style={[styles.actions, { paddingBottom: insets.bottom + 20 }]}>
-            {isMatched ? (
-              // Matched user - show unmatch option
-              <>
-                <TouchableOpacity style={styles.unmatchButton} onPress={handleUnmatch}>
-                  <Text style={styles.unmatchButtonText}>💔 Unmatch</Text>
-                </TouchableOpacity>
+          {isMatched ? (
+            // Matched user - show "More" button
+            <View style={[styles.matchedActions, { paddingBottom: insets.bottom + 20 }]}>
+              <TouchableOpacity style={styles.moreButton} onPress={handleMorePress}>
+                <Text style={styles.moreButtonText}>More</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            // Not matched - show flick/pass buttons
+            <View style={[styles.actions, { paddingBottom: insets.bottom + 20 }]}>
+              <TouchableOpacity style={styles.passButton} onPress={handlePass}>
+                <Text style={styles.passButtonText}>✕</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity style={styles.backToMessagesButton} onPress={handlePass}>
-                  <LinearGradient
-                    colors={['#FF6B9D', '#C44CE0']}
-                    style={styles.flickGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.backToMessagesButtonText}>💬 Back to Messages</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </>
-            ) : (
-              // Not matched - show flick/pass options
-              <>
-                <TouchableOpacity style={styles.passButton} onPress={handlePass}>
-                  <Text style={styles.passButtonText}>✕</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.flickButton} onPress={handleFlick}>
-                  <LinearGradient
-                    colors={['#FF6B9D', '#C44CE0']}
-                    style={styles.flickGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.flickButtonText}>♥</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
+              <TouchableOpacity style={styles.flickButton} onPress={handleFlick}>
+                <LinearGradient
+                  colors={['#FF6B9D', '#C44CE0']}
+                  style={styles.flickGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={styles.flickButtonText}>♥</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
       </SafeAreaView>
+
+      {/* More Options Modal */}
+      <Modal
+        visible={showMoreOptions}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowMoreOptions(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowMoreOptions(false)}
+        >
+          <View style={styles.moreOptionsSheet}>
+            <View style={styles.sheetHandle} />
+
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleUnmatch}
+            >
+              <Text style={styles.optionButtonText}>💔 Unmatch</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setShowMoreOptions(false)}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -438,33 +467,63 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: '#FFFFFF',
   },
-  unmatchButton: {
+  matchedActions: {
+    paddingTop: 24,
+    paddingHorizontal: 24,
+  },
+  moreButton: {
+    width: '100%',
     paddingVertical: 16,
-    paddingHorizontal: 32,
     borderRadius: 30,
-    backgroundColor: '#F0F0F0',
     borderWidth: 2,
-    borderColor: '#DDDDDD',
+    borderColor: '#C44CE0',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
   },
-  unmatchButtonText: {
-    fontSize: 16,
+  moreButtonText: {
+    fontSize: 18,
     fontWeight: '600',
+    color: '#C44CE0',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  moreOptionsSheet: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    paddingTop: 12,
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#DDDDDD',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  optionButton: {
+    paddingVertical: 18,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  optionButtonText: {
+    fontSize: 16,
+    color: '#000000',
+  },
+  cancelButton: {
+    paddingVertical: 18,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  cancelButtonText: {
+    fontSize: 16,
     color: '#888888',
-  },
-  backToMessagesButton: {
-    borderRadius: 30,
-    overflow: 'hidden',
-    shadowColor: '#C44CE0',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  backToMessagesButtonText: {
-    fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
   },
 });
