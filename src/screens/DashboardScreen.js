@@ -275,10 +275,6 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const handleFilterPress = () => {
-    Alert.alert('Filters', 'Filter options coming soon!');
-  };
-
   const renderUserCard = ({ item: nearbyUser }) => {
     const theyFlickdMe = usersWhoFlickedMe.has(nearbyUser.id);
     const iFlickdThem = flickedUsers.has(nearbyUser.id);
@@ -346,19 +342,14 @@ export default function DashboardScreen({ navigation }) {
 
       {/* Title Section */}
       <View style={styles.titleSection}>
-        <View style={styles.titleLeft}>
-          <Text style={styles.title}>
-            {currentFestival ? `Singles at ${currentFestival.name}` : 'Discover'}
-          </Text>
-          {countdown ? (
-            <Text style={styles.subtitle}>Everything expires in {countdown}</Text>
-          ) : (
-            <Text style={styles.subtitle}>{visibleUsers.length} people nearby</Text>
-          )}
-        </View>
-        <TouchableOpacity style={styles.filterButton} onPress={handleFilterPress}>
-          <Text style={styles.filterIcon}>☰</Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>
+          {currentFestival ? `Singles at ${currentFestival.name}` : 'Discover'}
+        </Text>
+        {countdown ? (
+          <Text style={styles.subtitle}>Everything expires in {countdown}</Text>
+        ) : (
+          <Text style={styles.subtitle}>{visibleUsers.length} people nearby</Text>
+        )}
       </View>
 
       {/* Grid */}
@@ -442,15 +433,8 @@ const styles = StyleSheet.create({
     color: '#C44CE0',
   },
   titleSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
     paddingHorizontal: GRID_PADDING,
     paddingBottom: 12,
-  },
-  titleLeft: {
-    flex: 1,
-    paddingRight: 12,
   },
   title: {
     fontSize: 22,
@@ -461,17 +445,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 13,
     color: '#888888',
-  },
-  filterButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F0F0F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  filterIcon: {
-    fontSize: 16,
   },
   gridContainer: {
     paddingHorizontal: GRID_PADDING,
