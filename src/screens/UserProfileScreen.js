@@ -13,13 +13,19 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { unmatchUser } from '../lib/flicks';
+import { useUser } from '../lib/userContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function UserProfileScreen({ route, navigation }) {
   const { user, onFlick } = route.params;
+  const { user: currentUser } = useUser();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const insets = useSafeAreaInsets();
+
+  // Check if this is a matched user (viewing from chat)
+  const isMatched = onFlick === null || onFlick === undefined;
 
   // Combine selfie and additional photos
   const allPhotos = user.selfie_url
@@ -35,6 +41,33 @@ export default function UserProfileScreen({ route, navigation }) {
 
   const handlePass = () => {
     navigation.goBack();
+  };
+
+  const handleUnmatch = () => {
+    Alert.alert(
+      'Unmatch?',
+      "You won't be able to see or message one another.",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Unmatch',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await unmatchUser(currentUser.id, user.id);
+              // Go back to matches list
+              navigation.navigate('MatchesTab');
+            } catch (error) {
+              console.error('Error unmatching:', error);
+              Alert.alert('Error', 'Failed to unmatch. Please try again.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const nextPhoto = () => {
@@ -179,20 +212,43 @@ export default function UserProfileScreen({ route, navigation }) {
 
           {/* Action Buttons */}
           <View style={[styles.actions, { paddingBottom: insets.bottom + 20 }]}>
-            <TouchableOpacity style={styles.passButton} onPress={handlePass}>
-              <Text style={styles.passButtonText}>✕</Text>
-            </TouchableOpacity>
+            {isMatched ? (
+              // Matched user - show unmatch option
+              <>
+                <TouchableOpacity style={styles.unmatchButton} onPress={handleUnmatch}>
+                  <Text style={styles.unmatchButtonText}>💔 Unmatch</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity style={styles.flickButton} onPress={handleFlick}>
-              <LinearGradient
-                colors={['#FF6B9D', '#C44CE0']}
-                style={styles.flickGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-              >
-                <Text style={styles.flickButtonText}>♥</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.backToMessagesButton} onPress={handlePass}>
+                  <LinearGradient
+                    colors={['#FF6B9D', '#C44CE0']}
+                    style={styles.flickGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Text style={styles.backToMessagesButtonText}>💬 Back to Messages</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </>
+            ) : (
+              // Not matched - show flick/pass options
+              <>
+                <TouchableOpacity style={styles.passButton} onPress={handlePass}>
+                  <Text style={styles.passButtonText}>✕</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.flickButton} onPress={handleFlick}>
+                  <LinearGradient
+                    colors={['#FF6B9D', '#C44CE0']}
+                    style={styles.flickGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Text style={styles.flickButtonText}>♥</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -381,5 +437,34 @@ const styles = StyleSheet.create({
   flickButtonText: {
     fontSize: 36,
     color: '#FFFFFF',
+  },
+  unmatchButton: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 30,
+    backgroundColor: '#F0F0F0',
+    borderWidth: 2,
+    borderColor: '#DDDDDD',
+  },
+  unmatchButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#888888',
+  },
+  backToMessagesButton: {
+    borderRadius: 30,
+    overflow: 'hidden',
+    shadowColor: '#C44CE0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  backToMessagesButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
   },
 });

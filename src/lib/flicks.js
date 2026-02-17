@@ -183,3 +183,34 @@ export async function getMatchedUserInfo(userId) {
     throw error;
   }
 }
+
+/**
+ * Unmatch with a user (delete both flicks and match record)
+ */
+export async function unmatchUser(currentUserId, otherUserId) {
+  try {
+    // Delete both directions of flicks
+    await deleteFlick(currentUserId, otherUserId);
+    await deleteFlick(otherUserId, currentUserId);
+
+    // Delete match record
+    const matchId = currentUserId < otherUserId
+      ? `${currentUserId}|${otherUserId}`
+      : `${otherUserId}|${currentUserId}`;
+
+    const { error: matchError } = await supabase
+      .from('matches')
+      .delete()
+      .eq('id', matchId);
+
+    if (matchError) {
+      console.error('Error deleting match:', matchError);
+      // Don't throw - flicks are already deleted
+    }
+
+    console.log('Unmatched successfully');
+  } catch (error) {
+    console.error('Error unmatching user:', error);
+    throw error;
+  }
+}
