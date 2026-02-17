@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import * as FileSystem from 'expo-file-system';
 
 /**
  * Generate match ID (alphabetically sorted)
@@ -50,37 +49,16 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
     console.log('Starting image upload for:', fileName);
     console.log('Image URI:', imageUri);
 
-    // Read file as base64 (use string 'base64' for Expo SDK 54+)
-    const base64 = await FileSystem.readAsStringAsync(imageUri, {
-      encoding: 'base64',
-    });
+    // Fetch the local file as a blob (works in React Native)
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
 
-    console.log('Base64 length:', base64.length);
+    console.log('Blob size:', blob.size, 'type:', blob.type);
 
-    // Decode base64 to byte array manually (no atob in RN)
-    const binaryString = base64.replace(/[^A-Za-z0-9+/]/g, '');
-    const len = binaryString.length;
-    const bytes = new Uint8Array(Math.ceil(len * 3 / 4));
-
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    let p = 0;
-    for (let i = 0; i < len; i += 4) {
-      const enc1 = chars.indexOf(binaryString[i]);
-      const enc2 = chars.indexOf(binaryString[i + 1]);
-      const enc3 = chars.indexOf(binaryString[i + 2]);
-      const enc4 = chars.indexOf(binaryString[i + 3]);
-
-      bytes[p++] = (enc1 << 2) | (enc2 >> 4);
-      if (enc3 !== 64) bytes[p++] = ((enc2 & 15) << 4) | (enc3 >> 2);
-      if (enc4 !== 64) bytes[p++] = ((enc3 & 3) << 6) | enc4;
-    }
-
-    console.log('Decoded bytes length:', bytes.length);
-
-    // Upload binary data
+    // Upload blob to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('chat-images')
-      .upload(fileName, bytes.buffer, {
+      .upload(fileName, blob, {
         contentType: 'image/jpeg',
         upsert: false,
       });
