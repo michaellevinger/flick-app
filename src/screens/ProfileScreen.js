@@ -8,12 +8,11 @@ import {
   TextInput,
   Alert,
   ScrollView,
-  SafeAreaView,
   Platform,
   StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio } from '../lib/database';

@@ -7,11 +7,10 @@ import {
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useMatches } from '../lib/matchesContext';
 import MatchCard from '../components/MatchCard';

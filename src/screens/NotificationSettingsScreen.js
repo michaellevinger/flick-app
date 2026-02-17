@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   Switch,
   ScrollView,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NotificationSettingsScreen({ navigation }) {
   // Notification preferences
