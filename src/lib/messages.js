@@ -50,9 +50,9 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
     console.log('Starting image upload for:', fileName);
     console.log('Image URI:', imageUri);
 
-    // Read file as base64
+    // Read file as base64 (use string 'base64' for Expo SDK 54+)
     const base64 = await FileSystem.readAsStringAsync(imageUri, {
-      encoding: FileSystem.EncodingType.Base64,
+      encoding: 'base64',
     });
 
     console.log('Base64 length:', base64.length);
