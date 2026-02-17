@@ -21,8 +21,12 @@
 - [x] Request/Accept flow for number sharing
 - [x] Vault Screen with countdown timer
 - [x] Real-Time Chat System (text, images, location)
-- [x] Tab Navigation (Radar + Matches)
+- [x] Optimistic message updates (instant UI feedback)
+- [x] Profile viewing from radar and chat
+- [x] Full profile carousel with multiple photos
+- [x] Tab Navigation (Radar + Matches + Profile)
 - [x] Persistent chat history until unmatch
+- [x] Clean UI (no redundant profile icons in headers)
 
 ### ✅ Supabase Setup - COMPLETE
 - [x] Project created (oithyuuztrmohcbfglrh.supabase.co)
@@ -495,7 +499,11 @@ RETURNS INTEGER
 Now that all core features are complete, focus on polish and real-world testing:
 
 ### Polish Tasks
-- [ ] Add loading states and error boundaries
+- [x] Add loading states (chat sending indicators, optimistic updates)
+- [x] Improve message sending UX (instant feedback)
+- [x] Fix image upload reliability (proper blob conversion)
+- [x] Profile view from chat (tap header to see full profile)
+- [x] Remove redundant UI elements (profile icons in headers)
 - [ ] Improve animation smoothness
 - [ ] Add empty state illustrations
 - [ ] Optimize image loading and caching
