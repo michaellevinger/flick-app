@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 import { useUser } from '../lib/userContext';
 import { uploadPhotos, updateUserPhotos } from '../lib/database';
 
@@ -96,13 +97,8 @@ export default function ManagePhotosScreen({ navigation }) {
     );
   };
 
-  const setAsMain = (index) => {
-    if (index === 0) return; // Already main
-
-    const newPhotos = [...photos];
-    const [selectedPhoto] = newPhotos.splice(index, 1);
-    newPhotos.unshift(selectedPhoto);
-    setPhotos(newPhotos);
+  const handleReorder = ({ data }) => {
+    setPhotos(data);
   };
 
   const handleSave = async () => {
@@ -209,68 +205,76 @@ export default function ManagePhotosScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.content}>
         <Text style={styles.subtitle}>
-          Add up to 3 photos • Tap to set as main
+          Add up to 3 photos • Drag to reorder
         </Text>
 
-        {/* Photo Grid */}
-        <View style={styles.photoGrid}>
-          {photos.map((uri, index) => (
-            <View key={index} style={styles.photoTile}>
-              <TouchableOpacity
-                onPress={() => setAsMain(index)}
-                activeOpacity={0.8}
-              >
-                <Image source={{ uri }} style={styles.photo} />
-                {index === 0 && (
-                  <View style={styles.mainBadge}>
-                    <Text style={styles.mainBadgeText}>Main</Text>
+        {/* Draggable Photo List */}
+        <DraggableFlatList
+          data={photos}
+          onDragEnd={handleReorder}
+          keyExtractor={(item, index) => `photo-${index}`}
+          renderItem={({ item, drag, isActive, getIndex }) => {
+            const index = getIndex();
+            return (
+              <View style={[styles.photoTile, isActive && styles.photoTileActive]}>
+                <TouchableOpacity
+                  onLongPress={drag}
+                  activeOpacity={0.8}
+                  style={styles.photoTouchable}
+                >
+                  <Image source={{ uri: item }} style={styles.photo} />
+                  {index === 0 && (
+                    <View style={styles.mainBadge}>
+                      <Text style={styles.mainBadgeText}>Main</Text>
+                    </View>
+                  )}
+                  <View style={styles.dragHandle}>
+                    <Text style={styles.dragHandleText}>☰</Text>
                   </View>
-                )}
-              </TouchableOpacity>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={() => removePhoto(index)}
+                >
+                  <Text style={styles.removeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          }}
+          ListFooterComponent={
+            canAddMore ? (
               <TouchableOpacity
-                style={styles.removeButton}
-                onPress={() => removePhoto(index)}
+                style={styles.addPhotoTile}
+                onPress={() => {
+                  Alert.alert(
+                    'Add Photo',
+                    'Choose how to add a photo',
+                    [
+                      { text: 'Take Photo', onPress: handleOpenCamera },
+                      { text: 'Choose from Gallery', onPress: pickFromGallery },
+                      { text: 'Cancel', style: 'cancel' }
+                    ]
+                  );
+                }}
               >
-                <Text style={styles.removeButtonText}>✕</Text>
+                <Text style={styles.plusIcon}>+</Text>
+                <Text style={styles.addPhotoText}>Add Photo</Text>
               </TouchableOpacity>
-            </View>
-          ))}
-
-          {/* Add Photo Tile */}
-          {canAddMore && (
-            <TouchableOpacity
-              style={styles.addPhotoTile}
-              onPress={() => {
-                Alert.alert(
-                  'Add Photo',
-                  'Choose how to add a photo',
-                  [
-                    { text: 'Take Photo', onPress: handleOpenCamera },
-                    { text: 'Choose from Gallery', onPress: pickFromGallery },
-                    { text: 'Cancel', style: 'cancel' }
-                  ]
-                );
-              }}
-            >
-              <Text style={styles.plusIcon}>+</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+            ) : null
+          }
+          contentContainerStyle={styles.photoList}
+        />
 
         {/* Info Box */}
         <View style={styles.infoBox}>
           <Text style={styles.infoIcon}>💡</Text>
           <Text style={styles.infoText}>
-            Tap any photo to set it as your main photo. Your main photo is shown first on your profile.
+            Long press and drag photos to reorder them. Your first photo is your main photo shown on your profile.
           </Text>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -318,42 +322,59 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#C44CE0',
   },
-  scrollView: {
+  content: {
     flex: 1,
-  },
-  scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: 40,
   },
   subtitle: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 24,
+    marginBottom: 16,
     textAlign: 'center',
   },
-  photoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 24,
-    marginHorizontal: -6,
+  photoList: {
+    paddingBottom: 24,
   },
   photoTile: {
-    width: '31.33%',
-    aspectRatio: 1,
+    height: 120,
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 6,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#EEEEEE',
+    flexDirection: 'row',
+  },
+  photoTileActive: {
+    opacity: 0.8,
+    borderColor: '#C44CE0',
+    borderWidth: 2,
+  },
+  photoTouchable: {
+    flex: 1,
+    position: 'relative',
   },
   photo: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  dragHandle: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  dragHandleText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   mainBadge: {
     position: 'absolute',
@@ -387,8 +408,7 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   addPhotoTile: {
-    width: '31.33%',
-    aspectRatio: 1,
+    height: 120,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: '#CCCCCC',
@@ -396,14 +416,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 6,
     marginBottom: 12,
   },
   plusIcon: {
-    fontSize: 48,
+    fontSize: 36,
     color: '#CCCCCC',
     fontWeight: '300',
-    lineHeight: 48,
+    lineHeight: 36,
+    marginBottom: 4,
+  },
+  addPhotoText: {
+    fontSize: 14,
+    color: '#999999',
+    fontWeight: '500',
   },
   infoBox: {
     flexDirection: 'row',
