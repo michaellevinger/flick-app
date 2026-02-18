@@ -20,7 +20,7 @@
 - [x] Number Exchange "The Off-Ramp" (15-min TTL, proximity wipe)
 - [x] Request/Accept flow for number sharing
 - [x] Vault Screen with countdown timer
-- [x] Real-Time Chat System (text, images, location)
+- [x] Real-Time Chat System (text, images)
 - [x] Optimistic message updates (instant UI feedback)
 - [x] Profile viewing from radar and chat
 - [x] Full profile carousel with multiple photos

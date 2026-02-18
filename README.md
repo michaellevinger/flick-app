@@ -81,7 +81,6 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 - **Persistent Messages**: Like normal dating apps - messages remain until unmatch
 - **Text Messaging**: Real-time text messages with instant delivery
 - **Image Sharing**: Send photos via camera or gallery (XMLHttpRequest for reliability)
-- **Location Sharing**: Opens Maps app with shared location (iOS/Android native)
 - **Optimistic Updates**: Messages appear instantly while sending
 - **Unread Badges**: See unread message count in Matches tab
 - **Event-Based Persistence**: Matches persist within festival/event

@@ -612,3 +612,19 @@ const fileName = `${safeMatchId}_${Date.now()}.jpg`;
 
 **Key Learning:** Always sanitize user-generated or composite IDs when using them in file paths. Special characters like `|`, `/`, `\`, `:`, `*`, `?`, `"`, `<`, `>` can break storage APIs.
 
+
+### Feature Removal: Location Sharing (2026-02-18)
+
+**User Request:** "remove the location pin emoji (no need to share location)"
+
+**Changes Made:**
+- Removed location button (📍) from MessageInput component
+- Removed `expo-location` imports and all location-related handlers
+- Removed `sendLocationMessage` from ChatScreen
+- Removed `onSendLocation` prop passing
+- Updated MessageInput to only accept `onSendText` and `onSendImage`
+
+**Result:** Cleaner chat UI with just camera (📷) and text messaging.
+
+**Rationale:** Location sharing not needed for the festival/event use case. Users meet in person at events, so sharing GPS coordinates doesn't add value.
+
