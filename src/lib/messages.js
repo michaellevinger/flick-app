@@ -49,7 +49,9 @@ export async function sendTextMessage(senderId, recipientId, content) {
 export async function sendImageMessage(senderId, recipientId, imageUri) {
   try {
     const matchId = getMatchId(senderId, recipientId);
-    const fileName = `${matchId}_${Date.now()}.jpg`;
+    // Replace pipe character with hyphen for safe filename
+    const safeMatchId = matchId.replace(/\|/g, '-');
+    const fileName = `${safeMatchId}_${Date.now()}.jpg`;
 
     console.log('Starting image upload for:', fileName);
     console.log('Image URI:', imageUri);
