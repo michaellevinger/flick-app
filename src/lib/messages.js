@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import Constants from 'expo-constants';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const SUPABASE_URL = Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -43,7 +44,7 @@ export async function sendTextMessage(senderId, recipientId, content) {
 }
 
 /**
- * Send an image message
+ * Send an image message using XMLHttpRequest (more reliable than FormData in React Native)
  */
 export async function sendImageMessage(senderId, recipientId, imageUri) {
   try {
@@ -53,40 +54,56 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
     console.log('Starting image upload for:', fileName);
     console.log('Image URI:', imageUri);
 
-    // Create FormData (more reliable in React Native)
-    const formData = new FormData();
-    formData.append('', {
-      uri: imageUri,
-      type: 'image/jpeg',
-      name: fileName,
+    // Read file as base64
+    const base64 = await FileSystem.readAsStringAsync(imageUri, {
+      encoding: 'base64',
     });
 
-    console.log('FormData created, uploading to Supabase...');
+    console.log('File read successfully, converting to binary...');
 
-    // Direct upload to Supabase Storage API
-    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/chat-images/${fileName}`;
-
-    console.log('Upload URL:', uploadUrl);
-
-    // Upload using fetch with FormData
-    const uploadResponse = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'apikey': SUPABASE_ANON_KEY,
-      },
-      body: formData,
-    });
-
-    const responseText = await uploadResponse.text();
-    console.log('Upload response:', uploadResponse.status, responseText);
-
-    if (!uploadResponse.ok) {
-      console.error('Upload failed:', uploadResponse.status, responseText);
-      throw new Error(`Upload failed: ${uploadResponse.status} - ${responseText}`);
+    // Convert base64 to binary
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
     }
 
-    console.log('Upload successful');
+    console.log('Binary conversion complete, uploading to Supabase...');
+
+    // Upload using XMLHttpRequest (more reliable than fetch for binary data)
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/chat-images/${fileName}`;
+
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.timeout = 60000; // 60 second timeout
+
+      xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+          console.log('Upload successful');
+          resolve();
+        } else {
+          console.error('Upload failed:', xhr.status, xhr.responseText);
+          reject(new Error(`Upload failed: ${xhr.status} - ${xhr.responseText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        console.error('Upload network error');
+        reject(new Error('Network error during upload'));
+      };
+
+      xhr.ontimeout = () => {
+        console.error('Upload timeout');
+        reject(new Error('Upload timeout - please try again'));
+      };
+
+      xhr.open('POST', uploadUrl);
+      xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+      xhr.setRequestHeader('Authorization', `Bearer ${SUPABASE_ANON_KEY}`);
+      xhr.setRequestHeader('Content-Type', 'image/jpeg');
+      xhr.send(bytes.buffer);
+    });
 
     // Get public URL
     const { data: urlData } = supabase.storage

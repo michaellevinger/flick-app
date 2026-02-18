@@ -277,11 +277,11 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
 - [ ] No layout regressions (padding, spacing intact)
 
 ### Part 2: Image Upload Fix
-- [ ] chat-images bucket created in Supabase with public access
-- [ ] All 3 RLS policies configured (INSERT, SELECT, DELETE)
-- [ ] sendImageMessage() refactored to use XMLHttpRequest
-- [ ] expo-file-system/legacy imported correctly
-- [ ] Binary encoding working (no base64 string issues)
+- [x] chat-images bucket created in Supabase with public access
+- [x] All 3 RLS policies configured (INSERT, SELECT, DELETE)
+- [x] sendImageMessage() refactored to use XMLHttpRequest
+- [x] expo-file-system/legacy imported correctly
+- [x] Binary encoding working (no base64 string issues)
 - [ ] Image uploads succeed from MessageInput.js
 - [ ] Uploaded images display in chat bubbles
 - [ ] Image URLs are publicly accessible
