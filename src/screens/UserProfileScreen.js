@@ -86,6 +86,15 @@ export default function UserProfileScreen({ route, navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
+      {/* Header with Back Button */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <TouchableOpacity style={styles.backButton} onPress={handlePass}>
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Profile</Text>
+        <View style={styles.headerRight} />
+      </View>
+
       {/* Large Photo */}
       <View style={styles.photoContainer}>
         {allPhotos.length > 0 ? (
@@ -122,11 +131,6 @@ export default function UserProfileScreen({ route, navigation }) {
             <Text style={styles.placeholderText}>No Photo</Text>
           </View>
         )}
-
-        {/* Close Button */}
-        <TouchableOpacity style={styles.closeButton} onPress={handlePass}>
-          <Text style={styles.closeButtonText}>✕</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Profile Info Card - Compact */}
@@ -228,6 +232,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 32,
+    color: '#FFFFFF',
+    fontWeight: '300',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  headerRight: {
+    width: 44,
+    height: 44,
+  },
   photoContainer: {
     height: SCREEN_HEIGHT * 0.65, // 65% of screen height
     position: 'relative',
@@ -249,7 +286,7 @@ const styles = StyleSheet.create({
   },
   photoIndicators: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
+    top: Platform.OS === 'ios' ? 100 : 80,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -272,22 +309,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 120,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    left: 20,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    fontSize: 26,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
   },
   infoCard: {
     flex: 1,
