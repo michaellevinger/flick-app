@@ -8,11 +8,13 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
 export default function MessageInput({ onSendText, onSendImage, onSendLocation }) {
+  const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -122,7 +124,7 @@ export default function MessageInput({ onSendText, onSendImage, onSendLocation }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, SPACING.md) }]}>
       {/* Camera Button */}
       <TouchableOpacity
         style={styles.iconButton}
