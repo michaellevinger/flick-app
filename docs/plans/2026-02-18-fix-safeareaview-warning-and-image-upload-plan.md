@@ -1,7 +1,7 @@
 ---
 title: Fix SafeAreaView Deprecation Warning and Image Upload Failures
 type: fix
-status: active
+status: completed
 date: 2026-02-18
 ---
 
