@@ -12,9 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import { useUser } from '../lib/userContext';
 import { uploadPhotos, updateUserPhotos } from '../lib/database';
@@ -23,36 +21,31 @@ export default function ManagePhotosScreen({ navigation }) {
   const { user, refreshUser } = useUser();
   const [photos, setPhotos] = useState(user?.photos || [user?.selfieUrl].filter(Boolean) || []);
   const [isSaving, setIsSaving] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
-  const cameraRef = React.useRef(null);
 
   const canAddMore = photos.length < 3;
 
-  const takePicture = async () => {
-    if (!cameraRef.current) {
-      Alert.alert('Error', 'Camera not ready. Please try again.');
-      return;
-    }
 
+  const takePhotoWithCrop = async () => {
     try {
-      const photo = await cameraRef.current.takePictureAsync({
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'We need camera access to take photos.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [4, 5],
         quality: 0.7,
-        base64: false,
-        exif: true,
+        cameraType: ImagePicker.CameraType.front,
       });
 
-      // Fix orientation for front-facing camera
-      const manipulatedImage = await ImageManipulator.manipulateAsync(
-        photo.uri,
-        [{ flip: ImageManipulator.FlipType.Horizontal }],
-        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
-      );
-
-      setPhotos([...photos, manipulatedImage.uri]);
-      setShowCamera(false);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setPhotos([...photos, result.assets[0].uri]);
+      }
     } catch (error) {
-      console.error('Error taking picture:', error);
+      console.error('Error taking photo:', error);
       Alert.alert('Error', 'Failed to take photo. Please try again.');
     }
   };
@@ -67,7 +60,9 @@ export default function ManagePhotosScreen({ navigation }) {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        allowsEditing: false,
+        allowsEditing: true,
+        allowsMultipleSelection: false,
+        aspect: [4, 5],
         quality: 0.7,
       });
 
@@ -142,45 +137,6 @@ export default function ManagePhotosScreen({ navigation }) {
     }
   };
 
-  const handleOpenCamera = async () => {
-    if (!permission) {
-      await requestPermission();
-      return;
-    }
-    if (!permission.granted) {
-      await requestPermission();
-      return;
-    }
-    setShowCamera(true);
-  };
-
-  if (showCamera) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <CameraView
-          style={styles.camera}
-          facing="front"
-          ref={cameraRef}
-        />
-
-        {/* Top Bar */}
-        <View style={styles.cameraTopBar}>
-          <TouchableOpacity style={styles.backButton} onPress={() => setShowCamera(false)}>
-            <Text style={styles.backButtonText}>✕</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Bottom Actions */}
-        <View style={styles.cameraBottomBar}>
-          <Text style={styles.cameraTitle}>Take a Photo</Text>
-          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-            <View style={styles.captureButtonInner} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -252,7 +208,7 @@ export default function ManagePhotosScreen({ navigation }) {
                     'Add Photo',
                     'Choose how to add a photo',
                     [
-                      { text: 'Take Photo', onPress: handleOpenCamera },
+                      { text: 'Take Photo', onPress: takePhotoWithCrop },
                       { text: 'Choose from Gallery', onPress: pickFromGallery },
                       { text: 'Cancel', style: 'cancel' }
                     ]
@@ -271,7 +227,7 @@ export default function ManagePhotosScreen({ navigation }) {
         <View style={styles.infoBox}>
           <Text style={styles.infoIcon}>💡</Text>
           <Text style={styles.infoText}>
-            Long press and drag photos to reorder them. Your first photo is your main photo shown on your profile.
+            Drag to reorder photos. When adding photos, you can crop them before adding. Your first photo is your main profile photo.
           </Text>
         </View>
       </View>
@@ -448,61 +404,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
     lineHeight: 20,
-  },
-  // Camera styles
-  camera: {
-    flex: 1,
-  },
-  cameraTopBar: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  cameraBottomBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    paddingBottom: Platform.OS === 'ios' ? 50 : 30,
-    paddingTop: 30,
-    alignItems: 'center',
-    gap: 16,
-  },
-  cameraTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  captureButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#FFFFFF',
-  },
-  captureButtonInner: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FFFFFF',
   },
 });
