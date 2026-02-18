@@ -74,22 +74,6 @@ export default function MatchesScreen({ navigation }) {
           />
         }
       />
-
-      {/* Bottom Tab Bar */}
-      <View style={[styles.tabBar, { paddingBottom: insets.bottom + 10 }]}>
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DashboardTab')}>
-          <Text style={styles.tabIcon}>📡</Text>
-          <Text style={styles.tabLabel}>Radar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Text style={styles.tabIconActive}>💬</Text>
-          <Text style={styles.tabLabelActive}>Matches</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('ProfileTab')}>
-          <Text style={styles.tabIcon}>👤</Text>
-          <Text style={styles.tabLabel}>Profile</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
@@ -139,39 +123,5 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.body,
     color: COLORS.gray,
     textAlign: 'center',
-  },
-  tabBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    paddingTop: 10,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-    opacity: 0.5,
-  },
-  tabIconActive: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  tabLabel: {
-    fontSize: 12,
-    color: '#888888',
-  },
-  tabLabelActive: {
-    fontSize: 12,
-    color: '#C44CE0',
-    fontWeight: '600',
   },
 });
