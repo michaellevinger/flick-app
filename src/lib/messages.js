@@ -149,6 +149,15 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
  */
 export async function sendLocationMessage(senderId, recipientId, location) {
   try {
+    // Validate location has valid coordinates
+    if (!location ||
+        typeof location.latitude !== 'number' ||
+        typeof location.longitude !== 'number' ||
+        isNaN(location.latitude) ||
+        isNaN(location.longitude)) {
+      throw new Error('Invalid location: latitude and longitude must be valid numbers');
+    }
+
     const matchId = getMatchId(senderId, recipientId);
 
     const { data, error } = await supabase

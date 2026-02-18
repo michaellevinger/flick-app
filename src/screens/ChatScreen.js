@@ -317,7 +317,6 @@ const styles = StyleSheet.create({
   },
   messagesList: {
     paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.sm,
     paddingBottom: SPACING.md,
   },
   emptyContainer: {

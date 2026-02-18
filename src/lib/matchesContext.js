@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { fetchMatches, subscribeToMatches } from './messages';
+import { fetchMatches } from './messages';
 import { useUser } from './userContext';
+import { supabase } from './supabase';
 
 const MatchesContext = createContext();
 
@@ -63,10 +64,79 @@ export function MatchesProvider({ children }) {
   const setupSubscription = () => {
     if (!user) return;
 
-    subscriptionRef.current = subscribeToMatches(user.id, async (newMatch) => {
-      // Reload matches when a new match is created
-      await loadMatches();
-    });
+    // Subscribe to match changes (new matches, updates, and deletes)
+    subscriptionRef.current = supabase
+      .channel('matches_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'matches',
+          filter: `user1_id=eq.${user.id}`,
+        },
+        async (payload) => {
+          console.log('Match INSERT (user1):', payload);
+          await loadMatches();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'matches',
+          filter: `user2_id=eq.${user.id}`,
+        },
+        async (payload) => {
+          console.log('Match INSERT (user2):', payload);
+          await loadMatches();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'matches',
+          filter: `user1_id=eq.${user.id}`,
+        },
+        async (payload) => {
+          console.log('Match UPDATE (user1):', payload);
+          await loadMatches();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'matches',
+          filter: `user2_id=eq.${user.id}`,
+        },
+        async (payload) => {
+          console.log('Match UPDATE (user2):', payload);
+          await loadMatches();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'matches',
+        },
+        async (payload) => {
+          console.log('Match DELETE:', payload);
+          // Check if this deleted match involves current user
+          const deletedMatch = payload.old;
+          if (deletedMatch.user1_id === user.id || deletedMatch.user2_id === user.id) {
+            console.log('Match deleted for current user, reloading...');
+            await loadMatches();
+          }
+        }
+      )
+      .subscribe();
   };
 
   return (

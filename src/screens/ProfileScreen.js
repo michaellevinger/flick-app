@@ -126,7 +126,7 @@ export default function ProfileScreen({ navigation }) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backIcon}>‹</Text>
+            <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile</Text>
           <View style={styles.headerSpacer} />
@@ -188,7 +188,7 @@ export default function ProfileScreen({ navigation }) {
 
           <View style={styles.menuCard}>
             <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
-              <Text style={styles.menuIcon}>?</Text>
+              <Text style={styles.menuIcon}>💬</Text>
               <Text style={styles.menuText}>Help & Support</Text>
               <Text style={styles.menuChevron}>›</Text>
             </TouchableOpacity>
@@ -243,15 +243,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEEEEE',
   },
   backButton: {
-    width: 40,
-    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
   backIcon: {
-    fontSize: 32,
+    fontSize: 28,
     color: '#000000',
-    fontWeight: '300',
   },
   headerTitle: {
     fontSize: 18,

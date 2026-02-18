@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,15 @@ import MatchCard from '../components/MatchCard';
 export default function MatchesScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { matches, loading, loadMatches } = useMatches();
+
+  // Reload matches when screen gains focus (to update unread counts)
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadMatches();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const handleMatchPress = (match) => {
     navigation.navigate('Chat', {

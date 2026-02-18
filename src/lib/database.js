@@ -19,6 +19,13 @@ function normalizeUserData(user) {
  * Create or update a user in the database
  */
 export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, location, phoneNumber, gender, lookingFor, festivalId, bio }) {
+  // Validate location has valid coordinates
+  const validLocation = location &&
+    typeof location.latitude === 'number' &&
+    typeof location.longitude === 'number' &&
+    !isNaN(location.latitude) &&
+    !isNaN(location.longitude);
+
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -30,7 +37,7 @@ export async function upsertUser({ id, name, age, height, selfieUrl, photos, sta
         selfie_url: selfieUrl,
         photos: photos || null, // Array of photo URLs
         status,
-        location: location ? `POINT(${location.longitude} ${location.latitude})` : null,
+        location: validLocation ? `POINT(${location.longitude} ${location.latitude})` : null,
         phone_number: phoneNumber || null,
         gender: gender || null,
         looking_for: lookingFor || null,
@@ -87,6 +94,16 @@ export async function updateUserStatus(userId, status) {
  * Update user's location
  */
 export async function updateUserLocation(userId, location) {
+  // Validate location has valid coordinates
+  if (!location ||
+      typeof location.latitude !== 'number' ||
+      typeof location.longitude !== 'number' ||
+      isNaN(location.latitude) ||
+      isNaN(location.longitude)) {
+    console.error('Invalid location data:', location);
+    throw new Error('Invalid location: latitude and longitude must be valid numbers');
+  }
+
   const { error } = await supabase
     .from('users')
     .update({
