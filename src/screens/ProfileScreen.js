@@ -91,12 +91,14 @@ export default function ProfileScreen({ navigation }) {
           onPress: async () => {
             try {
               await logout();
+            } catch (error) {
+              console.error('Error deleting account:', error);
+            } finally {
+              // Always navigate to Welcome, even if logout fails
               navigation.reset({
                 index: 0,
                 routes: [{ name: 'Welcome' }],
               });
-            } catch (error) {
-              console.error('Error deleting account:', error);
             }
           },
         },
