@@ -591,3 +591,24 @@ xhr.send(bytes.buffer);
 
 **Last Updated:** 2026-02-18 (SafeAreaView migration complete, image uploads working)
 **Next:** Test image uploads end-to-end on real devices
+
+### Additional Fix: Image Filename Issue (2026-02-18)
+
+**Problem:** Image uploads still failing with "Bucket not found" error even though bucket exists and is configured correctly.
+
+**Root Cause:** Match ID format uses pipe character (`userId1|userId2`), which created filenames like:
+```
+user_123|user_456_1771430727788.jpg
+```
+
+Pipe characters (`|`) are not allowed in Supabase Storage paths, causing 404 errors.
+
+**Solution:** Sanitize filename by replacing pipe with hyphen:
+```javascript
+const safeMatchId = matchId.replace(/\|/g, '-');
+const fileName = `${safeMatchId}_${Date.now()}.jpg`;
+// Result: user_123-user_456_1771430727788.jpg
+```
+
+**Key Learning:** Always sanitize user-generated or composite IDs when using them in file paths. Special characters like `|`, `/`, `\`, `:`, `*`, `?`, `"`, `<`, `>` can break storage APIs.
+
