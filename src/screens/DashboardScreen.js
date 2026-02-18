@@ -26,6 +26,7 @@ import {
   getFlicksSentByUser,
   getFlicksForUser,
   deleteFlick,
+  createMatch,
 } from '../lib/flicks';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -137,6 +138,9 @@ export default function DashboardScreen({ navigation }) {
       const isMutual = await checkMutualMatch(user.id, flick.from_user_id);
 
       if (isMutual) {
+        // Create match immediately
+        await createMatch(user.id, flick.from_user_id);
+
         const matchedUser = await getMatchedUserInfo(flick.from_user_id);
         navigation.navigate('GreenLight', { matchedUser });
       }
@@ -259,12 +263,18 @@ export default function DashboardScreen({ navigation }) {
       setFlickdUsers((prev) => new Set([...prev, targetUser.id]));
 
       if (theyFlickdMe) {
+        // Create match immediately
+        await createMatch(user.id, targetUser.id);
+
         const matchedUser = await getMatchedUserInfo(targetUser.id);
         navigation.navigate('GreenLight', { matchedUser });
       } else {
         const isMutual = await checkMutualMatch(user.id, targetUser.id);
 
         if (isMutual) {
+          // Create match immediately
+          await createMatch(user.id, targetUser.id);
+
           const matchedUser = await getMatchedUserInfo(targetUser.id);
           navigation.navigate('GreenLight', { matchedUser });
         }

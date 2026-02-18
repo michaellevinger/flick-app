@@ -185,6 +185,51 @@ export async function getMatchedUserInfo(userId) {
 }
 
 /**
+ * Create a match record when users mutually flick
+ */
+export async function createMatch(user1Id, user2Id) {
+  try {
+    // Generate match ID (alphabetically sorted)
+    const matchId = user1Id < user2Id
+      ? `${user1Id}|${user2Id}`
+      : `${user2Id}|${user1Id}`;
+
+    // Check if match already exists
+    const { data: existingMatch } = await supabase
+      .from('matches')
+      .select('id')
+      .eq('id', matchId)
+      .single();
+
+    if (existingMatch) {
+      console.log('Match already exists:', matchId);
+      return { alreadyExists: true, matchId };
+    }
+
+    // Create new match
+    const { data, error } = await supabase
+      .from('matches')
+      .insert({
+        id: matchId,
+        user1_id: user1Id < user2Id ? user1Id : user2Id,
+        user2_id: user1Id < user2Id ? user2Id : user1Id,
+        unread_count_user1: 0,
+        unread_count_user2: 0,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    console.log('Match created:', matchId);
+    return { success: true, match: data };
+  } catch (error) {
+    console.error('Error creating match:', error);
+    throw error;
+  }
+}
+
+/**
  * Unmatch with a user (delete both flicks and match record)
  */
 export async function unmatchUser(currentUserId, otherUserId) {

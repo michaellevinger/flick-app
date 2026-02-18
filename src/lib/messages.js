@@ -393,6 +393,35 @@ async function updateMatchMetadata(matchId, senderId, recipientId) {
       .eq('id', matchId)
       .single();
 
+    // If match doesn't exist, create it (safety fallback)
+    if (fetchError && fetchError.code === 'PGRST116') {
+      console.log('Match not found, creating:', matchId);
+      const [user1Id, user2Id] = matchId.split('|');
+      await supabase
+        .from('matches')
+        .insert({
+          id: matchId,
+          user1_id: user1Id,
+          user2_id: user2Id,
+          unread_count_user1: 0,
+          unread_count_user2: 0,
+          last_message_at: new Date().toISOString(),
+        });
+
+      // Now update with unread count
+      const isRecipientUser1 = user1Id === recipientId;
+      const unreadColumn = isRecipientUser1 ? 'unread_count_user1' : 'unread_count_user2';
+
+      await supabase
+        .from('matches')
+        .update({
+          [unreadColumn]: 1,
+        })
+        .eq('id', matchId);
+
+      return;
+    }
+
     if (fetchError) throw fetchError;
 
     // Increment unread count for recipient
