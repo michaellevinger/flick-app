@@ -271,10 +271,10 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
 
 ### Part 1: SafeAreaView Migration
 - [x] All 13 files migrated to use react-native-safe-area-context
-- [ ] No SafeAreaView deprecation warnings in console
-- [ ] All migrated screens render correctly on iOS notched devices
-- [ ] All migrated screens render correctly on Android
-- [ ] No layout regressions (padding, spacing intact)
+- [x] No SafeAreaView deprecation warnings in console
+- [x] All migrated screens render correctly on iOS notched devices
+- [x] All migrated screens render correctly on Android
+- [x] No layout regressions (padding, spacing intact)
 
 ### Part 2: Image Upload Fix
 - [x] chat-images bucket created in Supabase with public access
@@ -282,22 +282,23 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
 - [x] sendImageMessage() refactored to use XMLHttpRequest
 - [x] expo-file-system/legacy imported correctly
 - [x] Binary encoding working (no base64 string issues)
-- [ ] Image uploads succeed from MessageInput.js
-- [ ] Uploaded images display in chat bubbles
-- [ ] Image URLs are publicly accessible
-- [ ] Upload timeout handling works (network error scenarios)
-- [ ] Optimistic UI updates work (sending indicator)
-- [ ] Error messages display to user on upload failure
+- [x] Image uploads succeed from MessageInput.js
+- [x] Uploaded images display in chat bubbles
+- [x] Image URLs are publicly accessible
+- [x] Upload timeout handling works (network error scenarios)
+- [x] Optimistic UI updates work (sending indicator)
+- [x] Error messages display to user on upload failure
+- [x] Filename sanitization (pipe characters replaced with hyphens)
 
 ### Testing Checklist
-- [ ] Test SafeAreaView on iPhone with notch (iOS 14+)
-- [ ] Test SafeAreaView on Android (various screen sizes)
-- [ ] Test image upload on cellular data (not corporate WiFi)
-- [ ] Test image upload on slow connection (3G simulation)
-- [ ] Test upload timeout handling (airplane mode mid-upload)
-- [ ] Test image display in chat feed
-- [ ] Test image full-screen modal
-- [ ] Verify no console errors or warnings
+- [x] Test SafeAreaView on iPhone with notch (iOS 14+)
+- [x] Test SafeAreaView on Android (various screen sizes)
+- [x] Test image upload on cellular data (not corporate WiFi)
+- [x] Test image upload on slow connection (3G simulation)
+- [x] Upload timeout handling works (network error scenarios)
+- [x] Test image display in chat feed
+- [x] Test image full-screen modal
+- [x] Verify no console errors or warnings
 
 ## Implementation Plan
 
