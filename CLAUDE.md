@@ -29,8 +29,9 @@
 - [x] Clean UI (no redundant profile icons in headers)
 - [x] SafeAreaView migration complete (react-native-safe-area-context)
 - [x] Chat image uploads working (XMLHttpRequest + filename sanitization)
-- [x] Location sharing displays Maps links (not raw coordinates)
 - [x] Unmatch functionality with confirmation dialog
+- [x] Modern profile card UI (Bumble-style layout)
+- [x] Report user functionality
 - [x] All bugs resolved and tested on Android devices
 
 ### ✅ Supabase Setup - COMPLETE

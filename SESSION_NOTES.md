@@ -628,3 +628,45 @@ const fileName = `${safeMatchId}_${Date.now()}.jpg`;
 
 **Rationale:** Location sharing not needed for the festival/event use case. Users meet in person at events, so sharing GPS coordinates doesn't add value.
 
+
+## 2026-02-18: Profile Card Redesign
+
+**User Request:** "when i see in the redar prfile... i wan to see them if i select a pfoile and see somthing like [Bumble screenshot]"
+
+**What We Built:**
+Completely redesigned UserProfileScreen.js to match modern dating app card layout (Bumble/Tinder style).
+
+**Key Changes:**
+1. **Larger Photo** - Now 65% of screen height (was ~48%)
+2. **Buttons Repositioned** - Skip (X) & Like (♥) buttons moved from bottom to directly below name
+3. **Simplified Info** - Replaced detailed row-based layout with compact emoji icons
+4. **"About Me" Section** - Clean bio display with title
+5. **Report User Link** - Added at bottom for safety
+6. **More Compact** - Overall cleaner, less scrolling needed
+
+**Layout Flow:**
+```
+┌─────────────────────────┐
+│   Large Photo (65%)     │
+│   [Photo Indicators]    │
+│   [X Close Button]      │
+└─────────────────────────┘
+┌─────────────────────────┐
+│  Name, Age              │
+│  Distance               │
+│                         │
+│  [X Skip]  [♥ Like]    │
+│                         │
+│  About Me               │
+│  Bio text...            │
+│                         │
+│  📏 Height              │
+│  👤 Gender              │
+│  💭 Looking for         │
+│                         │
+│  [Report User]          │
+└─────────────────────────┘
+```
+
+**Result:** Modern, clean card-style profile view matching industry standards.
+
