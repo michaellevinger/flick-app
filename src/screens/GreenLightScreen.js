@@ -106,7 +106,7 @@ export default function GreenLightScreen({ route, navigation }) {
       if (existing.status === 'accepted') {
         Alert.alert(
           'Match!',
-          `You both matched! Head to the Heineken Lounge for a 2-for-1 drink.`,
+          `You both matched! Exchange your numbers now.`,
           [
             {
               text: 'OK',
@@ -145,7 +145,7 @@ export default function GreenLightScreen({ route, navigation }) {
         setExchangeRequest(exchange);
         Alert.alert(
           'Match!',
-          `You both matched! Head to the Heineken Lounge for a 2-for-1 drink.`,
+          `You both matched! Exchange your numbers now.`,
           [
             {
               text: 'OK',
@@ -270,7 +270,6 @@ export default function GreenLightScreen({ route, navigation }) {
       {/* Content */}
       <View style={styles.content}>
         <Text style={styles.title}>GREEN LIGHT</Text>
-        <Text style={styles.poweredBy}>This match is powered by Heineken</Text>
 
         {/* Matched User Info */}
         <View style={styles.userContainer}>
@@ -438,15 +437,8 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     color: COLORS.black,
-    marginBottom: SPACING.sm,
-    letterSpacing: 2,
-  },
-  poweredBy: {
-    fontSize: 14,
-    fontStyle: 'italic',
-    color: COLORS.black,
     marginBottom: SPACING.xxl,
-    opacity: 0.7,
+    letterSpacing: 2,
   },
   userContainer: {
     alignItems: 'center',
