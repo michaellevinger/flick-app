@@ -8,6 +8,8 @@ import {
   Modal,
   Dimensions,
   ActivityIndicator,
+  Linking,
+  Platform,
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
@@ -39,13 +41,22 @@ export default function MessageBubble({ message, isSender, onLongPress }) {
 
       case 'location':
         const locationData = JSON.parse(message.content);
+        const mapsUrl = Platform.select({
+          ios: `maps:0,0?q=${locationData.latitude},${locationData.longitude}`,
+          android: `geo:0,0?q=${locationData.latitude},${locationData.longitude}`,
+          default: `https://www.google.com/maps/search/?api=1&query=${locationData.latitude},${locationData.longitude}`,
+        });
+
         return (
-          <View style={styles.locationContainer}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(mapsUrl)}
+            style={styles.locationContainer}
+          >
             <Text style={[styles.text, isSender && styles.textSender]}>📍 Location shared</Text>
-            <Text style={[styles.locationText, isSender && styles.textSender]}>
-              {locationData.latitude.toFixed(4)}, {locationData.longitude.toFixed(4)}
+            <Text style={[styles.locationLink, isSender && styles.locationLinkSender]}>
+              View on Maps
             </Text>
-          </View>
+          </TouchableOpacity>
         );
 
       case 'emoji_reaction':
@@ -168,6 +179,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: SPACING.xs,
     color: COLORS.black,
+  },
+  locationLink: {
+    ...TYPOGRAPHY.caption,
+    fontSize: 12,
+    marginTop: SPACING.xs,
+    color: COLORS.black,
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+  },
+  locationLinkSender: {
+    color: COLORS.white,
   },
   emoji: {
     fontSize: 32,
