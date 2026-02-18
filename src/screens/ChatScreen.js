@@ -327,8 +327,8 @@ const styles = StyleSheet.create({
   },
   messagesList: {
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    flexGrow: 1,
+    paddingTop: SPACING.sm,
+    paddingBottom: SPACING.md,
   },
   emptyContainer: {
     flex: 1,
