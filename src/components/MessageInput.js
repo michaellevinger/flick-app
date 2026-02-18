@@ -10,10 +10,9 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
-export default function MessageInput({ onSendText, onSendImage, onSendLocation }) {
+export default function MessageInput({ onSendText, onSendImage }) {
   const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
@@ -96,33 +95,6 @@ export default function MessageInput({ onSendText, onSendImage, onSendLocation }
     }
   };
 
-  const handleLocationPress = async () => {
-    if (sending) return;
-
-    setSending(true);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'Location permission is required to share location.');
-        setSending(false);
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
-
-      await onSendLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-    } catch (error) {
-      Alert.alert('Error', 'Failed to get location');
-    } finally {
-      setSending(false);
-    }
-  };
-
   return (
     <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, SPACING.md) }]}>
       {/* Camera Button */}
@@ -132,15 +104,6 @@ export default function MessageInput({ onSendText, onSendImage, onSendLocation }
         disabled={sending}
       >
         <Text style={styles.iconText}>📷</Text>
-      </TouchableOpacity>
-
-      {/* Location Button */}
-      <TouchableOpacity
-        style={styles.iconButton}
-        onPress={handleLocationPress}
-        disabled={sending}
-      >
-        <Text style={styles.iconText}>📍</Text>
       </TouchableOpacity>
 
       {/* Text Input */}

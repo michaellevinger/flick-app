@@ -19,7 +19,6 @@ import {
   markMessagesAsRead,
   sendTextMessage,
   sendImageMessage,
-  sendLocationMessage,
   sendEmojiReaction,
 } from '../lib/messages';
 import MessageBubble from '../components/MessageBubble';
@@ -174,14 +173,6 @@ export default function ChatScreen({ route, navigation }) {
     }
   };
 
-  const handleSendLocation = async (location) => {
-    if (!user) return;
-    await sendLocationMessage(user.id, otherUser.id, location);
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
   const handleLongPress = (message) => {
     // TODO: Implement emoji reactions
     console.log('Long press on message:', message.id);
@@ -261,7 +252,6 @@ export default function ChatScreen({ route, navigation }) {
       <MessageInput
         onSendText={handleSendText}
         onSendImage={handleSendImage}
-        onSendLocation={handleSendLocation}
       />
     </KeyboardAvoidingView>
   );
