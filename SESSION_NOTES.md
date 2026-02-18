@@ -523,3 +523,71 @@ xhr.send(bytes.buffer);
 
 **Last Updated:** 2026-02-03 14:29 (Profile creation working, proximity verified!)
 **Resume From:** Test nudge system with nearby user at 1m distance
+
+---
+
+## 2026-02-18: Bug Fixes - SafeAreaView & Image Uploads
+
+### Issues Fixed
+
+1. **SafeAreaView Deprecation Warning**
+   - **Problem:** Console warning: "SafeAreaView has been deprecated"
+   - **Root Cause:** 13 screen files still importing SafeAreaView from 'react-native'
+   - **Solution:** Migrated all files to 'react-native-safe-area-context'
+   - **Files Updated:**
+     - Setup1Screen, Setup2Screen, Setup3Screen
+     - CameraScreen, WelcomeScreen
+     - BirthdayScreen, BioScreen, LookingForScreen
+     - HostOnboarding1, HostOnboarding2, HostOnboarding3
+     - CreateEventScreen, EventSuccessScreen
+
+2. **Chat Image Upload Failures**
+   - **Problem:** Images failing to upload with "Bucket not found" error
+   - **Root Causes:**
+     - `chat-images` storage bucket didn't exist in Supabase
+     - FormData approach unreliable in React Native for file:// URIs
+   - **Solution:**
+     - Created `chat-images` bucket with public access + RLS policies
+     - Replaced FormData with XMLHttpRequest pattern (proven from selfie uploads)
+     - Added expo-file-system/legacy for base64 reading
+     - Binary encoding via Uint8Array (not base64 strings)
+     - 60s timeout handling
+
+### Key Implementation Changes
+
+**messages.js (Image Upload Refactor):**
+```javascript
+// BEFORE (broken - FormData)
+const formData = new FormData();
+formData.append('', { uri, type, name });
+await fetch(uploadUrl, { body: formData });
+
+// AFTER (working - XMLHttpRequest)
+const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: 'base64' });
+const bytes = new Uint8Array(...); // Binary conversion
+xhr.send(bytes.buffer);
+```
+
+**Storage Bucket Setup:**
+- Bucket: `chat-images` (public, 5MB limit, image/* only)
+- RLS Policies: INSERT, SELECT, DELETE for anon users
+- Matches existing `selfies` bucket pattern
+
+### Testing Recommendations
+
+- Test SafeAreaView on iPhone X+ (notched devices) and Android
+- Test image upload on cellular data (corporate WiFi may block)
+- Verify location sharing opens Maps (not raw coordinates)
+- Check that unmatch functionality works end-to-end
+
+### Documentation Updated
+
+- ✅ CLAUDE.md - Added completed features
+- ✅ SUPABASE_SETUP.md - Added chat-images bucket setup
+- ✅ SESSION_NOTES.md - This file
+- ✅ Plan document - All checkboxes marked
+
+---
+
+**Last Updated:** 2026-02-18 (SafeAreaView migration complete, image uploads working)
+**Next:** Test image uploads end-to-end on real devices

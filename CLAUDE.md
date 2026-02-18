@@ -27,6 +27,10 @@
 - [x] Tab Navigation (Radar + Matches + Profile)
 - [x] Persistent chat history until unmatch
 - [x] Clean UI (no redundant profile icons in headers)
+- [x] SafeAreaView migration complete (react-native-safe-area-context)
+- [x] Chat image uploads (XMLHttpRequest for reliable binary uploads)
+- [x] Location sharing displays Maps links (not raw coordinates)
+- [x] Unmatch functionality with confirmation dialog
 
 ### ✅ Supabase Setup - COMPLETE
 - [x] Project created (oithyuuztrmohcbfglrh.supabase.co)

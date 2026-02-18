@@ -69,6 +69,40 @@ This creates:
 
 > **Note**: In production, you'd want more restrictive policies (e.g., users can only delete their own files). For now, we're keeping it simple.
 
+## Step 4b: Set Up Storage for Chat Images
+
+Follow the same process for chat images:
+
+1. Click on **Storage** in the left sidebar
+2. Click **New bucket**
+3. Configure the bucket:
+   - **Name**: `chat-images`
+   - **Public bucket**: Toggle ON
+   - Click **Create bucket**
+
+### Configure Storage Policies for Chat Images
+
+Run this SQL in the SQL Editor:
+
+```sql
+-- Allow anonymous uploads to chat-images
+CREATE POLICY "Allow anonymous uploads to chat-images"
+ON storage.objects FOR INSERT TO public
+WITH CHECK (bucket_id = 'chat-images');
+
+-- Allow public downloads from chat-images
+CREATE POLICY "Allow public downloads from chat-images"
+ON storage.objects FOR SELECT TO public
+USING (bucket_id = 'chat-images');
+
+-- Allow deletes from chat-images (for cleanup)
+CREATE POLICY "Allow deletes from chat-images"
+ON storage.objects FOR DELETE TO public
+USING (bucket_id = 'chat-images');
+```
+
+> **Note**: This bucket stores images sent in chat messages. Same public access pattern as selfies bucket.
+
 ## Step 5: Configure Your App
 
 1. In your SPOT app directory, open `src/lib/supabase.js`
