@@ -94,7 +94,9 @@ export default function ManagePhotosScreen({ navigation }) {
   const removePhoto = (index) => {
     Alert.alert(
       'Remove Photo',
-      index === 0 ? 'Remove your main photo?' : 'Remove this photo?',
+      index === 0
+        ? 'Remove your main photo? The next photo will become your main photo.'
+        : 'Remove this photo?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -201,77 +203,115 @@ export default function ManagePhotosScreen({ navigation }) {
           Add up to 3 photos • Use ↑↓ to reorder
         </Text>
 
-        {/* Photo List with simple reordering */}
-        <FlatList
-          data={photos}
-          keyExtractor={(item, index) => `photo-${index}`}
-          renderItem={({ item, index }) => {
-            return (
-              <View style={styles.photoTile}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.photoTouchable}
-                >
-                  <Image source={{ uri: item }} style={styles.photo} />
-                  {index === 0 && (
-                    <View style={styles.mainBadge}>
-                      <Text style={styles.mainBadgeText}>Main</Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-
-                {/* Reorder buttons */}
-                {photos.length > 1 && (
-                  <View style={styles.reorderButtons}>
-                    <TouchableOpacity
-                      style={[styles.reorderButton, index === 0 && styles.reorderButtonDisabled]}
-                      onPress={() => movePhotoUp(index)}
-                      disabled={index === 0}
-                    >
-                      <Text style={[styles.reorderButtonText, index === 0 && styles.reorderButtonTextDisabled]}>↑</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.reorderButton, index === photos.length - 1 && styles.reorderButtonDisabled]}
-                      onPress={() => movePhotoDown(index)}
-                      disabled={index === photos.length - 1}
-                    >
-                      <Text style={[styles.reorderButtonText, index === photos.length - 1 && styles.reorderButtonTextDisabled]}>↓</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => removePhoto(index)}
-                >
-                  <Text style={styles.removeButtonText}>✕</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-          ListFooterComponent={
-            canAddMore ? (
+        {/* Empty State */}
+        {photos.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateIcon}>📷</Text>
+            <Text style={styles.emptyStateTitle}>No photos yet</Text>
+            <Text style={styles.emptyStateText}>
+              Add up to 3 photos to your profile
+            </Text>
+            <TouchableOpacity
+              style={styles.addPhotoButton}
+              onPress={() => {
+                Alert.alert(
+                  'Add Photo',
+                  'Choose how to add a photo',
+                  [
+                    { text: 'Take Photo', onPress: takePhotoWithCrop },
+                    { text: 'Choose from Gallery', onPress: pickFromGallery },
+                    { text: 'Cancel', style: 'cancel' }
+                  ]
+                );
+              }}
+            >
+              <Text style={styles.addPhotoButtonText}>Add Photo</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.photoGrid}>
+          {photos.map((item, index) => (
+            <View key={index} style={styles.photoTile}>
               <TouchableOpacity
-                style={styles.addPhotoTile}
+                activeOpacity={0.8}
+                style={styles.photoTouchable}
                 onPress={() => {
-                  Alert.alert(
-                    'Add Photo',
-                    'Choose how to add a photo',
-                    [
-                      { text: 'Take Photo', onPress: takePhotoWithCrop },
-                      { text: 'Choose from Gallery', onPress: pickFromGallery },
-                      { text: 'Cancel', style: 'cancel' }
-                    ]
-                  );
+                  navigation.navigate('PhotoView', {
+                    photos: photos,
+                    initialIndex: index,
+                  });
                 }}
               >
-                <Text style={styles.plusIcon}>+</Text>
-                <Text style={styles.addPhotoText}>Add Photo</Text>
+                <Image
+                  source={{ uri: item }}
+                  style={styles.photo}
+                  onError={(error) => {
+                    console.error('Image load error:', error.nativeEvent.error, 'URI:', item);
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded successfully:', item?.substring(0, 50));
+                  }}
+                />
+                {index === 0 && (
+                  <View style={styles.mainBadge}>
+                    <Text style={styles.mainBadgeText}>Main</Text>
+                  </View>
+                )}
               </TouchableOpacity>
-            ) : null
-          }
-          contentContainerStyle={styles.photoList}
-        />
+
+              {/* Reorder buttons - overlay at bottom */}
+              {photos.length > 1 && (
+                <View style={styles.reorderButtons}>
+                  <TouchableOpacity
+                    style={[styles.reorderButton, index === 0 && styles.reorderButtonDisabled]}
+                    onPress={() => movePhotoUp(index)}
+                    disabled={index === 0}
+                  >
+                    <Text style={[styles.reorderButtonText, index === 0 && styles.reorderButtonTextDisabled]}>↑</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.reorderButton, index === photos.length - 1 && styles.reorderButtonDisabled]}
+                    onPress={() => movePhotoDown(index)}
+                    disabled={index === photos.length - 1}
+                  >
+                    <Text style={[styles.reorderButtonText, index === photos.length - 1 && styles.reorderButtonTextDisabled]}>↓</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Remove button */}
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removePhoto(index)}
+              >
+                <Text style={styles.removeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {/* Add Photo Tile */}
+          {canAddMore && (
+            <TouchableOpacity
+              style={styles.addPhotoTile}
+              onPress={() => {
+                Alert.alert(
+                  'Add Photo',
+                  'Choose how to add a photo',
+                  [
+                    { text: 'Take Photo', onPress: takePhotoWithCrop },
+                    { text: 'Choose from Gallery', onPress: pickFromGallery },
+                    { text: 'Cancel', style: 'cancel' }
+                  ]
+                );
+              }}
+            >
+              <View style={styles.plusButton}>
+                <Text style={styles.plusIcon}>+</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+        )}
 
         {/* Info Box */}
         <View style={styles.infoBox}>
@@ -339,19 +379,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  photoList: {
-    paddingBottom: 24,
+  photoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 24,
+    marginHorizontal: -6,
   },
   photoTile: {
-    height: 120,
+    width: '47%',
+    aspectRatio: 1,
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
     backgroundColor: '#FFFFFF',
+    marginHorizontal: 6,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#EEEEEE',
-    flexDirection: 'row',
   },
   photoTileActive: {
     opacity: 0.8,
@@ -359,7 +403,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   photoTouchable: {
-    flex: 1,
+    width: '100%',
+    height: '100%',
     position: 'relative',
   },
   photo: {
@@ -369,9 +414,10 @@ const styles = StyleSheet.create({
   },
   reorderButtons: {
     position: 'absolute',
-    right: 52,
-    top: 0,
-    bottom: 0,
+    bottom: 4,
+    left: 4,
+    right: 4,
+    flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
   },
@@ -379,11 +425,16 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.95)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#C44CE0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   reorderButtonDisabled: {
     backgroundColor: 'rgba(255,255,255,0.5)',
@@ -416,7 +467,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 6,
     left: 6,
-    backgroundColor: '#C44CE0',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
@@ -424,7 +475,7 @@ const styles = StyleSheet.create({
   mainBadgeText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: '#C44CE0',
   },
   removeButton: {
     position: 'absolute',
@@ -444,7 +495,8 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   addPhotoTile: {
-    height: 120,
+    width: '47%',
+    aspectRatio: 1,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: '#CCCCCC',
@@ -452,19 +504,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 6,
     marginBottom: 12,
+  },
+  plusButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   plusIcon: {
     fontSize: 36,
-    color: '#CCCCCC',
+    color: '#C44CE0',
     fontWeight: '300',
     lineHeight: 36,
-    marginBottom: 4,
-  },
-  addPhotoText: {
-    fontSize: 14,
-    color: '#999999',
-    fontWeight: '500',
   },
   infoBox: {
     flexDirection: 'row',
@@ -484,5 +544,39 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
     lineHeight: 20,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyStateIcon: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyStateTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 32,
+    paddingHorizontal: 40,
+  },
+  addPhotoButton: {
+    backgroundColor: '#C44CE0',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 24,
+  },
+  addPhotoButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });
