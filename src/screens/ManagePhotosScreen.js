@@ -10,10 +10,12 @@ import {
   Platform,
   StatusBar,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+// TEMPORARY: DraggableFlatList removed to fix Worklets version mismatch
+// import DraggableFlatList from 'react-native-draggable-flatlist';
 import { useUser } from '../lib/userContext';
 import { uploadPhotos, updateUserPhotos } from '../lib/database';
 
@@ -92,9 +94,10 @@ export default function ManagePhotosScreen({ navigation }) {
     );
   };
 
-  const handleReorder = ({ data }) => {
-    setPhotos(data);
-  };
+  // TEMPORARY: Drag-to-reorder disabled
+  // const handleReorder = ({ data }) => {
+  //   setPhotos(data);
+  // };
 
   const handleSave = async () => {
     if (photos.length === 0) {
@@ -163,20 +166,17 @@ export default function ManagePhotosScreen({ navigation }) {
 
       <View style={styles.content}>
         <Text style={styles.subtitle}>
-          Add up to 3 photos • Drag to reorder
+          Add up to 3 photos
         </Text>
 
-        {/* Draggable Photo List */}
-        <DraggableFlatList
+        {/* Photo List (drag-to-reorder temporarily disabled) */}
+        <FlatList
           data={photos}
-          onDragEnd={handleReorder}
           keyExtractor={(item, index) => `photo-${index}`}
-          renderItem={({ item, drag, isActive, getIndex }) => {
-            const index = getIndex();
+          renderItem={({ item, index }) => {
             return (
-              <View style={[styles.photoTile, isActive && styles.photoTileActive]}>
+              <View style={styles.photoTile}>
                 <TouchableOpacity
-                  onLongPress={drag}
                   activeOpacity={0.8}
                   style={styles.photoTouchable}
                 >
@@ -186,9 +186,6 @@ export default function ManagePhotosScreen({ navigation }) {
                       <Text style={styles.mainBadgeText}>Main</Text>
                     </View>
                   )}
-                  <View style={styles.dragHandle}>
-                    <Text style={styles.dragHandleText}>☰</Text>
-                  </View>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.removeButton}
