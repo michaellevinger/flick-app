@@ -40,7 +40,9 @@ export default function ManagePhotosScreen({ navigation }) {
         allowsEditing: true,
         aspect: [1, 1], // Square crop - most flexible and clear
         quality: 0.8,
-        cameraType: ImagePicker.CameraType.front,
+        cameraType: 'front',
+        presentationStyle: 'fullScreen',
+        selectionLimit: 1,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -66,6 +68,8 @@ export default function ManagePhotosScreen({ navigation }) {
         allowsMultipleSelection: false,
         aspect: [1, 1], // Square crop - most flexible and clear
         quality: 0.8,
+        presentationStyle: 'fullScreen',
+        selectionLimit: 1,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {

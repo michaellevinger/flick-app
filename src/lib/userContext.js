@@ -351,6 +351,7 @@ export function UserProvider({ children }) {
           age: data.age,
           height: data.height,
           selfieUrl: data.selfie_url,
+          photos: data.photos || [],
           status: Boolean(data.status),
           location: data.location,
           phoneNumber: data.phone_number,

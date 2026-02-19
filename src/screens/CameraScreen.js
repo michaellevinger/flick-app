@@ -193,6 +193,8 @@ export default function CameraScreen({ navigation, route }) {
         allowsEditing: true,
         aspect: [1, 1], // Square crop - most flexible and clear
         quality: 0.8,
+        presentationStyle: 'fullScreen',
+        selectionLimit: 1,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
