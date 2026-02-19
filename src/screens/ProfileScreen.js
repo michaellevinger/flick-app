@@ -11,11 +11,14 @@ import {
   Platform,
   StatusBar,
   KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio } from '../lib/database';
+
+const { width } = Dimensions.get('window');
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -149,6 +152,40 @@ export default function ProfileScreen({ navigation }) {
 
           {/* Name Display */}
           <Text style={styles.userName}>{user.name}, {user.age}</Text>
+
+          {/* Photos Section */}
+          {user.photos && user.photos.length > 0 && (
+            <View style={styles.photosSection}>
+              <View style={styles.photosSectionHeader}>
+                <Text style={styles.photosSectionTitle}>Photos</Text>
+                <TouchableOpacity onPress={handleChangePhoto}>
+                  <Text style={styles.photosSectionEdit}>Manage</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.photosGrid}>
+                {user.photos.map((photo, index) => (
+                  <TouchableOpacity
+                    key={`photo-${index}`}
+                    style={styles.photoGridItem}
+                    onPress={() => navigation.navigate('PhotoView', {
+                      photos: user.photos,
+                      initialIndex: index,
+                    })}
+                  >
+                    <Image
+                      source={{ uri: photo }}
+                      style={styles.photoGridImage}
+                    />
+                    {index === 0 && (
+                      <View style={styles.mainPhotoBadge}>
+                        <Text style={styles.mainPhotoBadgeText}>Main</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
 
           {/* Profile Card */}
           <View style={styles.card}>
@@ -303,6 +340,57 @@ const styles = StyleSheet.create({
     color: '#000000',
     textAlign: 'center',
     marginBottom: 24,
+  },
+  photosSection: {
+    marginBottom: 24,
+  },
+  photosSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  photosSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  photosSectionEdit: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#C44CE0',
+  },
+  photosGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  photoGridItem: {
+    width: (width - 48) / 2, // (screen width - padding - gap) / 2
+    height: (width - 48) / 2,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#F5F5F5',
+    position: 'relative',
+  },
+  photoGridImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  mainPhotoBadge: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+    backgroundColor: '#C44CE0',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  mainPhotoBadgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   card: {
     backgroundColor: '#FFFFFF',

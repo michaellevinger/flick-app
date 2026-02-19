@@ -27,6 +27,7 @@ import MatchesScreen from './src/screens/MatchesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import UserProfileScreen from './src/screens/UserProfileScreen';
 import ManagePhotosScreen from './src/screens/ManagePhotosScreen';
+import PhotoViewScreen from './src/screens/PhotoViewScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import GreenLightScreen from './src/screens/GreenLightScreen';
 import VaultScreen from './src/screens/VaultScreen';
@@ -191,6 +192,14 @@ export default function App() {
                 component={ManagePhotosScreen}
                 options={{
                   presentation: 'card',
+                }}
+              />
+              <Stack.Screen
+                name="PhotoView"
+                component={PhotoViewScreen}
+                options={{
+                  presentation: 'modal',
+                  headerShown: false,
                 }}
               />
               <Stack.Screen
