@@ -211,21 +211,24 @@ Profile/ManagePhotos screens
 ## Acceptance Criteria
 
 ### Photo Persistence
-- [ ] Save 3 photos in ManagePhotos screen
-- [ ] Tap "Save" button → success alert shows
-- [ ] Navigate back to Profile screen
-- [ ] Verify all 3 photos are visible (check how - see Implementation Notes)
-- [ ] Close and reopen app → photos still present
-- [ ] Reorder photos → save → order persists
-- [ ] Remove photo → save → deletion persists
+- [ ] Save 3 photos in ManagePhotos screen (requires device testing)
+- [ ] Tap "Save" button → success alert shows (requires device testing)
+- [ ] Navigate back to Profile screen (requires device testing)
+- [x] Verify all 3 photos are visible in grid layout - **IMPLEMENTED**
+- [ ] Close and reopen app → photos still present (requires device testing)
+- [ ] Reorder photos → save → order persists (requires device testing)
+- [ ] Remove photo → save → deletion persists (requires device testing)
+- [x] Photos persist when switching between tabs - **FIXED**
+- [x] Photo grid displays in 2-column layout - **IMPLEMENTED**
+- [x] Photos are tappable to view full-screen - **IMPLEMENTED**
 
 ### Crop Visibility
-- [ ] Tap "Add Photo" → choose camera or gallery
-- [ ] Crop interface appears with clear grid/overlay
-- [ ] Can see entire crop area boundaries
-- [ ] Crop box is visible against both light and dark photos
-- [ ] Can easily adjust crop before confirming
-- [ ] After confirming, cropped image matches expected framing
+- [ ] Tap "Add Photo" → choose camera or gallery (requires device testing)
+- [ ] Crop interface appears with clear grid/overlay (requires device testing)
+- [ ] Can see entire crop area boundaries (requires device testing)
+- [ ] Crop box is visible against both light and dark photos (requires device testing)
+- [ ] Can easily adjust crop before confirming (requires device testing)
+- [ ] After confirming, cropped image matches expected framing (requires device testing)
 
 ### Edge Cases
 - [ ] Save with 0 photos → validation error (need at least 1)
@@ -236,49 +239,58 @@ Profile/ManagePhotos screens
 
 ## Implementation Plan
 
-### Phase 1: Fix Photo Persistence (30 min)
+### Phase 1: Fix Photo Persistence ✅ COMPLETE
 
 #### Step 1: Add photos field to refreshUser() ✅
-**File**: `src/lib/userContext.js:361`
+**File**: `src/lib/userContext.js:354`
 ```javascript
 photos: data.photos || [],
 ```
+✅ **Completed** - Added missing photos field to refreshUser() function
 
-#### Step 2: Verify database query includes photos
+#### Step 2: Verify database query includes photos ✅
 **File**: `src/lib/userContext.js:340`
 ```javascript
-.select('*') // Should already include photos field
+.select('*') // Already includes photos field
 ```
+✅ **Verified** - Database query returns all fields including photos array
 
-#### Step 3: Test save flow
-1. Add debug log after refreshUser: `console.log('Refreshed user photos:', updatedUser.photos)`
-2. Verify photos array is populated
-3. Check ProfileScreen receives correct data
-
-### Phase 2: Update Profile Display (20 min)
-
-**Question**: How should Profile screen show multiple photos?
-
-**Option A**: Keep single photo + "Manage Photos" button (minimal change)
-**Option B**: Show photo carousel like UserProfileScreen (feature parity)
-**Option C**: Show thumbnail grid of all photos (Instagram-style)
-
-**Recommendation**: Option A for now (minimal change), defer carousel to future enhancement.
-
-**Implementation** (if choosing Option B):
+#### Step 3: Fix tab navigation photo sync ✅
+**File**: `src/screens/ManagePhotosScreen.js`
 ```javascript
-// src/screens/ProfileScreen.js
-// Import UserProfileScreen's carousel logic
-const allPhotos = user?.photos || [user?.selfieUrl].filter(Boolean);
-// Render image carousel with swipe/dots
+// Added useFocusEffect to sync photos when navigating back
+useFocusEffect(
+  React.useCallback(() => {
+    if (user?.photos && user.photos.length > 0) {
+      setPhotos(user.photos);
+    }
+  }, [user?.photos])
+);
 ```
+✅ **Completed** - Photos now persist when switching between tabs
 
-### Phase 3: Improve Crop Visibility (20 min)
+### Phase 2: Update Profile Display ✅ COMPLETE
+
+**Implementation**: Option C (Instagram-style thumbnail grid) - COMPLETED
+
+**What was built**:
+1. Created `PhotoViewScreen.js` - Full-screen photo viewer with carousel
+2. Added photo grid to `ProfileScreen.js`:
+   - 2-column responsive grid layout
+   - "Photos" section header with "Manage" button
+   - "Main" badge on first photo
+   - Tappable photos that open full-screen viewer
+3. Added PhotoViewScreen to navigation stack in App.js
+
+✅ **Completed** - Photo grid with full-screen viewer fully implemented
+
+### Phase 3: Improve Crop Visibility ✅ COMPLETE
 
 #### Step 1: Add presentation config ✅
 **Files**:
-- `src/screens/ManagePhotosScreen.js:55-78`
-- `src/screens/CameraScreen.js:191-195`
+- `src/screens/ManagePhotosScreen.js:48-56` (camera)
+- `src/screens/ManagePhotosScreen.js:75-83` (gallery)
+- `src/screens/CameraScreen.js:191-198`
 
 ```javascript
 const result = await ImagePicker.launchImageLibraryAsync({
@@ -290,17 +302,19 @@ const result = await ImagePicker.launchImageLibraryAsync({
   selectionLimit: 1,               // ✅ ADDED
 });
 ```
+✅ **Completed** - All ImagePicker calls now have presentation config
 
 #### Step 2: Fix cameraType enum ✅
-**File**: `src/screens/ManagePhotosScreen.js:43`
+**File**: `src/screens/ManagePhotosScreen.js:53`
 ```javascript
 cameraType: 'front', // String literal instead of enum
 ```
+✅ **Completed** - Fixed CameraType enum to string literal
 
 #### Step 3: Test on device
-- Add photo with light background → verify crop visible
-- Add photo with dark background → verify crop visible
-- Test on both iOS and Android
+- [ ] Add photo with light background → verify crop visible
+- [ ] Add photo with dark background → verify crop visible
+- [ ] Test on both iOS and Android
 
 ### Phase 4: Testing & Validation (20 min)
 
@@ -466,14 +480,42 @@ CREATE TABLE users (
 );
 ```
 
+## Bonus Implementation
+
+### Photo Grid Display ✅ COMPLETED
+
+**Beyond Original Scope**: User requested photo grid display similar to Instagram-style layout.
+
+**What Was Built**:
+1. **PhotoViewScreen** (`src/screens/PhotoViewScreen.js`):
+   - Full-screen photo viewer with dark background
+   - Swipeable horizontal carousel
+   - Photo counter header ("Photos 1/3")
+   - Dots indicator for navigation
+   - Close button to return
+
+2. **Photo Grid in ProfileScreen**:
+   - 2-column responsive grid layout
+   - "Photos" section header with "Manage" button
+   - "Main" badge on first photo
+   - Tappable photos navigate to full-screen viewer
+   - Proper spacing and styling
+
+3. **Navigation Integration**:
+   - Added PhotoViewScreen to navigation stack
+   - Modal presentation style
+   - Passes photos array and initial index
+
+**User Benefit**: Users can now see all their photos in their profile and view them full-screen by tapping, providing better visibility into their profile presentation.
+
 ## Future Enhancements
 
 **Out of Scope for This Fix**:
-- [ ] Add photo carousel to ProfileScreen (like UserProfileScreen)
 - [ ] Custom crop library with better styling
 - [ ] Photo compression before upload
 - [ ] Drag-and-drop photo reordering (removed due to Worklets conflict)
 - [ ] Delete old photos from storage when replaced
+- [ ] Photo zoom/pinch gestures in PhotoViewScreen
 
 **Consider Later**:
 - [ ] Remove `selfie_url` redundancy (use `photos[0]` everywhere)
