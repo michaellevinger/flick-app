@@ -56,7 +56,11 @@ export default function ManagePhotosScreen({ navigation }) {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        setPhotos([...photos, result.assets[0].uri]);
+        const newUri = result.assets[0].uri;
+        // Prevent duplicate photos
+        if (!photos.includes(newUri)) {
+          setPhotos([...photos, newUri]);
+        }
       }
     } catch (error) {
       console.error('Error taking photo:', error);
@@ -83,7 +87,11 @@ export default function ManagePhotosScreen({ navigation }) {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        setPhotos([...photos, result.assets[0].uri]);
+        const newUri = result.assets[0].uri;
+        // Prevent duplicate photos
+        if (!photos.includes(newUri)) {
+          setPhotos([...photos, newUri]);
+        }
       }
     } catch (error) {
       console.error('Error picking from gallery:', error);
@@ -133,9 +141,13 @@ export default function ManagePhotosScreen({ navigation }) {
     console.log('Starting photo save...', { photoCount: photos.length, userId: user?.id });
     setIsSaving(true);
     try {
+      // Remove duplicates from photos array
+      const uniquePhotos = [...new Set(photos)];
+      console.log('Unique photos count:', uniquePhotos.length);
+
       // Upload new photos if they're local URIs (not already uploaded)
       const uploadedPhotos = [];
-      for (const photoUri of photos) {
+      for (const photoUri of uniquePhotos) {
         console.log('Processing photo:', photoUri.substring(0, 50) + '...');
         if (photoUri.startsWith('http')) {
           // Already uploaded, keep the URL
