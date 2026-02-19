@@ -217,7 +217,7 @@ export default function ManagePhotosScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <Text style={styles.subtitle}>
           Add up to 3 photos • Use ↑↓ to reorder
         </Text>
@@ -394,7 +394,7 @@ export default function ManagePhotosScreen({ navigation }) {
             Drag to reorder photos. When adding photos, you can crop them before adding. Your first photo is your main profile photo.
           </Text>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -446,6 +446,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 24,
+    paddingBottom: 100,
+  },
+  contentContainer: {
+    paddingBottom: 40,
   },
   subtitle: {
     fontSize: 14,

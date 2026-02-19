@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
+    marginBottom: 12,
   },
   inputGroup: {
     marginBottom: 16,
