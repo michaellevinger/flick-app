@@ -190,12 +190,18 @@ export default function DashboardScreen({ navigation }) {
     }
 
     try {
-      const users = await findUsersInFestival(user.festival_id, user.id);
+      const users = await findUsersInFestival(
+        user.festival_id,
+        user.id,
+        user.gender,
+        user.lookingFor
+      );
       const filteredUsers = users.filter(u => u.id !== user.id);
 
       console.log('Current user ID:', user.id);
       console.log('Festival:', user.festival_id);
-      console.log('Users in festival:', filteredUsers.length);
+      console.log('Gender:', user.gender, '| Looking for:', user.lookingFor);
+      console.log('Compatible users in festival:', filteredUsers.length);
 
       setNearbyUsers(filteredUsers);
     } catch (error) {

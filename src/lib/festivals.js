@@ -36,14 +36,16 @@ export async function validateAndJoinFestival(userId, festivalCode) {
 }
 
 /**
- * Find all users in the same festival
+ * Find all users in the same festival (with gender preference filtering)
  */
-export async function findUsersInFestival(festivalId, currentUserId) {
+export async function findUsersInFestival(festivalId, currentUserId, currentUserGender, currentUserLookingFor) {
   try {
     const { data, error } = await supabase
       .rpc('find_users_in_festival', {
         user_festival_id: festivalId,
-        current_user_id: currentUserId
+        current_user_id: currentUserId,
+        current_user_gender: currentUserGender,
+        current_user_looking_for: currentUserLookingFor
       });
 
     if (error) {
