@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { validateAndJoinFestival } from '../lib/database';
 import { useUser } from '../lib/userContext';
@@ -22,6 +23,17 @@ export default function QRScannerScreen({ navigation }) {
   const [scanned, setScanned] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [zoom, setZoom] = useState(0);
+  const scale = useRef(0);
+
+  // Pinch gesture for zoom
+  const pinchGesture = Gesture.Pinch()
+    .onStart(() => {
+      scale.current = zoom;
+    })
+    .onUpdate((event) => {
+      const newZoom = Math.min(Math.max(scale.current + (event.scale - 1), 0), 1);
+      setZoom(newZoom);
+    });
 
   const handleClose = () => {
     navigation.goBack();
@@ -140,16 +152,17 @@ export default function QRScannerScreen({ navigation }) {
       <StatusBar barStyle="light-content" />
       <LinearGradient colors={['#FF6B9D', '#C44CE0']} style={styles.headerGradient} />
 
-      <CameraView
-        style={styles.camera}
-        facing="back"
-        zoom={zoom}
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr'],
-        }}
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-        enableZoomGesture={true}
-      />
+      <GestureDetector gesture={pinchGesture}>
+        <CameraView
+          style={styles.camera}
+          facing="back"
+          zoom={zoom}
+          barcodeScannerSettings={{
+            barcodeTypes: ['qr'],
+          }}
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        />
+      </GestureDetector>
 
       {/* Close Button */}
       <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
