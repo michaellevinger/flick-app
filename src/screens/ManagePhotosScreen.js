@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 // TEMPORARY: DraggableFlatList removed to fix Worklets version mismatch
 // import DraggableFlatList from 'react-native-draggable-flatlist';
@@ -23,6 +24,15 @@ export default function ManagePhotosScreen({ navigation }) {
   const { user, refreshUser } = useUser();
   const [photos, setPhotos] = useState(user?.photos || [user?.selfieUrl].filter(Boolean) || []);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Refresh photos from user context when screen gains focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user?.photos && user.photos.length > 0) {
+        setPhotos(user.photos);
+      }
+    }, [user?.photos])
+  );
 
   const canAddMore = photos.length < 3;
 
