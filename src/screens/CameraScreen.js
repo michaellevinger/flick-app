@@ -191,7 +191,7 @@ export default function CameraScreen({ navigation, route }) {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
         allowsEditing: true,
-        aspect: [3, 4], // Better portrait ratio for profiles
+        aspect: [1, 1], // Square crop - most flexible and clear
         quality: 0.8,
       });
 

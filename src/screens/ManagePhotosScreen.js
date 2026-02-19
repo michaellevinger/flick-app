@@ -38,7 +38,7 @@ export default function ManagePhotosScreen({ navigation }) {
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ['images'],
         allowsEditing: true,
-        aspect: [3, 4], // Better portrait ratio for profiles
+        aspect: [1, 1], // Square crop - most flexible and clear
         quality: 0.8,
         cameraType: ImagePicker.CameraType.front,
       });
@@ -64,7 +64,7 @@ export default function ManagePhotosScreen({ navigation }) {
         mediaTypes: ['images'],
         allowsEditing: true,
         allowsMultipleSelection: false,
-        aspect: [3, 4], // Better portrait ratio for profiles
+        aspect: [1, 1], // Square crop - most flexible and clear
         quality: 0.8,
       });
 
@@ -114,26 +114,35 @@ export default function ManagePhotosScreen({ navigation }) {
       return;
     }
 
+    console.log('Starting photo save...', { photoCount: photos.length, userId: user?.id });
     setIsSaving(true);
     try {
       // Upload new photos if they're local URIs (not already uploaded)
       const uploadedPhotos = [];
       for (const photoUri of photos) {
+        console.log('Processing photo:', photoUri.substring(0, 50) + '...');
         if (photoUri.startsWith('http')) {
           // Already uploaded, keep the URL
+          console.log('Photo already uploaded, keeping URL');
           uploadedPhotos.push(photoUri);
         } else {
           // Local URI, needs to be uploaded
+          console.log('Uploading new photo...');
           const uploaded = await uploadPhotos(user.id, [photoUri]);
+          console.log('Photo uploaded successfully:', uploaded);
           uploadedPhotos.push(...uploaded);
         }
       }
 
+      console.log('All photos processed, updating database...', uploadedPhotos);
       // Update user's photos in database
       await updateUserPhotos(user.id, uploadedPhotos);
+      console.log('Database updated successfully');
 
       // Refresh user data
+      console.log('Refreshing user data...');
       await refreshUser();
+      console.log('User data refreshed');
 
       Alert.alert('Success', 'Photos updated!', [
         {
@@ -143,7 +152,7 @@ export default function ManagePhotosScreen({ navigation }) {
       ]);
     } catch (error) {
       console.error('Error saving photos:', error);
-      Alert.alert('Error', 'Failed to save photos. Please try again.');
+      Alert.alert('Error', `Failed to save photos: ${error.message}`);
     } finally {
       setIsSaving(false);
     }
