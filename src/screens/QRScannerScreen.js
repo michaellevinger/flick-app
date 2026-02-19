@@ -157,8 +157,8 @@ export default function QRScannerScreen({ navigation }) {
       </TouchableOpacity>
 
       {/* Scan Frame Overlay */}
-      <View style={styles.overlay}>
-        <View style={styles.scanFrame}>
+      <View style={styles.overlay} pointerEvents="box-none">
+        <View style={styles.scanFrame} pointerEvents="none">
           <View style={[styles.corner, styles.topLeft]} />
           <View style={[styles.corner, styles.topRight]} />
           <View style={[styles.corner, styles.bottomLeft]} />
