@@ -190,8 +190,9 @@ export default function CameraScreen({ navigation, route }) {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        allowsEditing: false, // Skip crop screen for simpler UX
-        quality: 0.7,
+        allowsEditing: true,
+        aspect: [3, 4], // Better portrait ratio for profiles
+        quality: 0.8,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {

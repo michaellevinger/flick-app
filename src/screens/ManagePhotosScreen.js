@@ -38,8 +38,8 @@ export default function ManagePhotosScreen({ navigation }) {
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ['images'],
         allowsEditing: true,
-        aspect: [4, 5],
-        quality: 0.7,
+        aspect: [3, 4], // Better portrait ratio for profiles
+        quality: 0.8,
         cameraType: ImagePicker.CameraType.front,
       });
 
@@ -64,8 +64,8 @@ export default function ManagePhotosScreen({ navigation }) {
         mediaTypes: ['images'],
         allowsEditing: true,
         allowsMultipleSelection: false,
-        aspect: [4, 5],
-        quality: 0.7,
+        aspect: [3, 4], // Better portrait ratio for profiles
+        quality: 0.8,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -94,10 +94,19 @@ export default function ManagePhotosScreen({ navigation }) {
     );
   };
 
-  // TEMPORARY: Drag-to-reorder disabled
-  // const handleReorder = ({ data }) => {
-  //   setPhotos(data);
-  // };
+  const movePhotoUp = (index) => {
+    if (index === 0) return; // Can't move first item up
+    const newPhotos = [...photos];
+    [newPhotos[index - 1], newPhotos[index]] = [newPhotos[index], newPhotos[index - 1]];
+    setPhotos(newPhotos);
+  };
+
+  const movePhotoDown = (index) => {
+    if (index === photos.length - 1) return; // Can't move last item down
+    const newPhotos = [...photos];
+    [newPhotos[index], newPhotos[index + 1]] = [newPhotos[index + 1], newPhotos[index]];
+    setPhotos(newPhotos);
+  };
 
   const handleSave = async () => {
     if (photos.length === 0) {
@@ -166,10 +175,10 @@ export default function ManagePhotosScreen({ navigation }) {
 
       <View style={styles.content}>
         <Text style={styles.subtitle}>
-          Add up to 3 photos
+          Add up to 3 photos • Use ↑↓ to reorder
         </Text>
 
-        {/* Photo List (drag-to-reorder temporarily disabled) */}
+        {/* Photo List with simple reordering */}
         <FlatList
           data={photos}
           keyExtractor={(item, index) => `photo-${index}`}
@@ -187,6 +196,27 @@ export default function ManagePhotosScreen({ navigation }) {
                     </View>
                   )}
                 </TouchableOpacity>
+
+                {/* Reorder buttons */}
+                {photos.length > 1 && (
+                  <View style={styles.reorderButtons}>
+                    <TouchableOpacity
+                      style={[styles.reorderButton, index === 0 && styles.reorderButtonDisabled]}
+                      onPress={() => movePhotoUp(index)}
+                      disabled={index === 0}
+                    >
+                      <Text style={[styles.reorderButtonText, index === 0 && styles.reorderButtonTextDisabled]}>↑</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.reorderButton, index === photos.length - 1 && styles.reorderButtonDisabled]}
+                      onPress={() => movePhotoDown(index)}
+                      disabled={index === photos.length - 1}
+                    >
+                      <Text style={[styles.reorderButtonText, index === photos.length - 1 && styles.reorderButtonTextDisabled]}>↓</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
                 <TouchableOpacity
                   style={styles.removeButton}
                   onPress={() => removePhoto(index)}
@@ -313,6 +343,36 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  reorderButtons: {
+    position: 'absolute',
+    right: 52,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    gap: 8,
+  },
+  reorderButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#C44CE0',
+  },
+  reorderButtonDisabled: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderColor: '#CCCCCC',
+  },
+  reorderButtonText: {
+    fontSize: 18,
+    color: '#C44CE0',
+    fontWeight: 'bold',
+  },
+  reorderButtonTextDisabled: {
+    color: '#CCCCCC',
   },
   dragHandle: {
     position: 'absolute',
