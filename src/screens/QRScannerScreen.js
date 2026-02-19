@@ -21,6 +21,7 @@ export default function QRScannerScreen({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [zoom, setZoom] = useState(0);
 
   const handleClose = () => {
     navigation.goBack();
@@ -142,10 +143,12 @@ export default function QRScannerScreen({ navigation }) {
       <CameraView
         style={styles.camera}
         facing="back"
+        zoom={zoom}
         barcodeScannerSettings={{
           barcodeTypes: ['qr'],
         }}
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        enableZoomGesture={true}
       />
 
       {/* Close Button */}
