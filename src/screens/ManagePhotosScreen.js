@@ -24,14 +24,21 @@ export default function ManagePhotosScreen({ navigation }) {
   const { user, refreshUser } = useUser();
   const [photos, setPhotos] = useState(user?.photos || [user?.selfieUrl].filter(Boolean) || []);
   const [isSaving, setIsSaving] = useState(false);
+  const [brokenImages, setBrokenImages] = useState(new Set());
 
   // Refresh photos from user context when screen gains focus
   useFocusEffect(
     React.useCallback(() => {
+      console.log('ManagePhotosScreen focused, user.photos:', user?.photos);
       if (user?.photos && user.photos.length > 0) {
         setPhotos(user.photos);
+        setBrokenImages(new Set()); // Reset broken images tracker
+      } else if (user?.selfieUrl) {
+        // Fallback to selfie URL if no photos array
+        setPhotos([user.selfieUrl]);
+        setBrokenImages(new Set());
       }
-    }, [user?.photos])
+    }, [user?.photos, user?.selfieUrl])
   );
 
   const canAddMore = photos.length < 3;
@@ -254,16 +261,71 @@ export default function ManagePhotosScreen({ navigation }) {
                   });
                 }}
               >
-                <Image
-                  source={{ uri: item }}
-                  style={styles.photo}
-                  onError={(error) => {
-                    console.error('Image load error:', error.nativeEvent.error, 'URI:', item);
-                  }}
-                  onLoad={() => {
-                    console.log('Image loaded successfully:', item?.substring(0, 50));
-                  }}
-                />
+                {brokenImages.has(item) ? (
+                  <View style={styles.brokenImageContainer}>
+                    <Text style={styles.brokenImageIcon}>⚠️</Text>
+                    <Text style={styles.brokenImageText}>Failed to load</Text>
+                    <TouchableOpacity
+                      style={styles.replaceButton}
+                      onPress={() => {
+                        Alert.alert(
+                          'Replace Photo',
+                          'Choose a new photo',
+                          [
+                            {
+                              text: 'Take Photo',
+                              onPress: async () => {
+                                const oldPhotos = [...photos];
+                                oldPhotos.splice(index, 1);
+                                setPhotos(oldPhotos);
+                                await takePhotoWithCrop();
+                                setBrokenImages(prev => {
+                                  const next = new Set(prev);
+                                  next.delete(item);
+                                  return next;
+                                });
+                              }
+                            },
+                            {
+                              text: 'Choose from Gallery',
+                              onPress: async () => {
+                                const oldPhotos = [...photos];
+                                oldPhotos.splice(index, 1);
+                                setPhotos(oldPhotos);
+                                await pickFromGallery();
+                                setBrokenImages(prev => {
+                                  const next = new Set(prev);
+                                  next.delete(item);
+                                  return next;
+                                });
+                              }
+                            },
+                            { text: 'Cancel', style: 'cancel' }
+                          ]
+                        );
+                      }}
+                    >
+                      <Text style={styles.replaceButtonText}>Replace</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <Image
+                    source={{ uri: item }}
+                    style={styles.photo}
+                    onError={(error) => {
+                      console.error('Image load error:', error.nativeEvent.error, 'URI:', item);
+                      setBrokenImages(prev => new Set(prev).add(item));
+                    }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully:', item?.substring(0, 50));
+                      setBrokenImages(prev => {
+                        const next = new Set(prev);
+                        next.delete(item);
+                        return next;
+                      });
+                    }}
+                  />
+                )}
                 {index === 0 && (
                   <View style={styles.mainBadge}>
                     <Text style={styles.mainBadgeText}>Main</Text>
@@ -588,6 +650,35 @@ const styles = StyleSheet.create({
   },
   addPhotoButtonText: {
     fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  brokenImageContainer: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 8,
+  },
+  brokenImageIcon: {
+    fontSize: 32,
+    marginBottom: 4,
+  },
+  brokenImageText: {
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  replaceButton: {
+    backgroundColor: '#C44CE0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  replaceButtonText: {
+    fontSize: 12,
     fontWeight: '600',
     color: '#FFFFFF',
   },
