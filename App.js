@@ -93,8 +93,8 @@ function MainTabs() {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size, color }}>👤</Text>
+          tabBarIcon: ({ focused, size }) => (
+            <Text style={{ fontSize: size, opacity: focused ? 1 : 0.5 }}>👤</Text>
           ),
         }}
       />
