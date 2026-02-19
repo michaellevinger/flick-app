@@ -609,6 +609,8 @@ const styles = StyleSheet.create({
     gap: 12,
     borderWidth: 1,
     borderColor: '#EEEEEE',
+    marginTop: 24,
+    marginBottom: 40,
   },
   infoIcon: {
     fontSize: 20,

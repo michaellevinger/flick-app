@@ -1,8 +1,9 @@
 ---
 title: Fix QR Zoom & Photo Grid UI
 type: fix
-status: active
+status: completed
 date: 2026-02-19
+completed: 2026-02-19
 ---
 
 # Fix QR Zoom & Photo Grid UI
