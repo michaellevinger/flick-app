@@ -209,8 +209,13 @@ export default function DashboardScreen({ navigation }) {
 
         if (lat && lng) {
           console.log('📍 YOUR LOCATION:', lat, lng);
+          console.log('🎪 YOUR FESTIVAL:', user.festival_id || 'none');
           console.log('💡 To create test profiles near you, run:');
-          console.log(`   node create-test-profiles-nearby.js ${lat} ${lng} 5`);
+          if (user.festival_id) {
+            console.log(`   node create-test-profiles-nearby.js ${lat} ${lng} 5 ${user.festival_id}`);
+          } else {
+            console.log(`   node create-test-profiles-nearby.js ${lat} ${lng} 5`);
+          }
         }
       }
 

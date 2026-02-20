@@ -25,15 +25,16 @@ const supabase = createClient(
 const lat = parseFloat(process.argv[2]);
 const lng = parseFloat(process.argv[3]);
 const count = parseInt(process.argv[4]) || 5;
+const festivalId = process.argv[5] || null; // Optional festival ID
 
 if (isNaN(lat) || isNaN(lng)) {
   console.log('\n❌ Please provide valid coordinates!\n');
-  console.log('Usage: node create-test-profiles-nearby.js [LAT] [LNG] [COUNT]');
-  console.log('Example: node create-test-profiles-nearby.js 37.7749 -122.4194 5\n');
+  console.log('Usage: node create-test-profiles-nearby.js [LAT] [LNG] [COUNT] [FESTIVAL_ID]');
+  console.log('Example: node create-test-profiles-nearby.js 37.7749 -122.4194 5 coachella2024\n');
   console.log('💡 To get your coordinates:');
   console.log('   1. Open the app');
   console.log('   2. Check the console logs - it shows your location');
-  console.log('   3. Or use: defaults read com.apple.Maps MapSearchDestination\n');
+  console.log('   3. Your festival ID will also be shown in the logs\n');
   process.exit(1);
 }
 
@@ -73,7 +74,7 @@ function generatePhoto(name, gender) {
   return `https://ui-avatars.com/api/?name=${initial}&size=400&background=${colors[gender]}&color=fff&bold=true`;
 }
 
-async function createProfile(lat, lng) {
+async function createProfile(lat, lng, festivalId) {
   const gender = ['Male', 'Female', 'Other'][Math.floor(Math.random() * 3)];
   const name = names[Math.floor(Math.random() * names.length)];
   const age = 18 + Math.floor(Math.random() * 30);
@@ -83,23 +84,29 @@ async function createProfile(lat, lng) {
   const location = randomNearby(lat, lng, 400);
   const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+  const userData = {
+    id,
+    name,
+    age,
+    height,
+    selfie_url: generatePhoto(name, gender),
+    photos: [generatePhoto(name, gender)],
+    status: true,
+    location: `POINT(${location.longitude} ${location.latitude})`,
+    gender,
+    looking_for: lookingFor,
+    bio,
+    last_heartbeat: new Date().toISOString(),
+  };
+
+  // Only add festival_id if provided
+  if (festivalId) {
+    userData.festival_id = festivalId;
+  }
+
   const { data, error } = await supabase
     .from('users')
-    .insert({
-      id,
-      name,
-      age,
-      height,
-      selfie_url: generatePhoto(name, gender),
-      photos: [generatePhoto(name, gender)],
-      status: true,
-      location: `POINT(${location.longitude} ${location.latitude})`,
-      gender,
-      looking_for: lookingFor,
-      festival_id: 'test_festival',
-      bio,
-      last_heartbeat: new Date().toISOString(),
-    })
+    .insert(userData)
     .select()
     .single();
 
@@ -112,11 +119,12 @@ async function createProfile(lat, lng) {
 async function main() {
   console.log('\n🎭 Creating Test Profiles\n');
   console.log(`📍 Center: ${lat}, ${lng}`);
+  console.log(`🎪 Festival: ${festivalId || 'none (will match all festivals)'}`);
   console.log(`👥 Creating ${count} profiles within 400m\n`);
 
   for (let i = 0; i < count; i++) {
     try {
-      await createProfile(lat, lng);
+      await createProfile(lat, lng, festivalId);
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch (error) {
       console.error(`Failed: ${error.message}`);
