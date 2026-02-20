@@ -192,10 +192,22 @@ export default function DashboardScreen({ navigation }) {
     try {
       // Log user's location for creating test profiles
       if (user.location) {
-        const match = user.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
-        if (match) {
-          const lng = parseFloat(match[1]);
-          const lat = parseFloat(match[2]);
+        let lat, lng;
+
+        // Check if location is a string (PostGIS format) or object
+        if (typeof user.location === 'string') {
+          const match = user.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
+          if (match) {
+            lng = parseFloat(match[1]);
+            lat = parseFloat(match[2]);
+          }
+        } else if (user.location.latitude && user.location.longitude) {
+          // Location is an object
+          lat = user.location.latitude;
+          lng = user.location.longitude;
+        }
+
+        if (lat && lng) {
           console.log('📍 YOUR LOCATION:', lat, lng);
           console.log('💡 To create test profiles near you, run:');
           console.log(`   node create-test-profiles-nearby.js ${lat} ${lng} 5`);
