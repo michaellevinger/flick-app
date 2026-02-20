@@ -15,7 +15,7 @@ import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-export default function MessageBubble({ message, isSender, onLongPress, messageNumber, totalLimit }) {
+export default function MessageBubble({ message, isSender, onLongPress, messageNumber, totalLimit, onSystemAction }) {
   const [showImageModal, setShowImageModal] = useState(false);
 
   const formatTimestamp = (timestamp) => {
@@ -65,6 +65,29 @@ export default function MessageBubble({ message, isSender, onLongPress, messageN
       case 'emoji_reaction':
         return (
           <Text style={styles.emoji}>{message.content}</Text>
+        );
+
+      case 'system':
+        return (
+          <View style={styles.systemMessageContainer}>
+            <Text style={styles.systemMessageText}>{message.content}</Text>
+            {message.metadata?.buttons && (
+              <View style={styles.systemButtonsContainer}>
+                <TouchableOpacity
+                  style={styles.declineButton}
+                  onPress={() => onSystemAction?.('decline', message)}
+                >
+                  <Text style={styles.declineButtonText}>Decline</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.acceptButton}
+                  onPress={() => onSystemAction?.('accept', message)}
+                >
+                  <Text style={styles.acceptButtonText}>Accept</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         );
 
       default:
@@ -218,5 +241,44 @@ const styles = StyleSheet.create({
   fullScreenImage: {
     width: screenWidth,
     height: screenWidth,
+  },
+  systemMessageContainer: {
+    alignSelf: 'center',
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+  },
+  systemMessageText: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.gray,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  systemButtonsContainer: {
+    flexDirection: 'row',
+    marginTop: SPACING.sm,
+    gap: SPACING.sm,
+    justifyContent: 'center',
+  },
+  acceptButton: {
+    backgroundColor: COLORS.purple,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: 16,
+  },
+  declineButton: {
+    backgroundColor: COLORS.gray,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: 16,
+  },
+  acceptButtonText: {
+    color: COLORS.white,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  declineButtonText: {
+    color: COLORS.white,
+    fontWeight: '600',
+    fontSize: 14,
   },
 });

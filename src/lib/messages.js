@@ -251,6 +251,32 @@ export async function sendEmojiReaction(senderId, recipientId, messageId, emoji)
 }
 
 /**
+ * Send a system message (for number exchange, etc.)
+ */
+export async function sendSystemMessage(matchId, content, metadata = null) {
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert({
+        match_id: matchId,
+        sender_id: null, // System messages have no sender
+        recipient_id: null,
+        message_type: 'system',
+        content: content.trim(),
+        metadata: metadata, // Store buttons, exchange_id, etc.
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error sending system message:', error);
+    throw error;
+  }
+}
+
+/**
  * Fetch messages for a match
  */
 export async function fetchMessages(matchId, limit = 50) {

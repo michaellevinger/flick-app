@@ -12,10 +12,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
-export default function MessageInput({ onSendText, onSendImage, disabled = false }) {
+export default function MessageInput({
+  onSendText,
+  onSendImage,
+  onRequestNumber,
+  disabled = false,
+  messageCount = 0,
+}) {
   const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+
+  const showPhoneButton = messageCount >= 5; // Show after 5 messages
 
   const handleSendText = async () => {
     if (!text.trim() || sending || disabled) return;
@@ -105,6 +113,17 @@ export default function MessageInput({ onSendText, onSendImage, disabled = false
       >
         <Text style={[styles.iconText, disabled && styles.iconTextDisabled]}>📷</Text>
       </TouchableOpacity>
+
+      {/* Phone Button - Request Number */}
+      {showPhoneButton && onRequestNumber && (
+        <TouchableOpacity
+          style={[styles.iconButton, disabled && styles.iconButtonDisabled]}
+          onPress={onRequestNumber}
+          disabled={sending || disabled}
+        >
+          <Text style={[styles.iconText, disabled && styles.iconTextDisabled]}>📞</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Text Input */}
       <TextInput

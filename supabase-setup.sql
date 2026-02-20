@@ -144,11 +144,12 @@ CREATE TABLE IF NOT EXISTS messages (
   match_id TEXT NOT NULL,
   sender_id TEXT REFERENCES users(id) ON DELETE CASCADE,
   recipient_id TEXT REFERENCES users(id) ON DELETE CASCADE,
-  message_type TEXT NOT NULL CHECK (message_type IN ('text', 'image', 'location', 'emoji_reaction')),
+  message_type TEXT NOT NULL CHECK (message_type IN ('text', 'image', 'location', 'emoji_reaction', 'system')),
   content TEXT,
   image_url TEXT,
   location GEOGRAPHY(POINT, 4326),
   reaction_to_message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+  metadata JSONB,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

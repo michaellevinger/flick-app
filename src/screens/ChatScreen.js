@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Modal,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
@@ -22,7 +23,15 @@ import {
   sendImageMessage,
   sendEmojiReaction,
   getMessageCount,
+  sendSystemMessage,
 } from '../lib/messages';
+import {
+  requestNumberExchange,
+  subscribeToExchanges,
+  acceptExchangeRequest,
+  declineExchangeRequest,
+  getUserPhoneNumber,
+} from '../lib/vault';
 import MessageBubble from '../components/MessageBubble';
 import MessageInput from '../components/MessageInput';
 
@@ -36,6 +45,8 @@ export default function ChatScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [myMessageCount, setMyMessageCount] = useState(0);
   const [theirMessageCount, setTheirMessageCount] = useState(0);
+  const [exchangeRequest, setExchangeRequest] = useState(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const flatListRef = useRef(null);
   const subscriptionRef = useRef(null);
 
@@ -57,6 +68,60 @@ export default function ChatScreen({ route, navigation }) {
       unsubscribe();
     };
   }, [matchId]);
+
+  // Show limit modal when user reaches 10 messages
+  useEffect(() => {
+    if (myMessageCount >= MESSAGE_LIMIT && !exchangeRequest) {
+      setShowLimitModal(true);
+    }
+  }, [myMessageCount, exchangeRequest]);
+
+  // Subscribe to exchange requests
+  useEffect(() => {
+    if (!user) return;
+
+    const exchangeSub = subscribeToExchanges(user.id, async (exchangeUpdate) => {
+      if (exchangeUpdate.status === 'pending') {
+        // Someone requested your number
+        setExchangeRequest(exchangeUpdate);
+
+        // Show alert
+        Alert.alert(
+          'Number Exchange Request',
+          `${otherUser.name} wants to exchange phone numbers. Accept?`,
+          [
+            {
+              text: 'Decline',
+              style: 'cancel',
+              onPress: () => handleDeclineExchange(exchangeUpdate.id),
+            },
+            {
+              text: 'Accept',
+              onPress: () => handleAcceptExchange(exchangeUpdate.id),
+            },
+          ]
+        );
+      }
+
+      if (exchangeUpdate.status === 'accepted') {
+        // Exchange accepted - navigate to vault
+        Alert.alert(
+          'Exchange Accepted!',
+          'Check your vault to see phone numbers.',
+          [
+            {
+              text: 'View Vault',
+              onPress: () => navigation.navigate('Vault'),
+            },
+          ]
+        );
+      }
+    });
+
+    return () => {
+      exchangeSub?.unsubscribe();
+    };
+  }, [user, otherUser]);
 
   const loadMessages = async () => {
     try {
@@ -245,6 +310,121 @@ export default function ChatScreen({ route, navigation }) {
     console.log('Long press on message:', message.id);
   };
 
+  const handleRequestNumber = async () => {
+    if (!user) return;
+
+    // Check if user has phone number set
+    const myPhone = await getUserPhoneNumber(user.id);
+
+    if (!myPhone) {
+      Alert.alert(
+        'Phone Number Required',
+        'Please add your phone number in profile settings first.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    // Confirm request
+    Alert.alert(
+      'Request Phone Number?',
+      `Ask ${otherUser.name} to exchange phone numbers?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Request',
+          onPress: async () => {
+            try {
+              // Get their phone number (if they have one)
+              const theirPhone = await getUserPhoneNumber(otherUser.id);
+
+              if (!theirPhone) {
+                Alert.alert(
+                  'Cannot Request',
+                  `${otherUser.name} hasn't set a phone number yet.`,
+                  [{ text: 'OK' }]
+                );
+                return;
+              }
+
+              // Create exchange request
+              const result = await requestNumberExchange(
+                user.id,
+                otherUser.id,
+                myPhone,
+                theirPhone
+              );
+
+              if (result.alreadyExists) {
+                Alert.alert(
+                  'Request Pending',
+                  'You already have a pending exchange request.',
+                  [{ text: 'OK' }]
+                );
+                return;
+              }
+
+              // Send system message to both chats
+              await sendSystemMessage(
+                matchId,
+                `${user.name} requested to exchange phone numbers`,
+                { type: 'exchange_request', exchange_id: result.exchange.id }
+              );
+
+              Alert.alert(
+                'Request Sent',
+                `Waiting for ${otherUser.name} to accept.`,
+                [{ text: 'OK' }]
+              );
+
+              // Close limit modal if open
+              setShowLimitModal(false);
+            } catch (error) {
+              console.error('Error requesting number exchange:', error);
+              Alert.alert('Error', 'Failed to send request. Please try again.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleAcceptExchange = async (exchangeId) => {
+    try {
+      await acceptExchangeRequest(exchangeId);
+
+      // Send system message
+      await sendSystemMessage(
+        matchId,
+        'Number exchange accepted! Check your vault.',
+        { type: 'exchange_accepted' }
+      );
+
+      // Navigate to vault
+      navigation.navigate('Vault');
+    } catch (error) {
+      console.error('Error accepting exchange:', error);
+      Alert.alert('Error', 'Failed to accept. Please try again.');
+    }
+  };
+
+  const handleDeclineExchange = async (exchangeId) => {
+    try {
+      await declineExchangeRequest(exchangeId);
+
+      // Send system message
+      await sendSystemMessage(
+        matchId,
+        'Number exchange declined.',
+        { type: 'exchange_declined' }
+      );
+
+      setExchangeRequest(null);
+    } catch (error) {
+      console.error('Error declining exchange:', error);
+    }
+  };
+
   const renderMessage = ({ item, index }) => {
     // Calculate message number for this sender
     const isSender = item.sender_id === user?.id;
@@ -358,8 +538,46 @@ export default function ChatScreen({ route, navigation }) {
       <MessageInput
         onSendText={handleSendText}
         onSendImage={handleSendImage}
+        onRequestNumber={handleRequestNumber}
         disabled={myMessageCount >= MESSAGE_LIMIT}
+        messageCount={myMessageCount}
       />
+
+      {/* Show modal when message limit reached */}
+      {showLimitModal && (
+        <Modal
+          visible={true}
+          transparent
+          animationType="fade"
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Message Limit Reached</Text>
+              <Text style={styles.modalText}>
+                You've sent {MESSAGE_LIMIT} messages.{'\n'}
+                Request {otherUser.name}'s number to continue?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.modalButtonSecondary}
+                  onPress={() => setShowLimitModal(false)}
+                >
+                  <Text style={styles.modalButtonTextSecondary}>Not Now</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButtonPrimary}
+                  onPress={() => {
+                    setShowLimitModal(false);
+                    handleRequestNumber();
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>Request Number</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -466,5 +684,58 @@ const styles = StyleSheet.create({
   emptyText: {
     ...TYPOGRAPHY.body,
     color: COLORS.gray,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    padding: SPACING.xl,
+    marginHorizontal: SPACING.xl,
+    alignItems: 'center',
+    minWidth: 280,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.black,
+    marginBottom: SPACING.sm,
+  },
+  modalText: {
+    fontSize: 16,
+    color: COLORS.gray,
+    textAlign: 'center',
+    marginBottom: SPACING.xl,
+    lineHeight: 22,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: SPACING.md,
+  },
+  modalButtonPrimary: {
+    backgroundColor: COLORS.purple,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    borderRadius: 24,
+  },
+  modalButtonSecondary: {
+    backgroundColor: COLORS.grayLight,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    borderRadius: 24,
+  },
+  modalButtonText: {
+    color: COLORS.white,
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  modalButtonTextSecondary: {
+    color: COLORS.gray,
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
