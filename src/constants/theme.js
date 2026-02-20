@@ -5,6 +5,8 @@ export const COLORS = {
   white: '#FFFFFF',
   green: '#00FF00', // Action Green (for matches, CTAs, status)
   greenGlow: '#00FF0033', // 20% opacity for glow effect
+  purple: '#C44CE0', // Purple for chat bubbles
+  pink: '#FF6B9D', // Pink accent
   gray: '#808080',
   grayLight: '#F5F5F5',
 };

@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   senderBubble: {
-    backgroundColor: COLORS.green,
+    backgroundColor: COLORS.purple,
     borderBottomRightRadius: 4,
   },
   recipientBubble: {

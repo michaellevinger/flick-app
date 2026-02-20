@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   sendButton: {
-    backgroundColor: COLORS.green,
+    backgroundColor: COLORS.purple,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderRadius: 20,
