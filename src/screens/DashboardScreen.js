@@ -190,6 +190,18 @@ export default function DashboardScreen({ navigation }) {
     }
 
     try {
+      // Log user's location for creating test profiles
+      if (user.location) {
+        const match = user.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
+        if (match) {
+          const lng = parseFloat(match[1]);
+          const lat = parseFloat(match[2]);
+          console.log('📍 YOUR LOCATION:', lat, lng);
+          console.log('💡 To create test profiles near you, run:');
+          console.log(`   node create-test-profiles-nearby.js ${lat} ${lng} 5`);
+        }
+      }
+
       const users = await findUsersInFestival(
         user.festival_id,
         user.id,

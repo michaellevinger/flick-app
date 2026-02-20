@@ -15,7 +15,7 @@ import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-export default function MessageBubble({ message, isSender, onLongPress }) {
+export default function MessageBubble({ message, isSender, onLongPress, messageNumber, totalLimit }) {
   const [showImageModal, setShowImageModal] = useState(false);
 
   const formatTimestamp = (timestamp) => {
@@ -26,6 +26,9 @@ export default function MessageBubble({ message, isSender, onLongPress }) {
       hour12: true,
     });
   };
+
+  const showCounter = isSender && messageNumber && totalLimit &&
+    (message.message_type === 'text' || message.message_type === 'image');
 
   const renderContent = () => {
     switch (message.message_type) {
@@ -82,6 +85,11 @@ export default function MessageBubble({ message, isSender, onLongPress }) {
           message.sending && styles.sendingBubble
         ]}>
           {renderContent()}
+          {showCounter && (
+            <Text style={styles.messageCounter}>
+              {messageNumber}/{totalLimit}
+            </Text>
+          )}
           {message.sending && (
             <ActivityIndicator
               size="small"
@@ -165,6 +173,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.gray,
     paddingHorizontal: SPACING.xs,
+  },
+  messageCounter: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginTop: 4,
+    textAlign: 'right',
   },
   image: {
     width: screenWidth * 0.6,

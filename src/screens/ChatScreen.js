@@ -245,13 +245,30 @@ export default function ChatScreen({ route, navigation }) {
     console.log('Long press on message:', message.id);
   };
 
-  const renderMessage = ({ item }) => (
-    <MessageBubble
-      message={item}
-      isSender={item.sender_id === user?.id}
-      onLongPress={handleLongPress}
-    />
-  );
+  const renderMessage = ({ item, index }) => {
+    // Calculate message number for this sender
+    const isSender = item.sender_id === user?.id;
+    let messageNumber = null;
+
+    if (isSender && (item.message_type === 'text' || item.message_type === 'image')) {
+      // Count how many text/image messages this sender has sent up to this point
+      const messagesToThisPoint = messages.slice(0, index + 1);
+      messageNumber = messagesToThisPoint.filter(
+        msg => msg.sender_id === item.sender_id &&
+               (msg.message_type === 'text' || msg.message_type === 'image')
+      ).length;
+    }
+
+    return (
+      <MessageBubble
+        message={item}
+        isSender={isSender}
+        onLongPress={handleLongPress}
+        messageNumber={messageNumber}
+        totalLimit={MESSAGE_LIMIT}
+      />
+    );
+  };
 
   const handleProfilePress = () => {
     navigation.navigate('UserProfile', {
