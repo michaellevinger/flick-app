@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
@@ -20,9 +21,12 @@ import {
   sendTextMessage,
   sendImageMessage,
   sendEmojiReaction,
+  getMessageCount,
 } from '../lib/messages';
 import MessageBubble from '../components/MessageBubble';
 import MessageInput from '../components/MessageInput';
+
+const MESSAGE_LIMIT = 10; // Maximum messages per person
 
 export default function ChatScreen({ route, navigation }) {
   const { matchId, otherUser } = route.params;
@@ -30,11 +34,14 @@ export default function ChatScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [myMessageCount, setMyMessageCount] = useState(0);
+  const [theirMessageCount, setTheirMessageCount] = useState(0);
   const flatListRef = useRef(null);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
     loadMessages();
+    loadMessageCounts();
     setupSubscription();
     markAsRead();
 
@@ -63,6 +70,18 @@ export default function ChatScreen({ route, navigation }) {
     }
   };
 
+  const loadMessageCounts = async () => {
+    if (!user) return;
+    try {
+      const myCount = await getMessageCount(matchId, user.id);
+      const theirCount = await getMessageCount(matchId, otherUser.id);
+      setMyMessageCount(myCount);
+      setTheirMessageCount(theirCount);
+    } catch (error) {
+      console.error('Error loading message counts:', error);
+    }
+  };
+
   const setupSubscription = () => {
     subscriptionRef.current = subscribeToMessages(matchId, (newMessage) => {
       setMessages((prev) => {
@@ -81,6 +100,8 @@ export default function ChatScreen({ route, navigation }) {
         // New message from other user
         return [...prev, newMessage];
       });
+      // Update message counts
+      loadMessageCounts();
       // Mark as read when receiving new messages while chat is open
       markAsRead();
       // Scroll to bottom
@@ -101,6 +122,16 @@ export default function ChatScreen({ route, navigation }) {
 
   const handleSendText = async (text) => {
     if (!user) return;
+
+    // Check if limit already reached
+    if (myMessageCount >= MESSAGE_LIMIT) {
+      Alert.alert(
+        'Message Limit Reached',
+        `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
+        [{ text: 'OK' }]
+      );
+      return;
+    }
 
     // Optimistic update - add message to UI immediately
     const tempId = `temp_${Date.now()}`;
@@ -129,8 +160,21 @@ export default function ChatScreen({ route, navigation }) {
       setMessages((prev) =>
         prev.map((msg) => (msg.id === tempId ? sentMessage : msg))
       );
+
+      // Update message count
+      loadMessageCounts();
     } catch (error) {
       console.error('Failed to send message:', error);
+
+      // Check if it's the limit error
+      if (error.message === 'MESSAGE_LIMIT_REACHED') {
+        Alert.alert(
+          'Message Limit Reached',
+          `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
+          [{ text: 'OK' }]
+        );
+      }
+
       // Remove failed message
       setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
     }
@@ -138,6 +182,16 @@ export default function ChatScreen({ route, navigation }) {
 
   const handleSendImage = async (imageUri) => {
     if (!user) return;
+
+    // Check if limit already reached
+    if (myMessageCount >= MESSAGE_LIMIT) {
+      Alert.alert(
+        'Message Limit Reached',
+        `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
+        [{ text: 'OK' }]
+      );
+      return;
+    }
 
     // Optimistic update - show image immediately
     const tempId = `temp_${Date.now()}`;
@@ -166,8 +220,21 @@ export default function ChatScreen({ route, navigation }) {
       setMessages((prev) =>
         prev.map((msg) => (msg.id === tempId ? sentMessage : msg))
       );
+
+      // Update message count
+      loadMessageCounts();
     } catch (error) {
       console.error('Failed to send image:', error);
+
+      // Check if it's the limit error
+      if (error.message === 'MESSAGE_LIMIT_REACHED') {
+        Alert.alert(
+          'Message Limit Reached',
+          `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
+          [{ text: 'OK' }]
+        );
+      }
+
       // Remove failed message
       setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
     }
@@ -193,27 +260,49 @@ export default function ChatScreen({ route, navigation }) {
     });
   };
 
-  const renderHeader = () => (
-    <View style={[styles.header, { paddingTop: insets.top }]}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Text style={styles.backText}>←</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.headerUser}
-        onPress={handleProfilePress}
-        activeOpacity={0.7}
-      >
-        {otherUser.selfie_url ? (
-          <Image source={{ uri: otherUser.selfie_url }} style={styles.headerAvatar} />
-        ) : (
-          <View style={styles.headerAvatarPlaceholder}>
-            <Text style={styles.headerInitial}>{otherUser.name[0]}</Text>
+  const renderHeader = () => {
+    const isLimitReached = myMessageCount >= MESSAGE_LIMIT || theirMessageCount >= MESSAGE_LIMIT;
+    const messagesRemaining = MESSAGE_LIMIT - myMessageCount;
+
+    return (
+      <>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backText}>←</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerUser}
+            onPress={handleProfilePress}
+            activeOpacity={0.7}
+          >
+            {otherUser.selfie_url ? (
+              <Image source={{ uri: otherUser.selfie_url }} style={styles.headerAvatar} />
+            ) : (
+              <View style={styles.headerAvatarPlaceholder}>
+                <Text style={styles.headerInitial}>{otherUser.name[0]}</Text>
+              </View>
+            )}
+            <View style={styles.headerInfo}>
+              <Text style={styles.headerName}>{otherUser.name}</Text>
+              {!isLimitReached && (
+                <Text style={styles.messageCount}>
+                  {messagesRemaining} {messagesRemaining === 1 ? 'message' : 'messages'} left
+                </Text>
+              )}
+            </View>
+          </TouchableOpacity>
+        </View>
+        {isLimitReached && (
+          <View style={styles.limitBanner}>
+            <Text style={styles.limitEmoji}>🤝</Text>
+            <Text style={styles.limitText}>
+              Message limit reached! Time to meet in person.
+            </Text>
           </View>
         )}
-        <Text style={styles.headerName}>{otherUser.name}</Text>
-      </TouchableOpacity>
-    </View>
-  );
+      </>
+    );
+  };
 
   if (loading) {
     return (
@@ -252,6 +341,7 @@ export default function ChatScreen({ route, navigation }) {
       <MessageInput
         onSendText={handleSendText}
         onSendImage={handleSendImage}
+        disabled={myMessageCount >= MESSAGE_LIMIT}
       />
     </KeyboardAvoidingView>
   );
@@ -306,9 +396,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.white,
   },
+  headerInfo: {
+    flex: 1,
+  },
   headerName: {
     ...TYPOGRAPHY.subtitle,
     fontSize: 20,
+  },
+  messageCount: {
+    fontSize: 12,
+    color: COLORS.gray,
+    marginTop: 2,
+  },
+  limitBanner: {
+    backgroundColor: '#FFE4E1',
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#FFB6B6',
+  },
+  limitEmoji: {
+    fontSize: 24,
+    marginRight: SPACING.sm,
+  },
+  limitText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#D32F2F',
+    fontWeight: '600',
   },
   loadingContainer: {
     flex: 1,

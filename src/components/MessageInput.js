@@ -12,13 +12,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
-export default function MessageInput({ onSendText, onSendImage }) {
+export default function MessageInput({ onSendText, onSendImage, disabled = false }) {
   const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
 
   const handleSendText = async () => {
-    if (!text.trim() || sending) return;
+    if (!text.trim() || sending || disabled) return;
 
     setSending(true);
     try {
@@ -32,7 +32,7 @@ export default function MessageInput({ onSendText, onSendImage }) {
   };
 
   const handleCameraPress = async () => {
-    if (sending) return;
+    if (sending || disabled) return;
 
     try {
       // Request permissions
@@ -96,33 +96,33 @@ export default function MessageInput({ onSendText, onSendImage }) {
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, SPACING.md) }]}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, SPACING.md) }, disabled && styles.containerDisabled]}>
       {/* Camera Button */}
       <TouchableOpacity
-        style={styles.iconButton}
+        style={[styles.iconButton, disabled && styles.iconButtonDisabled]}
         onPress={handleCameraPress}
-        disabled={sending}
+        disabled={sending || disabled}
       >
-        <Text style={styles.iconText}>📷</Text>
+        <Text style={[styles.iconText, disabled && styles.iconTextDisabled]}>📷</Text>
       </TouchableOpacity>
 
       {/* Text Input */}
       <TextInput
-        style={styles.input}
+        style={[styles.input, disabled && styles.inputDisabled]}
         value={text}
         onChangeText={setText}
-        placeholder="Type a message..."
-        placeholderTextColor={COLORS.gray}
+        placeholder={disabled ? "Message limit reached" : "Type a message..."}
+        placeholderTextColor={disabled ? '#CCC' : COLORS.gray}
         multiline
         maxLength={500}
-        editable={!sending}
+        editable={!sending && !disabled}
       />
 
       {/* Send Button */}
       <TouchableOpacity
-        style={[styles.sendButton, (!text.trim() || sending) && styles.sendButtonDisabled]}
+        style={[styles.sendButton, (!text.trim() || sending || disabled) && styles.sendButtonDisabled]}
         onPress={handleSendText}
-        disabled={!text.trim() || sending}
+        disabled={!text.trim() || sending || disabled}
       >
         {sending ? (
           <ActivityIndicator size="small" color={COLORS.white} />
@@ -143,6 +143,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.grayLight,
   },
+  containerDisabled: {
+    opacity: 0.6,
+  },
   iconButton: {
     width: 36,
     height: 36,
@@ -150,8 +153,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: SPACING.sm,
   },
+  iconButtonDisabled: {
+    opacity: 0.4,
+  },
   iconText: {
     fontSize: 24,
+  },
+  iconTextDisabled: {
+    opacity: 0.4,
   },
   input: {
     flex: 1,
@@ -162,6 +171,10 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     marginRight: SPACING.sm,
     maxHeight: 100,
+  },
+  inputDisabled: {
+    backgroundColor: '#F0F0F0',
+    color: '#999',
   },
   sendButton: {
     backgroundColor: COLORS.green,

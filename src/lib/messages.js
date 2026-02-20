@@ -13,11 +13,37 @@ export function getMatchId(userId1, userId2) {
 }
 
 /**
+ * Count messages sent by a user in a match
+ */
+export async function getMessageCount(matchId, senderId) {
+  try {
+    const { count, error } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('match_id', matchId)
+      .eq('sender_id', senderId)
+      .in('message_type', ['text', 'image']); // Only count text and image messages
+
+    if (error) throw error;
+    return count || 0;
+  } catch (error) {
+    console.error('Error counting messages:', error);
+    return 0;
+  }
+}
+
+/**
  * Send a text message
  */
 export async function sendTextMessage(senderId, recipientId, content) {
   try {
     const matchId = getMatchId(senderId, recipientId);
+
+    // Check message limit (10 messages per person)
+    const messageCount = await getMessageCount(matchId, senderId);
+    if (messageCount >= 10) {
+      throw new Error('MESSAGE_LIMIT_REACHED');
+    }
 
     const { data, error } = await supabase
       .from('messages')
@@ -49,6 +75,13 @@ export async function sendTextMessage(senderId, recipientId, content) {
 export async function sendImageMessage(senderId, recipientId, imageUri) {
   try {
     const matchId = getMatchId(senderId, recipientId);
+
+    // Check message limit (10 messages per person)
+    const messageCount = await getMessageCount(matchId, senderId);
+    if (messageCount >= 10) {
+      throw new Error('MESSAGE_LIMIT_REACHED');
+    }
+
     // Replace pipe character with hyphen for safe filename
     const safeMatchId = matchId.replace(/\|/g, '-');
     const fileName = `${safeMatchId}_${Date.now()}.jpg`;
