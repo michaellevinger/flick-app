@@ -19,7 +19,7 @@ import { useUser } from '../lib/userContext';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function UserProfileScreen({ route, navigation }) {
-  const { user, onFlick } = route.params;
+  const { user, onFlick, onPass } = route.params;
   const { user: currentUser } = useUser();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const insets = useSafeAreaInsets();
@@ -40,6 +40,9 @@ export default function UserProfileScreen({ route, navigation }) {
   };
 
   const handlePass = () => {
+    if (onPass) {
+      onPass(user);
+    }
     navigation.goBack();
   };
 

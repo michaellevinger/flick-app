@@ -238,6 +238,11 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
+  const handlePass = (targetUser) => {
+    // Add user to hidden list
+    setHiddenUsers((prev) => new Set(prev).add(targetUser.id));
+  };
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -333,6 +338,7 @@ export default function DashboardScreen({ navigation }) {
         onPress={() => navigation.navigate('UserProfile', {
           user: nearbyUser,
           onFlick: handleFlick,
+          onPass: handlePass,
         })}
         onLongPress={() => setSelectedPhoto(nearbyUser.selfie_url)}
         activeOpacity={0.8}
