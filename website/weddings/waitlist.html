@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Join the Waitlist - flick for Weddings</title>
+    <meta name="description" content="Join the waitlist for flick - modernizing wedding websites with a private social platform for your wedding guests.">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Join the Waitlist - flick for Weddings">
+    <meta property="og:description" content="Be the first to modernize your wedding website with a private social platform for your guests.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://helloflick.com/weddings/waitlist">
+    <meta property="og:image" content="https://helloflick.com/images/logo.png">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💘</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'flick-pink': '#FF6B9D',
+                        'flick-purple': '#C44CE0',
+                        'flick-dark': '#0B0F0E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top center, rgba(255, 107, 157, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(255, 107, 157, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        #000000;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44CE0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 107, 157, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #FF6B9D;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44CE0 100%);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/weddings" class="text-2xl font-bold">
+                    💘 <span class="gradient-text">flick</span>
+                </a>
+                <a href="/weddings" class="text-sm text-white/70 hover:text-white transition">
+                    ← Back to Weddings
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-block mb-6 px-4 py-2 rounded-full bg-flick-pink/20 border border-flick-pink/30">
+                <span class="text-flick-pink font-semibold text-sm">Coming Soon</span>
+            </div>
+
+            <h1 class="text-5xl md:text-6xl font-black mb-6 leading-tight">
+                Modernizing a Wedding Website<br>
+                <span class="gradient-text">With A Private Social Platform</span><br>
+                For Your Wedding Guests
+            </h1>
+
+            <p class="text-xl text-white/70 mb-12 max-w-2xl mx-auto">
+                Join the waitlist and be among the first couples to transform your wedding into a connected experience your guests will never forget.
+            </p>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="py-16 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">
+                <span class="gradient-text">Core Features</span>
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">🌐</div>
+                    <h3 class="text-xl font-bold mb-2">Wedding Website Essentials</h3>
+                    <p class="text-white/60 text-sm">All the traditional features you need, beautifully modernized</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">📱</div>
+                    <h3 class="text-xl font-bold mb-2">Digital Invites & QR Codes</h3>
+                    <p class="text-white/60 text-sm">Send beautiful invites and let guests join with a simple scan</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">✅</div>
+                    <h3 class="text-xl font-bold mb-2">RSVP Management</h3>
+                    <p class="text-white/60 text-sm">Track responses and manage your guest list effortlessly</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">👤</div>
+                    <h3 class="text-xl font-bold mb-2">Visible Guest Profiles</h3>
+                    <p class="text-white/60 text-sm">Help your guests get to know each other before the big day</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">💬</div>
+                    <h3 class="text-xl font-bold mb-2">Private Chats & Feeds</h3>
+                    <p class="text-white/60 text-sm">Create connections through private messaging and shared moments</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">🔔</div>
+                    <h3 class="text-xl font-bold mb-2">Real-Time Alerts</h3>
+                    <p class="text-white/60 text-sm">Keep everyone informed with instant notifications</p>
+                </div>
+
+                <!-- Feature 7 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">📸</div>
+                    <h3 class="text-xl font-bold mb-2">Shared Photo Albums</h3>
+                    <p class="text-white/60 text-sm">Everyone contributes to your wedding memories</p>
+                </div>
+
+                <!-- Feature 8 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">✈️</div>
+                    <h3 class="text-xl font-bold mb-2">Flight Sharing & Travel</h3>
+                    <p class="text-white/60 text-sm">Coordinate travel plans and help guests connect on their journey</p>
+                </div>
+
+                <!-- Feature 9 -->
+                <div class="feature-card rounded-2xl p-6">
+                    <div class="text-4xl mb-4">🎉</div>
+                    <h3 class="text-xl font-bold mb-2">And Much More...</h3>
+                    <p class="text-white/60 text-sm">Join the waitlist to see all the features we're building</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist Form -->
+    <section class="py-16 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-white/10">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-3">Join the Waitlist</h2>
+                    <p class="text-white/60">Be the first to know when we launch. No spam, just updates.</p>
+                </div>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="success-message mb-8 p-6 rounded-2xl bg-gradient-to-r from-flick-pink/20 to-flick-purple/20 border border-flick-pink/30">
+                    <div class="flex items-start gap-3">
+                        <span class="text-3xl">🎉</span>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">You're on the list!</h3>
+                            <p class="text-white/70 text-sm">Thanks for joining! We'll be in touch soon with exclusive early access.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="waitlistForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="space-y-6">
+                    <!-- Name Fields -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium mb-2 text-white/80">First Name *</label>
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                required
+                                class="form-input w-full px-4 py-3 rounded-xl"
+                                placeholder="Alex"
+                            >
+                        </div>
+                        <div>
+                            <label for="lastName" class="block text-sm font-medium mb-2 text-white/80">Last Name *</label>
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                required
+                                class="form-input w-full px-4 py-3 rounded-xl"
+                                placeholder="Smith"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-2 text-white/80">Email Address *</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="form-input w-full px-4 py-3 rounded-xl"
+                            placeholder="alex@example.com"
+                        >
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium mb-2 text-white/80">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="form-input w-full px-4 py-3 rounded-xl"
+                            placeholder="+1 (555) 123-4567"
+                        >
+                    </div>
+
+                    <!-- Wedding Date -->
+                    <div>
+                        <label for="weddingDate" class="block text-sm font-medium mb-2 text-white/80">Wedding Date (if set)</label>
+                        <input
+                            type="date"
+                            id="weddingDate"
+                            name="weddingDate"
+                            class="form-input w-full px-4 py-3 rounded-xl"
+                        >
+                    </div>
+
+                    <!-- Guest Count -->
+                    <div>
+                        <label for="guestCount" class="block text-sm font-medium mb-2 text-white/80">Expected Number of Guests</label>
+                        <select
+                            id="guestCount"
+                            name="guestCount"
+                            class="form-input w-full px-4 py-3 rounded-xl"
+                        >
+                            <option value="">Select range</option>
+                            <option value="0-50">Under 50</option>
+                            <option value="50-100">50-100</option>
+                            <option value="100-150">100-150</option>
+                            <option value="150-200">150-200</option>
+                            <option value="200+">200+</option>
+                        </select>
+                    </div>
+
+                    <!-- How did you hear about us -->
+                    <div>
+                        <label for="referralSource" class="block text-sm font-medium mb-2 text-white/80">How did you hear about us?</label>
+                        <select
+                            id="referralSource"
+                            name="referralSource"
+                            class="form-input w-full px-4 py-3 rounded-xl"
+                        >
+                            <option value="">Select one</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Google">Google Search</option>
+                            <option value="Friend">Friend or Family</option>
+                            <option value="Wedding Planner">Wedding Planner</option>
+                            <option value="Venue">Wedding Venue</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Additional Comments -->
+                    <div>
+                        <label for="comments" class="block text-sm font-medium mb-2 text-white/80">Anything else you'd like to share?</label>
+                        <textarea
+                            id="comments"
+                            name="comments"
+                            rows="4"
+                            class="form-input w-full px-4 py-3 rounded-xl resize-none"
+                            placeholder="Tell us about your wedding vision..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        id="submitBtn"
+                        class="submit-btn w-full py-4 rounded-xl font-bold text-lg text-white shadow-lg"
+                    >
+                        Join the Waitlist
+                    </button>
+
+                    <p class="text-xs text-white/40 text-center">
+                        By joining, you agree to receive updates about flick. Unsubscribe anytime.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-white/10">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-white/60 text-sm mb-4">
+                © 2026 flick. Making weddings more connected.
+            </p>
+            <div class="flex justify-center gap-6 text-sm">
+                <a href="/privacy.html" class="text-white/60 hover:text-white transition">Privacy</a>
+                <a href="/terms.html" class="text-white/60 hover:text-white transition">Terms</a>
+                <a href="mailto:hello@helloflick.com" class="text-white/60 hover:text-white transition">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Form Handler Script -->
+    <script>
+        const form = document.getElementById('waitlistForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Joining...';
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                alert('Oops! Something went wrong. Please try again or email us directly at hello@helloflick.com');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Join the Waitlist';
+            }
+        });
+    </script>
+</body>
+</html>
