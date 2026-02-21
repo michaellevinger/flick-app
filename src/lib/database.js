@@ -134,6 +134,21 @@ export async function updateUserBio(userId, bio) {
 }
 
 /**
+ * Update user's phone number
+ */
+export async function updateUserPhoneNumber(userId, phoneNumber) {
+  const { error } = await supabase
+    .from('users')
+    .update({ phone_number: phoneNumber })
+    .eq('id', userId);
+
+  if (error) {
+    console.error('Error updating phone number:', error);
+    throw error;
+  }
+}
+
+/**
  * Update user's photos (array of photo URLs)
  */
 export async function updateUserPhotos(userId, photos) {

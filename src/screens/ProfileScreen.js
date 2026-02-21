@@ -15,18 +15,24 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
-import { updateUserBio } from '../lib/database';
+import { updateUserBio, updateUserPhoneNumber } from '../lib/database';
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { user, updateSelfie, leaveEvent, logout, refreshUser } = useUser();
   const [bio, setBio] = useState(user?.bio || '');
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   const handleBioChange = (text) => {
     setBio(text);
-    setHasChanges(text !== (user?.bio || ''));
+    setHasChanges(text !== (user?.bio || '') || phoneNumber !== (user?.phoneNumber || ''));
+  };
+
+  const handlePhoneNumberChange = (text) => {
+    setPhoneNumber(text);
+    setHasChanges(bio !== (user?.bio || '') || text !== (user?.phoneNumber || ''));
   };
 
   const handleSaveChanges = async () => {
@@ -35,6 +41,7 @@ export default function ProfileScreen({ navigation }) {
     setIsSaving(true);
     try {
       await updateUserBio(user.id, bio);
+      await updateUserPhoneNumber(user.id, phoneNumber);
       await refreshUser();
       setHasChanges(false);
       Alert.alert('Success', 'Profile updated!');
@@ -164,6 +171,20 @@ export default function ProfileScreen({ navigation }) {
                 maxLength={150}
               />
               <Text style={styles.charCount}>{bio.length}/150</Text>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Phone Number</Text>
+              <TextInput
+                style={[styles.input, styles.phoneInput]}
+                value={phoneNumber}
+                onChangeText={handlePhoneNumberChange}
+                placeholder="+1 (555) 123-4567"
+                placeholderTextColor="#999"
+                keyboardType="phone-pad"
+                maxLength={20}
+              />
+              <Text style={styles.helperText}>Used only for number exchange after matching</Text>
             </View>
 
             {/* Save Button */}
@@ -334,6 +355,15 @@ const styles = StyleSheet.create({
     color: '#999999',
     textAlign: 'right',
     marginTop: 4,
+  },
+  phoneInput: {
+    minHeight: 50,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#999999',
+    marginTop: 4,
+    fontStyle: 'italic',
   },
   saveButton: {
     borderRadius: 30,

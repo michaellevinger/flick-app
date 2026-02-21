@@ -23,7 +23,7 @@ export default function MessageInput({
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
 
-  const showPhoneButton = messageCount >= 5; // Show after 5 messages
+  const showPhoneButton = true; // Always show phone button
 
   const handleSendText = async () => {
     if (!text.trim() || sending || disabled) return;
