@@ -114,14 +114,14 @@ export default function MessageInput({
         <Text style={[styles.iconText, disabled && styles.iconTextDisabled]}>📷</Text>
       </TouchableOpacity>
 
-      {/* Phone Button - Request Number */}
+      {/* Phone Button - Request Number - Always enabled */}
       {showPhoneButton && onRequestNumber && (
         <TouchableOpacity
-          style={[styles.iconButton, disabled && styles.iconButtonDisabled]}
+          style={styles.iconButton}
           onPress={onRequestNumber}
-          disabled={sending || disabled}
+          disabled={sending}
         >
-          <Text style={[styles.iconText, disabled && styles.iconTextDisabled]}>📞</Text>
+          <Text style={styles.iconText}>📞</Text>
         </TouchableOpacity>
       )}
 
