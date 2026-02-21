@@ -262,17 +262,22 @@ export default function DashboardScreen({ navigation }) {
     const iFlickdThem = flickedUsers.has(targetUser.id);
     const theyFlickdMe = usersWhoFlickedMe.has(targetUser.id);
 
-    const canInitiateFlick = !(
-      user.gender === 'male' &&
-      user.lookingFor === 'female' &&
-      targetUser.gender === 'female' &&
-      !theyFlickdMe
-    );
+    // Gender-based flick rules:
+    // - Females can always initiate
+    // - Non-binary can always initiate
+    // - Gay/lesbian/queer matches (same-gender or involving non-binary) can initiate
+    // - Straight males CANNOT initiate first (must wait for female to flick)
+    const isStraightMale = user.gender === 'male' && user.lookingFor === 'female';
+    const targetIsFemale = targetUser.gender === 'female';
+    const isStraightMatch = isStraightMale && targetIsFemale;
+
+    const canInitiateFlick = !isStraightMatch || theyFlickdMe;
 
     if (!canInitiateFlick && !iFlickdThem) {
       Alert.alert(
-        'Cannot Initiate',
-        'Based on your preferences, you cannot send the first flick. Wait for them to flick you first.'
+        'Ladies First 💃',
+        'In straight matches, women make the first move. Wait for her to flick you first!',
+        [{ text: 'Got it' }]
       );
       return;
     }
