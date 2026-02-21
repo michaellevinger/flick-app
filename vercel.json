@@ -9,6 +9,10 @@
   ],
   "routes": [
     {
+      "src": "/weddings/waitlist",
+      "dest": "/website/weddings/waitlist.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     }
