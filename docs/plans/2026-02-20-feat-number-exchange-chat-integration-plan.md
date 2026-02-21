@@ -1,8 +1,9 @@
 ---
 title: Add Number Exchange Request Button to Chat
 type: feat
-status: active
+status: completed
 date: 2026-02-20
+completed_date: 2026-02-21
 ---
 
 # Add Number Exchange Request Button to Chat

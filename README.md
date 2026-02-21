@@ -48,6 +48,7 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 
 - **Visible Interest Signals**: Users who flicked you show green border + "Wants to meet"
 - **Flick Button**: Send one-way interest signal to users in same festival
+- **Gender-Based Rules**: Females initiate in straight matches (ladies first); LGBTQ+ matches allow both to initiate
 - **Visual Indicators**: Green card border and "Flick Back" button
 - **Instant Matching**: Flick back triggers immediate Green Light
 - **Green Light Screen**: Full-screen green with pulse animation + haptic feedback
@@ -82,6 +83,12 @@ A Social Catalyst for Festivals & Events. Built for real-world hellos—not swip
 - **Text Messaging**: Real-time text messages with instant delivery
 - **Image Sharing**: Send photos via camera or gallery (XMLHttpRequest for reliability)
 - **Optimistic Updates**: Messages appear instantly while sending
+- **10-Message Limit**: First 10 messages per person with counter display
+- **Number Exchange Button**: Phone icon (📞) in message input - request numbers anytime
+- **Number Exchange Modal**: Auto-prompt after 10 messages to continue conversation
+- **System Messages**: Exchange requests/status appear as centered gray messages
+- **Request/Accept Flow**: Both users consent before numbers are revealed
+- **Phone Number in Profile**: Edit/add phone number in Profile settings
 - **Unread Badges**: See unread message count in Matches tab
 - **Event-Based Persistence**: Matches persist within festival/event
 - **Tab Navigation**: Radar tab (discovery) + Matches tab (conversations)

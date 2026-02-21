@@ -33,6 +33,10 @@
 - [x] Modern profile card UI (Bumble-style layout)
 - [x] Report user functionality
 - [x] All bugs resolved and tested on Android devices
+- [x] Gender-based flick rules (ladies first for straight matches)
+- [x] Phone number editing in profile
+- [x] Number exchange integration in chat (phone button, modal, system messages)
+- [x] 10-message limit with number exchange prompt
 
 ### ✅ Supabase Setup - COMPLETE
 - [x] Project created (oithyuuztrmohcbfglrh.supabase.co)
@@ -76,10 +80,12 @@
 - [x] Database Migrations - Clean SQL files for chat system setup
 
 ### 🔮 Next Up
-- [ ] Run festivals-schema.sql in Supabase (festivals table)
-- [ ] Run chat-migration.sql in Supabase (matches/messages tables)
+- [x] Run system messages migration in Supabase - ✅ COMPLETE
+- [x] Number exchange chat integration - ✅ COMPLETE
+- [x] Gender-based flick rules - ✅ COMPLETE
+- [x] Phone number profile editing - ✅ COMPLETE
 - [x] Deploy website to Vercel - ✅ LIVE at helloflick.com
-- [ ] Test complete user flow with real devices
+- [ ] Test complete number exchange flow with real devices
 - [ ] App Store submission (iOS/Android)
 - [ ] Push notifications
 - [ ] Marketing: Share website on social media
