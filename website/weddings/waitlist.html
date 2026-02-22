@@ -25,9 +25,10 @@
             theme: {
                 extend: {
                     colors: {
-                        'flick-pink': '#FF6B9D',
-                        'flick-purple': '#C44CE0',
-                        'flick-dark': '#0B0F0E',
+                        'flick-pink': '#F2B6C6',
+                        'flick-purple': '#FFC9D6',
+                        'flick-dark': '#3D405B',
+                        'flick-bg': '#FFF8F3',
                     }
                 }
             }
@@ -38,58 +39,58 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(ellipse at top center, rgba(255, 107, 157, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(255, 107, 157, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
-                        #000000;
+            background: radial-gradient(ellipse at top center, rgba(242, 182, 198, 0.15) 0%, rgba(255, 248, 243, 0) 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(242, 182, 198, 0.1) 0%, rgba(255, 248, 243, 0) 50%),
+                        #FFF8F3;
             background-attachment: fixed;
             min-height: 100vh;
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #FF6B9D 0%, #C44CE0 100%);
+            background: linear-gradient(135deg, #F2B6C6 0%, #FFC9D6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(61, 64, 91, 0.05);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(61, 64, 91, 0.1);
             transition: all 0.3s ease;
         }
 
         .feature-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 107, 157, 0.3);
+            background: rgba(61, 64, 91, 0.08);
+            border-color: rgba(242, 182, 198, 0.5);
             transform: translateY(-2px);
         }
 
         .form-input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(61, 64, 91, 0.2);
+            color: #3D405B;
             transition: all 0.3s ease;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #FF6B9D;
-            background: rgba(255, 255, 255, 0.08);
+            border-color: #F2B6C6;
+            background: rgba(255, 255, 255, 0.8);
         }
 
         .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(61, 64, 91, 0.4);
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #FF6B9D 0%, #C44CE0 100%);
+            background: linear-gradient(135deg, #F2B6C6 0%, #FFC9D6 100%);
             transition: all 0.3s ease;
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            box-shadow: 0 10px 30px rgba(242, 182, 198, 0.5);
         }
 
         .submit-btn:disabled {
@@ -115,9 +116,9 @@
         }
     </style>
 </head>
-<body class="text-white">
+<body class="text-flick-dark">
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/40 backdrop-blur-md border-b border-flick-dark/10">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-start">
                 <a href="/" class="text-2xl font-bold">
@@ -139,7 +140,7 @@
                 <span class="gradient-text">Secret Matchmaker</span>
             </h1>
 
-            <p class="text-xl text-white/70 mb-12 max-w-2xl mx-auto">
+            <p class="text-xl text-flick-dark/70 mb-12 max-w-2xl mx-auto">
                 A private app experience where you can connect, flick, and maybe find your own love story — all within exclusive, curated spaces where real connections happen
             </p>
         </div>
@@ -156,55 +157,55 @@
                 <!-- Feature 1 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Real Connections</h3>
-                    <p class="text-white/60 text-sm">Meet people at events, parties, and exclusive spaces where sparks fly naturally</p>
+                    <p class="text-flick-dark/60 text-sm">Meet people at events, parties, and exclusive spaces where sparks fly naturally</p>
                 </div>
 
                 <!-- Feature 2 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Event-Based Matching</h3>
-                    <p class="text-white/60 text-sm">Only see singles at the same event—no endless swiping, just real proximity</p>
+                    <p class="text-flick-dark/60 text-sm">Only see singles at the same event—no endless swiping, just real proximity</p>
                 </div>
 
                 <!-- Feature 3 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">The Flick</h3>
-                    <p class="text-white/60 text-sm">Signal interest with a flick. When it's mutual, get the green light to connect</p>
+                    <p class="text-flick-dark/60 text-sm">Signal interest with a flick. When it's mutual, get the green light to connect</p>
                 </div>
 
                 <!-- Feature 4 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Authentic Profiles</h3>
-                    <p class="text-white/60 text-sm">Real photos, real people, real moments—no catfishing, no games</p>
+                    <p class="text-flick-dark/60 text-sm">Real photos, real people, real moments—no catfishing, no games</p>
                 </div>
 
                 <!-- Feature 5 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Private Chat</h3>
-                    <p class="text-white/60 text-sm">Direct messaging with your matches to keep the conversation going</p>
+                    <p class="text-flick-dark/60 text-sm">Direct messaging with your matches to keep the conversation going</p>
                 </div>
 
                 <!-- Feature 6 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Privacy First</h3>
-                    <p class="text-white/60 text-sm">Your number stays private until you're ready to share. Control when and how you connect</p>
+                    <p class="text-flick-dark/60 text-sm">Your number stays private until you're ready to share. Control when and how you connect</p>
                 </div>
 
                 <!-- Feature 7 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Instant Matches</h3>
-                    <p class="text-white/60 text-sm">Real-time notifications when someone flicks you back—no waiting, no games</p>
+                    <p class="text-flick-dark/60 text-sm">Real-time notifications when someone flicks you back—no waiting, no games</p>
                 </div>
 
                 <!-- Feature 8 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">Event Exclusive</h3>
-                    <p class="text-white/60 text-sm">Join through QR codes at weddings, festivals, parties—where real life happens</p>
+                    <p class="text-flick-dark/60 text-sm">Join through QR codes at weddings, festivals, parties—where real life happens</p>
                 </div>
 
                 <!-- Feature 9 -->
                 <div class="feature-card rounded-2xl p-6">
                     <h3 class="text-xl font-bold mb-2">No Endless Swiping</h3>
-                    <p class="text-white/60 text-sm">A curated pool of real singles at your event—quality over quantity</p>
+                    <p class="text-flick-dark/60 text-sm">A curated pool of real singles at your event—quality over quantity</p>
                 </div>
             </div>
         </div>
@@ -213,10 +214,10 @@
     <!-- Waitlist Form -->
     <section class="py-16 px-6">
         <div class="max-w-2xl mx-auto">
-            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-white/10">
+            <div class="bg-white/60 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-flick-dark/10">
                 <div class="text-center mb-8">
                     <h2 class="text-3xl font-bold mb-3">Join the Waitlist</h2>
-                    <p class="text-white/60">Be the first to know when we launch. No spam, just updates.</p>
+                    <p class="text-flick-dark/60">Be the first to know when we launch. No spam, just updates.</p>
                 </div>
 
                 <!-- Success Message -->
@@ -225,7 +226,7 @@
                         <span class="text-3xl">🎉</span>
                         <div>
                             <h3 class="font-bold text-lg mb-1">You're on the list!</h3>
-                            <p class="text-white/70 text-sm">Thanks for joining! We'll be in touch soon with exclusive early access.</p>
+                            <p class="text-flick-dark/70 text-sm">Thanks for joining! We'll be in touch soon with exclusive early access.</p>
                         </div>
                     </div>
                 </div>
@@ -235,7 +236,7 @@
                     <!-- Name Fields -->
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label for="firstName" class="block text-sm font-medium mb-2 text-white/80">First Name *</label>
+                            <label for="firstName" class="block text-sm font-medium mb-2 text-flick-dark/80">First Name *</label>
                             <input
                                 type="text"
                                 id="firstName"
@@ -246,7 +247,7 @@
                             >
                         </div>
                         <div>
-                            <label for="lastName" class="block text-sm font-medium mb-2 text-white/80">Last Name *</label>
+                            <label for="lastName" class="block text-sm font-medium mb-2 text-flick-dark/80">Last Name *</label>
                             <input
                                 type="text"
                                 id="lastName"
@@ -260,7 +261,7 @@
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-medium mb-2 text-white/80">Email Address *</label>
+                        <label for="email" class="block text-sm font-medium mb-2 text-flick-dark/80">Email Address *</label>
                         <input
                             type="email"
                             id="email"
@@ -273,7 +274,7 @@
 
                     <!-- Age Range -->
                     <div>
-                        <label for="ageRange" class="block text-sm font-medium mb-2 text-white/80">Age Range</label>
+                        <label for="ageRange" class="block text-sm font-medium mb-2 text-flick-dark/80">Age Range</label>
                         <select
                             id="ageRange"
                             name="ageRange"
@@ -289,7 +290,7 @@
 
                     <!-- Location -->
                     <div>
-                        <label for="location" class="block text-sm font-medium mb-2 text-white/80">City / Location</label>
+                        <label for="location" class="block text-sm font-medium mb-2 text-flick-dark/80">City / Location</label>
                         <input
                             type="text"
                             id="location"
@@ -301,7 +302,7 @@
 
                     <!-- How did you hear about us -->
                     <div>
-                        <label for="referralSource" class="block text-sm font-medium mb-2 text-white/80">How did you hear about us?</label>
+                        <label for="referralSource" class="block text-sm font-medium mb-2 text-flick-dark/80">How did you hear about us?</label>
                         <select
                             id="referralSource"
                             name="referralSource"
@@ -321,7 +322,7 @@
 
                     <!-- Additional Comments -->
                     <div>
-                        <label for="comments" class="block text-sm font-medium mb-2 text-white/80">What excites you most about flick?</label>
+                        <label for="comments" class="block text-sm font-medium mb-2 text-flick-dark/80">What excites you most about flick?</label>
                         <textarea
                             id="comments"
                             name="comments"
@@ -335,12 +336,12 @@
                     <button
                         type="submit"
                         id="submitBtn"
-                        class="submit-btn w-full py-4 rounded-xl font-bold text-lg text-white shadow-lg"
+                        class="submit-btn w-full py-4 rounded-xl font-bold text-lg text-flick-dark shadow-lg"
                     >
                         Join the Waitlist
                     </button>
 
-                    <p class="text-xs text-white/40 text-center">
+                    <p class="text-xs text-flick-dark/40 text-center">
                         By joining, you agree to receive updates about flick. Unsubscribe anytime.
                     </p>
                 </form>
@@ -349,15 +350,15 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 px-6 border-t border-white/10">
+    <footer class="py-12 px-6 border-t border-flick-dark/10">
         <div class="max-w-6xl mx-auto text-center">
-            <p class="text-white/60 text-sm mb-4">
+            <p class="text-flick-dark/60 text-sm mb-4">
                 © 2026 flick. Turn a look into hello.
             </p>
             <div class="flex justify-center gap-6 text-sm">
-                <a href="/privacy.html" class="text-white/60 hover:text-white transition">Privacy</a>
-                <a href="/terms.html" class="text-white/60 hover:text-white transition">Terms</a>
-                <a href="https://mail.google.com/mail/?view=cm&to=info@helloflick.com" target="_blank" rel="noopener noreferrer" class="text-white/60 hover:text-white transition">info@helloflick.com</a>
+                <a href="/privacy.html" class="text-flick-dark/60 hover:text-flick-pink transition">Privacy</a>
+                <a href="/terms.html" class="text-flick-dark/60 hover:text-flick-pink transition">Terms</a>
+                <a href="https://mail.google.com/mail/?view=cm&to=info@helloflick.com" target="_blank" rel="noopener noreferrer" class="text-flick-dark/60 hover:text-flick-pink transition">info@helloflick.com</a>
             </div>
         </div>
     </footer>
