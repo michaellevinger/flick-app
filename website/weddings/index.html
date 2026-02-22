@@ -96,10 +96,19 @@
             aspect-ratio: 9 / 19.5;
             background: #000;
             border-radius: 50px;
-            padding: 12px;
-            box-shadow: 0 0 0 12px #1a1a1a,
-                        0 0 0 13px #333,
+            padding: 8px;
+            box-shadow: 0 0 0 8px #1a1a1a,
+                        0 0 0 9px #333,
                         0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        @media (max-width: 640px) {
+            .iphone-mockup {
+                padding: 6px;
+                box-shadow: 0 0 0 6px #1a1a1a,
+                            0 0 0 7px #333,
+                            0 20px 40px rgba(0, 0, 0, 0.4);
+            }
         }
 
         .iphone-notch {
@@ -155,6 +164,24 @@
 
         .profile-info {
             padding: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .profile-info {
+                padding: 12px;
+            }
+            .iphone-screen .px-5 {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+            .iphone-screen .px-4 {
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+            .iphone-screen button {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
         }
     </style>
 </head>
