@@ -89,8 +89,8 @@ export default function CreateEventScreen({ navigation }) {
         hostUserId: user?.id || null,
       });
 
-      // Navigate to success screen with event details
-      navigation.replace('EventSuccess', { event });
+      // Navigate to customization screen
+      navigation.replace('CustomizeEvent', { festivalId: event.id, event });
     } catch (error) {
       console.error('Failed to create event:', error);
       Alert.alert(

@@ -37,6 +37,7 @@ import HostOnboarding1Screen from './src/screens/HostOnboarding1Screen';
 import HostOnboarding2Screen from './src/screens/HostOnboarding2Screen';
 import HostOnboarding3Screen from './src/screens/HostOnboarding3Screen';
 import CreateEventScreen from './src/screens/CreateEventScreen';
+import CustomizeEventScreen from './src/screens/CustomizeEventScreen';
 import EventSuccessScreen from './src/screens/EventSuccessScreen';
 import HelpSupportScreen from './src/screens/HelpSupportScreen';
 import NotificationSettingsScreen from './src/screens/NotificationSettingsScreen';
@@ -152,6 +153,7 @@ export default function App() {
               <Stack.Screen name="HostOnboarding2" component={HostOnboarding2Screen} />
               <Stack.Screen name="HostOnboarding3" component={HostOnboarding3Screen} />
               <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
+              <Stack.Screen name="CustomizeEvent" component={CustomizeEventScreen} />
               <Stack.Screen name="EventSuccess" component={EventSuccessScreen} />
 
               {/* Main App (Tabs) */}
