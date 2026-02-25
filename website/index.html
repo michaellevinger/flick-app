@@ -440,7 +440,7 @@
                 weddingCouplesDesc: 'Dale a tus amigos solteros un regalo inolvidable — una oportunidad de conocer a alguien especial en tu celebración',
                 weddingVenues: 'Lugares para Bodas',
                 weddingVenuesDesc: 'Destaca con una amenidad moderna única que las parejas aman y aumenta las tasas de reserva',
-                weddingPlanners: 'Planificadores de Bodas',
+                weddingPlanners: 'Planificadores',
                 weddingPlannersDesc: 'Conviértete en el planificador más comentado con un servicio innovador que crea conexiones reales',
                 builtForSubtitle: 'Convierte tu boda en un momento legendario de conexión para invitados solteros',
                 everyWedding: 'Cada boda tiene <span class="text-flick-pink font-bold">invitados solteros, romance y celebración</span>',
@@ -730,7 +730,7 @@
                     title.textContent = t.weddingVenues;
                     const desc = title.nextElementSibling;
                     if (desc && desc.tagName === 'P') desc.textContent = t.weddingVenuesDesc;
-                } else if (text.includes('Wedding Planners') || text.includes('Planificadores de Bodas')) {
+                } else if (text.includes('Wedding Planners') || text.includes('Planificadores')) {
                     title.textContent = t.weddingPlanners;
                     const desc = title.nextElementSibling;
                     if (desc && desc.tagName === 'P') desc.textContent = t.weddingPlannersDesc;
