@@ -389,6 +389,7 @@
                 footerHowItWorks: 'How It Works',
                 footerContact: 'Contact',
                 footerCopyright: '© 2026 flick. Turn a look into hello.',
+                footerAllRights: 'All rights reserved.',
                 footerPrivacy: 'Privacy',
                 footerTerms: 'Terms',
             },
@@ -457,6 +458,7 @@
                 footerHowItWorks: 'Cómo Funciona',
                 footerContact: 'Contacto',
                 footerCopyright: '© 2026 flick. Convierte una mirada en un hola.',
+                footerAllRights: 'Todos los derechos reservados.',
                 footerPrivacy: 'Privacidad',
                 footerTerms: 'Términos',
             }
@@ -777,16 +779,18 @@
             if (footerContact && (footerContact.textContent === 'Contact' || footerContact.textContent === 'Contacto')) {
                 footerContact.textContent = t.footerContact;
             }
-            const footerCopyright = document.querySelector('.text-flick-dark\\/60.text-sm.mb-4');
-            if (footerCopyright && footerCopyright.textContent.includes('© 2026 flick')) {
-                footerCopyright.textContent = t.footerCopyright;
+            const allRightsReserved = document.getElementById('allRightsReserved');
+            if (allRightsReserved) {
+                allRightsReserved.textContent = t.footerAllRights;
             }
-            const footerLinks = document.querySelectorAll('a.text-flick-dark\\/60');
-            footerLinks.forEach(link => {
-                const text = link.textContent.trim();
-                if (text === 'Privacy' || text === 'Privacidad') link.textContent = t.footerPrivacy;
-                if (text === 'Terms' || text === 'Términos') link.textContent = t.footerTerms;
-            });
+            const privacyLink = document.getElementById('privacyLink');
+            if (privacyLink) {
+                privacyLink.textContent = t.footerPrivacy;
+            }
+            const termsLink = document.getElementById('termsLink');
+            if (termsLink) {
+                termsLink.textContent = t.footerTerms;
+            }
 
             // Update footer "Join Waitlist" link
             const footerWaitlistLinks = document.querySelectorAll('a[href="/waitlist.html"]');
@@ -1279,8 +1283,8 @@
                 </div>
             </div>
             <div class="pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-flick-dark/70 mb-4 md:mb-0">
-                    © 2026 flick. All rights reserved. • <a href="/privacy.html" class="hover:text-flick-pink">Privacy</a> • <a href="/terms.html" class="hover:text-flick-pink">Terms</a>
+                <p id="footerCopyright" class="text-sm text-flick-dark/70 mb-4 md:mb-0">
+                    © 2026 flick. <span id="allRightsReserved">All rights reserved.</span> • <a id="privacyLink" href="/privacy.html" class="hover:text-flick-pink">Privacy</a> • <a id="termsLink" href="/terms.html" class="hover:text-flick-pink">Terms</a>
                 </p>
                 <div class="flex space-x-6">
                     <a href="https://x.com/MichaelLevinger" target="_blank" rel="noopener noreferrer" class="text-flick-dark/80 hover:text-flick-pink">
