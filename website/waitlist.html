@@ -528,23 +528,21 @@
 
         let currentLang = 'en';
 
-        // Language switcher - wrap in DOMContentLoaded to ensure elements exist
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    console.log('Language button clicked:', lang);
-                    if (lang === currentLang) return;
+        // Language switcher
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                console.log('Language button clicked:', lang);
+                if (lang === currentLang) return;
 
-                    currentLang = lang;
+                currentLang = lang;
 
-                    // Update active state
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll(`[data-lang="${lang}"]`).forEach(b => b.classList.add('active'));
+                // Update active state
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll(`[data-lang="${lang}"]`).forEach(b => b.classList.add('active'));
 
-                    // Update page content
-                    updatePageLanguage(lang);
-                });
+                // Update page content
+                updatePageLanguage(lang);
             });
         });
 
@@ -687,57 +685,60 @@
 
     <!-- Form Handler Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('waitlistForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const successMessage = document.getElementById('successMessage');
+        const form = document.getElementById('waitlistForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
 
-            console.log('Form handler initialized', { form, submitBtn, successMessage });
+        console.log('Form handler initialized', { form, submitBtn, successMessage });
 
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                console.log('Form submitted');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('Form submitted');
 
-                // Disable button
-                submitBtn.disabled = true;
-                const lang = window.currentLanguage || 'en';
-                submitBtn.textContent = translations[lang].submittingBtn;
+            // Disable button
+            submitBtn.disabled = true;
+            const lang = window.currentLanguage || currentLang || 'en';
+            submitBtn.textContent = translations[lang].submittingBtn;
 
-                try {
-                    const formData = new FormData(form);
-                    console.log('Submitting to:', form.action);
+            try {
+                const formData = new FormData(form);
+                console.log('Submitting to:', form.action);
 
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    console.log('Response status:', response.status);
-
-                    if (response.ok) {
-                        console.log('Form submission successful');
-                        // Show success message
-                        form.style.display = 'none';
-                        successMessage.style.display = 'block';
-
-                        // Scroll to success message
-                        successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    } else {
-                        const errorData = await response.json().catch(() => ({}));
-                        console.error('Form submission failed:', errorData);
-                        throw new Error('Form submission failed');
-                    }
-                } catch (error) {
-                    console.error('Form submission error:', error);
-                    const lang = window.currentLanguage || 'en';
-                    alert(translations[lang].errorMessage);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = translations[lang].submitBtn;
+                // Log form data
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
                 }
-            });
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                console.log('Response status:', response.status);
+
+                if (response.ok) {
+                    console.log('Form submission successful');
+                    // Show success message
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Form submission failed:', errorData);
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                const lang = window.currentLanguage || currentLang || 'en';
+                alert(translations[lang].errorMessage);
+                submitBtn.disabled = false;
+                submitBtn.textContent = translations[lang].submitBtn;
+            }
         });
     </script>
 </body>
