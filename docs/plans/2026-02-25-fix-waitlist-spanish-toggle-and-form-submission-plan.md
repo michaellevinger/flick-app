@@ -1,7 +1,7 @@
 ---
 title: Fix waitlist page Spanish toggle and form submission
 type: fix
-status: active
+status: completed
 date: 2026-02-25
 ---
 
@@ -63,21 +63,33 @@ Response status: 200
 ## ✅ RESOLUTION SUMMARY
 
 **Root Cause Identified:**
-- JavaScript syntax error on line 451 in `waitlist.html`
-- Curly apostrophe in string `'Signal interest with a flick. When it's mutual, get the green light to connect'`
-- The apostrophe in "it's" prematurely ended the string literal
-- Caused error: `Uncaught SyntaxError: Unexpected identifier 's'`
+- Multiple JavaScript syntax errors caused by curly apostrophes in `waitlist.html`
+- Curly apostrophes in single-quoted strings break JavaScript string literals
 - Translation system crashed before event listeners could attach to ESP/ENG buttons
 
-**Fix Applied:**
-- Changed line 451 from single quotes to double quotes
-- `feature3Desc: "Signal interest with a flick. When it's mutual, get the green light to connect",`
-- Commit: 31b40a6 (pushed to production)
-- Deployed to: https://www.helloflick.com/waitlist.html
+**Errors Found & Fixed:**
+1. **Line 451**: `'When it's mutual'` → Changed to double quotes
+   - Error: `Uncaught SyntaxError: Unexpected identifier 's'`
+   - Commit: 31b40a6
+
+2. **Line 473**: `'what you're looking for'` → Changed to double quotes
+   - Error: `Uncaught SyntaxError: Unexpected identifier 're'`
+   - Commit: 9f8a6b3
+
+3. **Line 477**: `'You're on the list!'` → Changed to double quotes
+   - Commit: 9f8a6b3
+
+4. **Line 478**: `'We'll send you'` → Changed to double quotes
+   - Commit: 9f8a6b3
+
+**All Fixes Deployed:**
+- Commits: 31b40a6, 9f8a6b3
+- Pushed to: https://www.helloflick.com/waitlist.html
+- Status: Deployed (CDN cache propagating)
 
 **Testing Status:**
-- ✅ Syntax error fixed and deployed
-- ⏳ User acceptance testing needed for language toggle
+- ✅ All syntax errors fixed
+- ⏳ User acceptance testing needed for language toggle (waiting for CDN cache)
 - ⏳ User acceptance testing needed for form submission
 
 ---
@@ -238,10 +250,14 @@ Open https://helloflick.com/waitlist.html and:
 7. ✅ Check for form field logs and response status
 
 **Findings Documented:**
-- ✅ Console showed "Uncaught SyntaxError: Unexpected identifier 's'" at line 451
+- ✅ Console showed multiple "Uncaught SyntaxError" errors at different lines
 - ✅ Form handler was initializing correctly (✓ checkmarks present)
 - ✅ Translation system never initialized (no logs from translation code)
-- ✅ Root cause: Curly apostrophe in "it's" on line 451 broke string literal
+- ✅ Root cause: Multiple curly apostrophes throughout translations object
+  - Line 451: "it's" → Unexpected identifier 's'
+  - Line 473: "you're" → Unexpected identifier 're'
+  - Line 477: "You're" (fixed preemptively)
+  - Line 478: "We'll" (fixed preemptively)
 
 ### Step 3: Add Defensive Error Handling ✅ COMPLETED
 
