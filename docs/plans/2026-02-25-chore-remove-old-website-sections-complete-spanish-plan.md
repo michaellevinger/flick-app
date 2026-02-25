@@ -1,7 +1,7 @@
 ---
 title: Remove old website sections and complete Spanish translations
 type: chore
-status: active
+status: completed
 date: 2026-02-25
 ---
 
