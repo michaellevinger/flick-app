@@ -331,6 +331,7 @@
                 heroSubtitle: 'Help your single guests meet and connect—no awkward introductions, just real proximity and real sparks',
                 heroDescription: 'A private app experience where single guests can connect, flick, and maybe find their own love story — all within your wedding\'s exclusive digital space.',
                 waitlist: 'Join the Waitlist →',
+                joinWaitlist: 'Join Waitlist',
                 seeHow: 'See How It Works',
                 guestsReady: 'guests ready to connect',
                 howItWorksTitle: 'Turn a Look into Hello',
@@ -396,6 +397,7 @@
                 heroSubtitle: 'Ayuda a tus invitados solteros a conocerse y conectar—sin presentaciones incómodas, solo proximidad real y chispas reales',
                 heroDescription: 'Una experiencia de aplicación privada donde los invitados solteros pueden conectar, dar flick, y quizás encontrar su propia historia de amor — todo dentro del espacio digital exclusivo de tu boda.',
                 waitlist: 'Únete a la Lista de Espera →',
+                joinWaitlist: 'Únete a la Lista',
                 seeHow: 'Ver Cómo Funciona',
                 guestsReady: 'invitados listos para conectar',
                 howItWorksTitle: 'Convierte una Mirada en un Hola',
@@ -497,8 +499,9 @@
             if (heroDescription) heroDescription.textContent = t.heroDescription;
 
             // Update buttons
-            const waitlistBtn = document.querySelector('a[href="/weddings/waitlist.html"]');
-            if (waitlistBtn) waitlistBtn.innerHTML = t.waitlist;
+            document.querySelectorAll('a[href="/weddings/waitlist.html"]').forEach(btn => {
+                btn.innerHTML = t.waitlist;
+            });
 
             const seeHowBtn = document.querySelector('a[href="#how-it-works"]');
             if (seeHowBtn) seeHowBtn.textContent = t.seeHow;
@@ -765,6 +768,15 @@
                 const text = link.textContent.trim();
                 if (text === 'Privacy' || text === 'Privacidad') link.textContent = t.footerPrivacy;
                 if (text === 'Terms' || text === 'Términos') link.textContent = t.footerTerms;
+            });
+
+            // Update footer "Join Waitlist" link
+            const footerWaitlistLinks = document.querySelectorAll('a[href="/weddings/waitlist.html"]');
+            footerWaitlistLinks.forEach(link => {
+                const text = link.textContent.trim();
+                if (text === 'Join Waitlist' || text === 'Únete a la Lista') {
+                    link.textContent = t.joinWaitlist;
+                }
             });
 
             // Update footer tagline
