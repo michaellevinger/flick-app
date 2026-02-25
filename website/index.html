@@ -601,10 +601,11 @@
             }
 
             // Update "single guests nearby"
-            const guestsNearby = document.querySelector('.text-xs.text-flick-dark\\/80');
-            if (guestsNearby && (guestsNearby.textContent.includes('single guests nearby') || guestsNearby.textContent.includes('invitados solteros cerca'))) {
-                guestsNearby.textContent = `12 ${t.singleGuestsNearby}`;
-            }
+            document.querySelectorAll('.text-xs.text-flick-dark\\/80').forEach(el => {
+                if (el.textContent.includes('single guests nearby') || el.textContent.includes('invitados solteros cerca')) {
+                    el.textContent = `12 ${t.singleGuestsNearby}`;
+                }
+            });
 
             // Update distance text (e.g., "150m away" -> "150m de distancia")
             document.querySelectorAll('.text-xs.text-flick-dark\\/80').forEach(el => {
@@ -631,10 +632,11 @@
             }
 
             // Update "You both flicked each other"
-            const bothFlicked = document.querySelector('.text-sm.text-flick-dark\\/80');
-            if (bothFlicked && (bothFlicked.textContent.includes('You both flicked') || bothFlicked.textContent.includes('Ambos se dieron flick'))) {
-                bothFlicked.textContent = t.bothFlicked;
-            }
+            document.querySelectorAll('.text-sm.text-flick-dark\\/80').forEach(el => {
+                if (el.textContent.includes('You both flicked') || el.textContent.includes('Ambos se dieron flick')) {
+                    el.textContent = t.bothFlicked;
+                }
+            });
 
             // Update "Start Chat" and "Back to Browse" buttons
             const startChatBtn = document.querySelector('.w-full.bg-flick-dark.text-white.font-bold.py-4.rounded-xl.text-lg');
