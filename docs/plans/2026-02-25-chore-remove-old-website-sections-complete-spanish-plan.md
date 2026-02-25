@@ -25,42 +25,42 @@ Clean up redundant website directories (weddings, bars, colleges) and ensure com
 
 ### 1. Remove Old Directories
 
-- [ ] Delete `/website/weddings/` directory entirely
-- [ ] Delete `/website/bars/` directory entirely
-- [ ] Delete `/website/colleges/` directory entirely
-- [ ] Remove any routing rules for these sections in `vercel.json`
-- [ ] Check for and remove any other references in config files
+- [x] Delete `/website/weddings/` directory entirely
+- [x] Delete `/website/bars/` directory entirely
+- [x] Delete `/website/colleges/` directory entirely
+- [x] Remove any routing rules for these sections in `vercel.json`
+- [x] Check for and remove any other references in config files
 
 ### 2. Complete Spanish Translations
 
 **Verify every text element on `/website/index.html` has Spanish translation:**
 
-- [ ] Navigation menu items
-- [ ] Hero section (tag, title, subtitle, description)
-- [ ] Phone mockup content (all UI text in screenshots)
-- [ ] "How It Works" section (title, subtitle, all 3 steps)
-- [ ] Step labels under phone mockups
-- [ ] "Where guests become love stories" tagline
-- [ ] "See flick in Action" section
-- [ ] "Built For" section (titles and descriptions)
-- [ ] CTA section ("Ready to Add Magic")
-- [ ] Footer (Product, Contact, links, copyright)
-- [ ] All button text
-- [ ] Any tooltips or helper text
+- [x] Navigation menu items
+- [x] Hero section (tag, title, subtitle, description)
+- [x] Phone mockup content (all UI text in screenshots)
+- [x] "How It Works" section (title, subtitle, all 3 steps)
+- [x] Step labels under phone mockups
+- [x] "Where guests become love stories" tagline
+- [x] "See flick in Action" section
+- [x] "Built For" section (titles and descriptions)
+- [x] CTA section ("Ready to Add Magic")
+- [x] Footer (Product, Contact, links, copyright)
+- [x] All button text
+- [x] Any tooltips or helper text
 
 **Testing:**
-- [ ] Click ESP toggle and verify entire page displays in Spanish
-- [ ] Click ENG toggle and verify entire page displays in English
+- [x] Click ESP toggle and verify entire page displays in Spanish
+- [x] Click ENG toggle and verify entire page displays in English
 - [ ] Test on mobile and desktop
 - [ ] Check for any English text remaining when Spanish is active
 
 ### 3. Update Documentation
 
 **CLAUDE.md updates:**
-- [ ] Remove references to "Festival Site"
-- [ ] Update website section to reflect single wedding landing page
-- [ ] Remove bars/colleges from feature list
-- [ ] Update version notes to reflect current architecture
+- [x] Remove references to "Festival Site"
+- [x] Update website section to reflect single wedding landing page
+- [x] Remove bars/colleges from feature list
+- [x] Update version notes to reflect current architecture
 
 **README.md updates (if needed):**
 - [ ] Remove festival/sponsor references if present

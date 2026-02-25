@@ -49,21 +49,14 @@
 - [x] Edge Function deployment (auto-cleanup) - Optional
 
 ### ✅ Website - LIVE at helloflick.com
-- [x] **Festival Site** (`/website/index.html`) - LIVE at https://helloflick.com
-  - Hero section with "Turn a Look into Hello" positioning
-  - Your Audience section with festival imagery
-  - Sponsor Advantage with activation examples (Heineken, Red Bull, Spotify)
-  - How It Works 3-step flow
-  - See flick in Action with iPhone mockups
-  - Post-Event Analytics with video demonstration
-  - Social media links (Instagram, Twitter, LinkedIn)
-- [x] **Wedding Site** (`/website/weddings/index.html`) - LIVE at https://helloflick.com/weddings
+- [x] **Wedding Landing Page** (`/website/index.html`) - LIVE at https://helloflick.com
   - Your Wedding's Secret Matchmaker positioning
+  - Bilingual support: English/Spanish toggle (ENG/ESP)
   - How It Works: QR → Scan → Browse → Match
-  - See flick in Action with real profile photos (David, 34 & Michael, 32)
-  - Pricing tiers (Starter, Classic, Premium)
-  - Perfect For section (couples, planners, venues)
-  - App preview showcase
+  - See flick in Action with iPhone mockups showing app interface
+  - Built For section (couples, planners, venues)
+  - Complete Spanish translations for all content
+  - Mobile responsive with language toggle
   - Social media integration
 - [x] **Deployment**
   - Deployed on Vercel with custom domain
@@ -71,12 +64,13 @@
   - SEO-optimized with Open Graph tags
   - Mobile responsive with hamburger menus
   - Seamless backgrounds (no section dividers)
+  - Single wedding-focused landing page
 
 ### ✅ Development Tools - COMPLETE
-- [x] QR Code Generator (`generate-qr.js`) - CLI tool for festival QR codes
+- [x] QR Code Generator (`generate-qr.js`) - CLI tool for event QR codes
 - [x] Web QR Generator (`generate-qr.html`) - Browser-based QR creator
 - [x] Build & Share Guide (`BUILD-AND-SHARE.md`) - Complete app distribution docs
-- [x] QR System Guide (`QR-SYSTEM-GUIDE.md`) - Festival QR code documentation
+- [x] QR System Guide (`QR-SYSTEM-GUIDE.md`) - Event QR code documentation
 - [x] Database Migrations - Clean SQL files for chat system setup
 
 ### 🔮 Next Up
@@ -99,12 +93,12 @@
 **1. Download App → Open**
 - First screen: QR Scanner (camera view with corner guides)
 
-**2. Scan Festival QR Code**
-- User points camera at festival's unique QR code
-- Example codes: `coachella2024`, `tomorrowland2024`, `lollapalooza2024`
-- QR codes printed on: posters, wristbands, tent cards, sponsor booths
-- System validates festival and stores festival ID
-- Dev mode: "Skip (Dev Only)" button to join test festival
+**2. Scan Event QR Code**
+- User points camera at event's unique QR code
+- Example codes: `wedding-sarah-mike-2024`, `corporate-event-2024`
+- QR codes printed on: invitations, welcome bags, table cards, event materials
+- System validates event and stores event ID
+- Dev mode: "Skip (Dev Only)" button to join test event
 
 **3. Camera Screen → Take Selfie**
 - Front-facing camera (primary)
@@ -118,33 +112,33 @@
 - Looking for preferences (Male/Female/Both)
 - Height (optional)
 
-**5. Dashboard → Festival Room**
-- Shows festival banner: "Coachella 2024 - Sponsored by Heineken"
-- List of users in SAME festival only
+**5. Dashboard → Event Room**
+- Shows event banner: "Sarah & Mike's Wedding - June 15, 2026"
+- List of users in SAME event only
 - Pull to refresh
 - Flick users to match
-- **No switching festivals** - users locked into scanned festival
+- **No switching events** - users locked into scanned event
 
 ### B2B Value Proposition:
 
-**For Festival Sponsors:**
-- ✅ **Direct Attribution** - Know exactly which matches came from YOUR festival
-- ✅ **Isolated Pools** - Users only see attendees of same festival
-- ✅ **Real-time Metrics** - Dashboard shows active users, matches made
-- ✅ **Booth Traffic** - "Visit sponsor booth to exchange numbers" drives foot traffic
-- ✅ **Brand Association** - "Sponsored by Heineken" on every match
+**For Wedding Couples:**
+- ✅ **Help Your Single Friends** - Give single guests a chance to meet someone special
+- ✅ **Isolated Pools** - Users only see other singles at your wedding
+- ✅ **Memorable Experience** - Your wedding could be where someone's love story begins
+- ✅ **Easy Setup** - Just share a QR code with your guests
+- ✅ **Privacy First** - Only singles who opt-in can participate
 
-**For Festival Organizers:**
-- ✅ **Unique QR per Event** - Different code for each festival/weekend/stage
-- ✅ **Sponsor Upsell** - Add sponsorship tiers with branding
-- ✅ **Attendee Engagement** - Digital icebreaker increases festival satisfaction
-- ✅ **Data Insights** - See which stages/areas have most activity
+**For Wedding Planners:**
+- ✅ **Unique QR per Event** - Different code for each wedding
+- ✅ **Value-Add Service** - Stand out with innovative matchmaking feature
+- ✅ **Guest Engagement** - Digital icebreaker increases wedding enjoyment
+- ✅ **Easy Integration** - Simple QR code inclusion in materials
 
 **Distribution Strategy:**
-1. Print QR codes on festival materials (posters, maps, wristbands)
-2. Display at high-traffic areas (entrance, main stage, food courts)
-3. Include in festival app/push notifications
-4. Sponsor booth signage: "Scan to meet people around you"
+1. Print QR codes on wedding materials (invitations, table cards, welcome bags)
+2. Display at wedding venue (entrance, cocktail hour, reception tables)
+3. Include in wedding website or digital invitations
+4. Share via wedding planner with interested couples
 
 ---
 
@@ -584,5 +578,5 @@ Claude, write a test scenario to verify that [specific behavior from CLAUDE.md] 
 
 ---
 
-**Last Updated:** 2026-02-13
-**Version:** 0.4.0 (Websites LIVE at helloflick.com - Festival + Wedding Sites Deployed)
+**Last Updated:** 2026-02-25
+**Version:** 0.5.0 (Wedding Landing Page LIVE at helloflick.com - Bilingual ENG/ESP Support)
