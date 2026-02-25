@@ -656,28 +656,28 @@
 
                 // Step 1: Scan
                 if (stepContainers[0]) {
-                    const step1Label = stepContainers[0].querySelector('.text-xl.font-bold.mb-2');
+                    const step1Label = stepContainers[0].querySelector('h3');
                     if (step1Label) step1Label.textContent = t.step1Label;
 
-                    const step1LabelDesc = stepContainers[0].querySelector('.text-flick-dark\\/80.text-sm');
+                    const step1LabelDesc = stepContainers[0].querySelector('p');
                     if (step1LabelDesc) step1LabelDesc.innerHTML = t.step1LabelDesc;
                 }
 
                 // Step 2: Browse
                 if (stepContainers[1]) {
-                    const step2Label = stepContainers[1].querySelector('.text-xl.font-bold.mb-2');
+                    const step2Label = stepContainers[1].querySelector('h3');
                     if (step2Label) step2Label.textContent = t.step2Label;
 
-                    const step2LabelDesc = stepContainers[1].querySelector('.text-flick-dark\\/80.text-sm');
+                    const step2LabelDesc = stepContainers[1].querySelector('p');
                     if (step2LabelDesc) step2LabelDesc.innerHTML = t.step2LabelDesc;
                 }
 
                 // Step 3: Connect
                 if (stepContainers[2]) {
-                    const step3Label = stepContainers[2].querySelector('.text-xl.font-bold.mb-2');
+                    const step3Label = stepContainers[2].querySelector('h3');
                     if (step3Label) step3Label.textContent = t.step3Label;
 
-                    const step3LabelDesc = stepContainers[2].querySelector('.text-flick-dark\\/80.text-sm');
+                    const step3LabelDesc = stepContainers[2].querySelector('p');
                     if (step3LabelDesc) step3LabelDesc.innerHTML = t.step3LabelDesc;
                 }
             }
@@ -713,26 +713,24 @@
                 }
             }
 
-            const weddingCouplesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[0];
-            if (weddingCouplesTitle && (weddingCouplesTitle.textContent.includes('Wedding Couples') || weddingCouplesTitle.textContent.includes('Parejas de Novios'))) {
-                weddingCouplesTitle.textContent = t.weddingCouples;
-            }
-            const weddingCouplesDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[0];
-            if (weddingCouplesDesc) weddingCouplesDesc.textContent = t.weddingCouplesDesc;
-
-            const weddingVenuesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[1];
-            if (weddingVenuesTitle && (weddingVenuesTitle.textContent.includes('Wedding Venues') || weddingVenuesTitle.textContent.includes('Lugares de Bodas'))) {
-                weddingVenuesTitle.textContent = t.weddingVenues;
-            }
-            const weddingVenuesDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[1];
-            if (weddingVenuesDesc) weddingVenuesDesc.textContent = t.weddingVenuesDesc;
-
-            const weddingPlannersTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[2];
-            if (weddingPlannersTitle && (weddingPlannersTitle.textContent.includes('Wedding Planners') || weddingPlannersTitle.textContent.includes('Planificadores de Bodas'))) {
-                weddingPlannersTitle.textContent = t.weddingPlanners;
-            }
-            const weddingPlannersDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[2];
-            if (weddingPlannersDesc) weddingPlannersDesc.textContent = t.weddingPlannersDesc;
+            // Update "Built For" cards - find by text content to be more robust
+            const allBuiltForTitles = document.querySelectorAll('.text-2xl.font-bold.mb-4');
+            allBuiltForTitles.forEach(title => {
+                const text = title.textContent;
+                if (text.includes('Wedding Couples') || text.includes('Parejas de Novios')) {
+                    title.textContent = t.weddingCouples;
+                    const desc = title.nextElementSibling;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.weddingCouplesDesc;
+                } else if (text.includes('Wedding Venues') || text.includes('Lugares para Bodas') || text.includes('Lugares de Bodas')) {
+                    title.textContent = t.weddingVenues;
+                    const desc = title.nextElementSibling;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.weddingVenuesDesc;
+                } else if (text.includes('Wedding Planners') || text.includes('Planificadores de Bodas')) {
+                    title.textContent = t.weddingPlanners;
+                    const desc = title.nextElementSibling;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.weddingPlannersDesc;
+                }
+            });
 
             // Update CTA section
             const ctaTitles = document.querySelectorAll('.text-4xl.md\\:text-5xl.font-black.mb-6');
