@@ -350,6 +350,7 @@
                 scanQRDesc: 'Point your camera at the QR code',
                 signOut: 'Sign Out',
                 sarahMikeWedding: "Sarah & Mike's Wedding",
+                weddingDate: 'June 15, 2026',
                 singleGuestsNearby: 'single guests nearby',
                 away: 'away',
                 flickBtn: 'Flick',
@@ -409,6 +410,7 @@
                 scanQRDesc: 'Apunta tu cámara al código QR',
                 signOut: 'Cerrar Sesión',
                 sarahMikeWedding: 'Boda de Sarah y Mike',
+                weddingDate: '15 de Junio, 2026',
                 singleGuestsNearby: 'invitados solteros cerca',
                 away: 'de distancia',
                 flickBtn: 'Flick',
@@ -566,11 +568,27 @@
                 weddingName.textContent = t.sarahMikeWedding;
             }
 
+            // Update wedding date
+            const weddingDate = weddingName?.nextElementSibling;
+            if (weddingDate && (weddingDate.textContent.includes('June 15') || weddingDate.textContent.includes('Junio'))) {
+                weddingDate.textContent = t.weddingDate;
+            }
+
             // Update "single guests nearby"
             const guestsNearby = document.querySelector('.text-xs.text-flick-dark\\/80');
             if (guestsNearby && (guestsNearby.textContent.includes('single guests nearby') || guestsNearby.textContent.includes('invitados solteros cerca'))) {
                 guestsNearby.textContent = `12 ${t.singleGuestsNearby}`;
             }
+
+            // Update distance text (e.g., "150m away" -> "150m de distancia")
+            document.querySelectorAll('.text-xs.text-flick-dark\\/80').forEach(el => {
+                if (el.textContent.includes('m away') || el.textContent.includes('m de distancia')) {
+                    const distance = el.textContent.match(/\d+m/)?.[0] || '';
+                    if (distance) {
+                        el.textContent = `${distance} ${t.away}`;
+                    }
+                }
+            });
 
             // Update "Flick" buttons
             document.querySelectorAll('.bg-flick-pink.px-4.py-2.rounded-lg.text-black.text-sm.font-bold').forEach(btn => {
