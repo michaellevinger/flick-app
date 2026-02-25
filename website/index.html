@@ -652,7 +652,7 @@
             // Target the grid container with the three phone mockups
             const phoneGrid = document.querySelector('.grid.md\\:grid-cols-3.gap-8');
             if (phoneGrid) {
-                const stepContainers = phoneGrid.querySelectorAll('.text-center');
+                const stepContainers = phoneGrid.querySelectorAll(':scope > .text-center');
 
                 // Step 1: Scan
                 if (stepContainers[0]) {
