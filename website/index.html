@@ -547,7 +547,13 @@
             // Update "See flick in Action" section
             const seeFlickHeading = document.querySelectorAll('.text-center h2')[1];
             if (seeFlickHeading && (seeFlickHeading.textContent.includes('See flick in Action') || seeFlickHeading.textContent.includes('Ve flick en Acción'))) {
-                seeFlickHeading.innerHTML = t.seeFlickTitle + '<br/><span class="text-flick-pink text-2xl">' + t.seeFlickSubtitle + '</span>';
+                seeFlickHeading.textContent = t.seeFlickTitle;
+            }
+
+            // Update "See flick in Action" subtitle
+            const seeFlickSubtitle = seeFlickHeading?.nextElementSibling;
+            if (seeFlickSubtitle && seeFlickSubtitle.tagName === 'P' && (seeFlickSubtitle.textContent.includes('Elegant') || seeFlickSubtitle.textContent.includes('Elegante'))) {
+                seeFlickSubtitle.textContent = t.seeFlickSubtitle;
             }
 
             // Update phone mockup content
