@@ -364,7 +364,7 @@
                 step2Label: 'Step 2: Browse',
                 step2LabelDesc: 'See other single guests<br/>and "flick" people they\'d like to meet',
                 step3Label: 'Step 3: Connect',
-                step3LabelDesc: 'Mutual matches can chat and plan to meet during the reception',
+                step3LabelDesc: '',
                 // Built For section
                 builtForTitle: 'Built For Weddings That<br/><span class="text-flick-pink">Create Love Stories</span>',
                 weddingCouples: 'Wedding Couples',
@@ -424,7 +424,7 @@
                 step2Label: 'Paso 2: Explorar',
                 step2LabelDesc: 'Ve otros invitados solteros<br/>y da "flick" a quienes te gusten',
                 step3Label: 'Paso 3: Conectar',
-                step3LabelDesc: 'Los matches mutuos pueden chatear y planear conocerse durante la recepción',
+                step3LabelDesc: '',
                 // Built For section
                 builtForTitle: 'Diseñado Para Bodas Que<br/><span class="text-flick-pink">Crean Historias de Amor</span>',
                 weddingCouples: 'Parejas de Novios',
@@ -648,9 +648,6 @@
                 if (stepContainers[2]) {
                     const step3Label = stepContainers[2].querySelector('.text-xl.font-bold.mb-2');
                     if (step3Label) step3Label.textContent = t.step3Label;
-
-                    const step3LabelDesc = stepContainers[2].querySelector('.text-flick-dark\\/80.text-sm');
-                    if (step3LabelDesc) step3LabelDesc.innerHTML = t.step3LabelDesc;
                 }
             }
 
@@ -1083,9 +1080,6 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 3: Connect</h3>
-                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
-                        Mutual matches can chat and plan to meet during the reception
-                    </p>
                 </div>
             </div>
         </div>
