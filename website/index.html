@@ -545,15 +545,22 @@
             }
 
             // Update "See flick in Action" section
-            const seeFlickHeading = document.querySelectorAll('.text-center h2')[1];
-            if (seeFlickHeading && (seeFlickHeading.textContent.includes('See flick in Action') || seeFlickHeading.textContent.includes('Ve flick en Acción'))) {
-                seeFlickHeading.textContent = t.seeFlickTitle;
-            }
+            const allH2s = document.querySelectorAll('h2');
+            let seeFlickHeading = null;
+            allH2s.forEach(h2 => {
+                if (h2.textContent.includes('See flick in Action') || h2.textContent.includes('Ve flick en Acción')) {
+                    seeFlickHeading = h2;
+                }
+            });
 
-            // Update "See flick in Action" subtitle
-            const seeFlickSubtitle = seeFlickHeading?.nextElementSibling;
-            if (seeFlickSubtitle && seeFlickSubtitle.tagName === 'P' && (seeFlickSubtitle.textContent.includes('Elegant') || seeFlickSubtitle.textContent.includes('Elegante'))) {
-                seeFlickSubtitle.textContent = t.seeFlickSubtitle;
+            if (seeFlickHeading) {
+                seeFlickHeading.textContent = t.seeFlickTitle;
+
+                // Update "See flick in Action" subtitle
+                const seeFlickSubtitle = seeFlickHeading.nextElementSibling;
+                if (seeFlickSubtitle && seeFlickSubtitle.tagName === 'P' && (seeFlickSubtitle.textContent.includes('Elegant') || seeFlickSubtitle.textContent.includes('Elegante'))) {
+                    seeFlickSubtitle.textContent = t.seeFlickSubtitle;
+                }
             }
 
             // Update phone mockup content
@@ -671,8 +678,13 @@
             }
 
             // Update "Built For" section
-            const builtForTitle = document.querySelectorAll('.text-center h2')[2];
-            if (builtForTitle && (builtForTitle.textContent.includes('Built For Weddings') || builtForTitle.textContent.includes('Diseñado Para Bodas'))) {
+            let builtForTitle = null;
+            allH2s.forEach(h2 => {
+                if (h2.textContent.includes('Built For Weddings') || h2.textContent.includes('Diseñado Para Bodas')) {
+                    builtForTitle = h2;
+                }
+            });
+            if (builtForTitle) {
                 builtForTitle.innerHTML = t.builtForTitle;
             }
 
@@ -1085,7 +1097,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 2: Browse</h3>
                     <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
-                        See other single guests and "flick" people they'd like to meet
+                        Browse profiles and flick on people they find interesting
                     </p>
                 </div>
 
