@@ -183,36 +183,6 @@
                 padding-right: 12px !important;
             }
         }
-
-        /* Language Toggle */
-        .lang-toggle {
-            display: inline-flex;
-            background: rgba(61, 64, 91, 0.1);
-            border-radius: 8px;
-            padding: 4px;
-            gap: 4px;
-        }
-
-        .lang-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            background: transparent;
-            color: #3D405B;
-        }
-
-        .lang-btn.active {
-            background: #F2B6C6;
-            color: #3D405B;
-        }
-
-        .lang-btn:hover:not(.active) {
-            background: rgba(242, 182, 198, 0.3);
-        }
     </style>
 </head>
 <body class="text-flick-dark">
@@ -224,18 +194,14 @@
                 <div class="text-2xl font-black">flick<span class="text-flick-pink">.</span></div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-4">
-                    <div class="lang-toggle">
-                        <button class="lang-btn active" data-lang="en">ENG</button>
-                        <button class="lang-btn" data-lang="es">ESP</button>
-                    </div>
+                <div class="hidden md:flex items-center space-x-8">
                     <a href="#contact" class="px-6 py-2 bg-flick-pink text-black font-bold rounded-lg btn-hover">
                         Book a Demo
                     </a>
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden text-flick-dark focus:outline-none">
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -244,10 +210,6 @@
 
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-4">
-                <div class="lang-toggle mx-auto w-fit">
-                    <button class="lang-btn active" data-lang="en">ENG</button>
-                    <button class="lang-btn" data-lang="es">ESP</button>
-                </div>
                 <a href="#contact" class="block bg-flick-pink text-black px-6 py-2 rounded-lg font-bold text-center">Book a Demo</a>
             </div>
         </div>
@@ -266,79 +228,6 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
             });
         });
-
-        // Language translations
-        const translations = {
-            en: {
-                bookDemo: 'Book a Demo',
-                heroTag: 'PERFECT FOR WEDDING RECEPTIONS',
-                heroTitle: "Your Wedding's <span class='text-flick-pink'>Secret Matchmaker</span>",
-                heroSubtitle: 'Help your single guests meet and connect—no awkward introductions, just real proximity and real sparks',
-                waitlist: 'Join the Waitlist →',
-                seeHow: 'See How It Works',
-                guestsReady: 'guests ready to connect',
-            },
-            es: {
-                bookDemo: 'Reservar Demo',
-                heroTag: 'PERFECTO PARA RECEPCIONES DE BODA',
-                heroTitle: "El <span class='text-flick-pink'>Cupido Secreto</span> de tu Boda",
-                heroSubtitle: 'Ayuda a tus invitados solteros a conocerse y conectar—sin presentaciones incómodas, solo proximidad real y chispas reales',
-                waitlist: 'Únete a la Lista de Espera →',
-                seeHow: 'Ver Cómo Funciona',
-                guestsReady: 'invitados listos para conectar',
-            }
-        };
-
-        let currentLang = 'en';
-
-        // Language switcher
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const lang = this.getAttribute('data-lang');
-                if (lang === currentLang) return;
-
-                currentLang = lang;
-
-                // Update active state
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll(`[data-lang="${lang}"]`).forEach(b => b.classList.add('active'));
-
-                // Update page content
-                updatePageLanguage(lang);
-            });
-        });
-
-        function updatePageLanguage(lang) {
-            const t = translations[lang];
-
-            // Update navigation
-            document.querySelectorAll('a[href="#contact"]').forEach(el => {
-                el.textContent = t.bookDemo;
-            });
-
-            // Update hero section
-            const heroTag = document.querySelector('.text-flick-pink.font-bold.mb-4');
-            if (heroTag) heroTag.textContent = t.heroTag;
-
-            const heroTitle = document.querySelector('h1.text-5xl');
-            if (heroTitle) heroTitle.innerHTML = t.heroTitle;
-
-            const heroSubtitle = document.querySelector('h1 + p');
-            if (heroSubtitle) heroSubtitle.textContent = t.heroSubtitle;
-
-            // Update buttons
-            const waitlistBtn = document.querySelector('a[href="/weddings/waitlist.html"]');
-            if (waitlistBtn) waitlistBtn.innerHTML = t.waitlist;
-
-            const seeHowBtn = document.querySelector('a[href="#how-it-works"]');
-            if (seeHowBtn) seeHowBtn.textContent = t.seeHow;
-
-            // Update phone mockup guest count
-            const guestCount = document.querySelector('.text-sm.text-flick-dark\\/70');
-            if (guestCount && guestCount.textContent.includes('guests ready')) {
-                guestCount.textContent = `7 ${t.guestsReady}`;
-            }
-        }
     </script>
 
     <!-- Hero Section -->
