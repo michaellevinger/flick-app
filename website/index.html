@@ -373,6 +373,9 @@
                 weddingVenuesDesc: 'Stand out with a unique modern amenity that couples love and increases booking rates',
                 weddingPlanners: 'Wedding Planners',
                 weddingPlannersDesc: 'Become the most talked-about planner with an innovative service that creates real connections',
+                builtForSubtitle: 'Turn your wedding into a legendary connection moment for single guests',
+                everyWedding: 'Every wedding has <span class="text-flick-pink font-bold">single guests, romance, and celebration</span>',
+                everyWeddingAfter: '— but they rarely get a chance to actually connect',
                 // CTA section
                 ctaTitle: 'Ready to Add Magic to Your Wedding?',
                 ctaSubtitle: 'Get started with your custom QR code',
@@ -433,6 +436,9 @@
                 weddingVenuesDesc: 'Destaca con una amenidad moderna única que las parejas aman y aumenta las tasas de reserva',
                 weddingPlanners: 'Planificadores de Bodas',
                 weddingPlannersDesc: 'Conviértete en el planificador más comentado con un servicio innovador que crea conexiones reales',
+                builtForSubtitle: 'Convierte tu boda en un momento legendario de conexión para invitados solteros',
+                everyWedding: 'Cada boda tiene <span class="text-flick-pink font-bold">invitados solteros, romance y celebración</span>',
+                everyWeddingAfter: '— pero rara vez tienen la oportunidad de conectar realmente',
                 // CTA section
                 ctaTitle: '¿Listo para Agregar Magia a tu Boda?',
                 ctaSubtitle: 'Comienza con tu código QR personalizado',
@@ -655,6 +661,23 @@
             const builtForTitle = document.querySelectorAll('.text-center h2')[2];
             if (builtForTitle && (builtForTitle.textContent.includes('Built For Weddings') || builtForTitle.textContent.includes('Diseñado Para Bodas'))) {
                 builtForTitle.innerHTML = t.builtForTitle;
+            }
+
+            // Update "Built For" subtitle
+            const builtForSubtitle = document.querySelector('.text-xl.md\\:text-2xl.text-flick-dark\\/80.mb-20');
+            if (builtForSubtitle && (builtForSubtitle.textContent.includes('Turn your wedding') || builtForSubtitle.textContent.includes('Convierte tu boda'))) {
+                builtForSubtitle.textContent = t.builtForSubtitle;
+            }
+
+            // Update "Every wedding" section
+            const everyWeddingText = document.querySelector('.text-2xl.mb-4.leading-relaxed');
+            if (everyWeddingText && (everyWeddingText.textContent.includes('Every wedding has') || everyWeddingText.textContent.includes('Cada boda tiene'))) {
+                everyWeddingText.innerHTML = t.everyWedding;
+            }
+
+            const everyWeddingAfter = document.querySelector('.text-xl.text-flick-dark\\/80.leading-relaxed');
+            if (everyWeddingAfter && (everyWeddingAfter.textContent.includes('but they rarely') || everyWeddingAfter.textContent.includes('pero rara vez'))) {
+                everyWeddingAfter.textContent = t.everyWeddingAfter;
             }
 
             const weddingCouplesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[0];
