@@ -329,18 +329,42 @@
                 heroTag: 'PERFECT FOR WEDDING RECEPTIONS',
                 heroTitle: "Your Wedding's <span class='text-flick-pink'>Secret Matchmaker</span>",
                 heroSubtitle: 'Help your single guests meet and connect—no awkward introductions, just real proximity and real sparks',
+                heroDescription: 'A private app experience where single guests can connect, flick, and maybe find their own love story — all within your wedding\'s exclusive digital space.',
                 waitlist: 'Join the Waitlist →',
                 seeHow: 'See How It Works',
                 guestsReady: 'guests ready to connect',
+                howItWorksTitle: 'Turn a Look into Hello',
+                howItWorksSubtitle: 'Simple Setup, Magical Results',
+                step1Title: 'You Get a QR Code',
+                step1Desc: 'We create a private flick room for your wedding with a unique QR code. Include in save-the-dates, invitations, welcome bags, or table cards.',
+                step2Title: 'Guests Scan & Connect',
+                step2Desc: 'Single guests scan the QR, create a profile, and see only other singles at your wedding. They can "flick" people they like, match instantly, and chat before the big day.',
+                step3Title: 'Magic Happens',
+                step3Desc: 'Mutual interest triggers a connection. Matched guests chat, meet at cocktail hour, dance together — your wedding becomes their love story.',
+                guestsBecome: 'Where guests become <span class="text-flick-pink">love stories</span>',
+                seeFlickTitle: 'See flick in Action',
+                seeFlickSubtitle: 'Elegant, wedding-appropriate, effortless',
             },
             es: {
                 bookDemo: 'Reservar Demo',
                 heroTag: 'PERFECTO PARA RECEPCIONES DE BODA',
                 heroTitle: "El <span class='text-flick-pink'>Cupido Secreto</span> de tu Boda",
                 heroSubtitle: 'Ayuda a tus invitados solteros a conocerse y conectar—sin presentaciones incómodas, solo proximidad real y chispas reales',
+                heroDescription: 'Una experiencia de aplicación privada donde los invitados solteros pueden conectar, dar flick, y quizás encontrar su propia historia de amor — todo dentro del espacio digital exclusivo de tu boda.',
                 waitlist: 'Únete a la Lista de Espera →',
                 seeHow: 'Ver Cómo Funciona',
                 guestsReady: 'invitados listos para conectar',
+                howItWorksTitle: 'Convierte una Mirada en un Hola',
+                howItWorksSubtitle: 'Configuración Simple, Resultados Mágicos',
+                step1Title: 'Recibes un Código QR',
+                step1Desc: 'Creamos una sala flick privada para tu boda con un código QR único. Inclúyelo en las invitaciones previas, invitaciones, bolsas de bienvenida o tarjetas de mesa.',
+                step2Title: 'Los Invitados Escanean y Conectan',
+                step2Desc: 'Los invitados solteros escanean el QR, crean un perfil y ven solo otros solteros en tu boda. Pueden dar "flick" a las personas que les gustan, hacer match instantáneamente y chatear antes del gran día.',
+                step3Title: 'La Magia Sucede',
+                step3Desc: 'El interés mutuo activa una conexión. Los invitados conectados chatean, se conocen en el cóctel, bailan juntos — tu boda se convierte en su historia de amor.',
+                guestsBecome: 'Donde los invitados se convierten en <span class="text-flick-pink">historias de amor</span>',
+                seeFlickTitle: 'Ve flick en Acción',
+                seeFlickSubtitle: 'Elegante, apropiado para bodas, sin esfuerzo',
             }
         };
 
@@ -381,6 +405,9 @@
             const heroSubtitle = document.querySelector('h1 + p');
             if (heroSubtitle) heroSubtitle.textContent = t.heroSubtitle;
 
+            const heroDescription = document.querySelector('p.text-lg.text-flick-dark\\/80.mb-8');
+            if (heroDescription) heroDescription.textContent = t.heroDescription;
+
             // Update buttons
             const waitlistBtn = document.querySelector('a[href="/weddings/waitlist.html"]');
             if (waitlistBtn) waitlistBtn.innerHTML = t.waitlist;
@@ -392,6 +419,42 @@
             const guestCount = document.querySelector('.text-sm.text-flick-dark\\/70');
             if (guestCount && guestCount.textContent.includes('guests ready')) {
                 guestCount.textContent = `7 ${t.guestsReady}`;
+            }
+
+            // Update How It Works section
+            const howItWorksTitle = document.querySelector('#how-it-works h2');
+            if (howItWorksTitle) {
+                howItWorksTitle.innerHTML = t.howItWorksTitle + '<br/><span class="text-flick-pink">' + t.howItWorksSubtitle + '</span>';
+            }
+
+            // Update Step 1
+            const step1Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(1)');
+            if (step1Title) step1Title.textContent = t.step1Title;
+            const step1Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(1) + p');
+            if (step1Desc) step1Desc.textContent = t.step1Desc;
+
+            // Update Step 2
+            const step2Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(2)');
+            if (step2Title) step2Title.textContent = t.step2Title;
+            const step2Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(2) + p');
+            if (step2Desc) step2Desc.textContent = t.step2Desc;
+
+            // Update Step 3
+            const step3Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(3)');
+            if (step3Title) step3Title.textContent = t.step3Title;
+            const step3Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(3) + p');
+            if (step3Desc) step3Desc.textContent = t.step3Desc;
+
+            // Update "Where guests become love stories"
+            const guestsBecome = document.querySelector('.text-xl.text-flick-dark.font-bold');
+            if (guestsBecome && guestsBecome.textContent.includes('Where guests become')) {
+                guestsBecome.innerHTML = t.guestsBecome;
+            }
+
+            // Update "See flick in Action" section
+            const seeFlickHeading = document.querySelectorAll('.text-center h2')[1];
+            if (seeFlickHeading && seeFlickHeading.textContent.includes('See flick in Action')) {
+                seeFlickHeading.innerHTML = t.seeFlickTitle + '<br/><span class="text-flick-pink text-2xl">' + t.seeFlickSubtitle + '</span>';
             }
         }
     </script>
