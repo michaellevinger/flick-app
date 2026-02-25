@@ -418,11 +418,11 @@
                 backToBrowse: 'Volver a Explorar',
                 // Steps
                 step1Label: 'Paso 1: Escanear',
-                step1LabelDesc: 'Los invitados escanean el código QR de tu invitación o tarjeta de mesa',
+                step1LabelDesc: 'Los invitados escanean el código QR<br/>de tu invitación o tarjeta de mesa',
                 step2Label: 'Paso 2: Explorar',
-                step2LabelDesc: 'Ve otros invitados solteros y da "flick" a quienes te gusten',
+                step2LabelDesc: 'Ve otros invitados solteros<br/>y da "flick" a quienes te gusten',
                 step3Label: 'Paso 3: Conectar',
-                step3LabelDesc: 'Los matches mutuos pueden chatear y planear conocerse durante la recepción',
+                step3LabelDesc: 'Los matches mutuos pueden chatear<br/>y planear conocerse durante la recepción',
                 // Built For section
                 builtForTitle: 'Diseñado Para Bodas Que<br/><span class="text-flick-pink">Crean Historias de Amor</span>',
                 weddingCouples: 'Parejas de Novios',
@@ -527,12 +527,9 @@
             });
 
             // Update "Where guests become love stories"
-            const guestsBecome = document.querySelector('.text-xl.text-flick-dark.font-bold');
+            const guestsBecome = document.querySelector('p.text-xl.text-flick-dark.font-bold');
             if (guestsBecome) {
-                const text = guestsBecome.textContent.trim();
-                if (text.includes('Where guests') || text.includes('Donde los') || text.includes('love stories') || text.includes('historias de amor')) {
-                    guestsBecome.innerHTML = t.guestsBecome;
-                }
+                guestsBecome.innerHTML = t.guestsBecome;
             }
 
             // Update "See flick in Action" section
