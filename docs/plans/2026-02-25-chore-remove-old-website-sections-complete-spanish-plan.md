@@ -51,6 +51,8 @@ Clean up redundant website directories (weddings, bars, colleges) and ensure com
 **Testing:**
 - [x] Click ESP toggle and verify entire page displays in Spanish
 - [x] Click ENG toggle and verify entire page displays in English
+- [x] Fixed bidirectional language switching (Spanish to English works)
+- [x] Added line breaks to Spanish step descriptions for consistent formatting
 - [ ] Test on mobile and desktop
 - [ ] Check for any English text remaining when Spanish is active
 
