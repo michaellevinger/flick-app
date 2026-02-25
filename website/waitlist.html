@@ -289,7 +289,7 @@
             <div class="bg-white/60 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-flick-dark/10">
                 <div class="text-center mb-8">
                     <h2 class="text-3xl font-bold mb-3">Join the Waitlist</h2>
-                    <p class="text-flick-dark/60">Be the first to know when we launch. No spam, just updates.</p>
+                    <p id="formSubtitle" class="text-flick-dark/60">Be the first to know when we launch. No spam, just updates.</p>
                 </div>
 
                 <!-- Success Message -->
@@ -625,8 +625,8 @@
                 formTitle.textContent = t.formTitle;
             }
 
-            const formSubtitle = document.querySelector('.text-flick-dark\\/60');
-            if (formSubtitle && (formSubtitle.textContent.includes('Be the first to know') || formSubtitle.textContent.includes('Sé el primero'))) {
+            const formSubtitle = document.getElementById('formSubtitle');
+            if (formSubtitle) {
                 formSubtitle.textContent = t.formSubtitle;
             }
 
