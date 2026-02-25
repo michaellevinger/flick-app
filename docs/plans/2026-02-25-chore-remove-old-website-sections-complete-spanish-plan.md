@@ -54,9 +54,10 @@ Clean up redundant website directories (weddings, bars, colleges) and ensure com
 - [x] Fixed bidirectional language switching (Spanish to English works)
 - [x] Added line breaks to Spanish step descriptions for consistent formatting
 - [x] Fixed step 1, 2, 3 descriptions to translate properly (under phone mockups)
+- [x] Fixed selector to use :scope > p to avoid selecting nested paragraphs inside mockups
 - [x] Fixed "Built For" section cards (Wedding Couples, Wedding Venues, Wedding Planners)
 - [ ] Test on mobile and desktop
-- [x] Check for any English text remaining when Spanish is active - ALL FIXED
+- [x] Check for any English text remaining when Spanish is active - ALL FIXED (including "Guests scan the QR code...")
 
 ### 3. Update Documentation
 
