@@ -344,6 +344,44 @@
                 guestsBecome: 'Where guests become <span class="text-flick-pink">love stories</span>',
                 seeFlickTitle: 'See flick in Action',
                 seeFlickSubtitle: 'Elegant, wedding-appropriate, effortless',
+                // Phone mockup
+                singlesAtWedding: 'Singles at the wedding',
+                scanQRTitle: 'Scan Wedding QR Code',
+                scanQRDesc: 'Point your camera at the QR code',
+                signOut: 'Sign Out',
+                sarahMikeWedding: "Sarah & Mike's Wedding",
+                singleGuestsNearby: 'single guests nearby',
+                away: 'away',
+                flickBtn: 'Flick',
+                itsAMatch: "It's a Match!",
+                bothFlicked: 'You both flicked each other',
+                startChat: 'Start Chat 💬',
+                backToBrowse: 'Back to Browse',
+                // Steps
+                step1Label: 'Step 1: Scan',
+                step1LabelDesc: 'Point your camera at the QR code at the venue',
+                step2Label: 'Step 2: Browse',
+                step2LabelDesc: 'See other single guests<br/>and "flick" people they\'d like to meet',
+                step3Label: 'Step 3: Connect',
+                step3LabelDesc: 'Mutual matches can chat<br/>and plan to meet during the reception',
+                // Built For section
+                builtForTitle: 'Built For Weddings That<br/><span class="text-flick-pink">Create Love Stories</span>',
+                weddingCouples: 'Wedding Couples',
+                weddingCouplesDesc: 'Give your single friends an unforgettable gift — a chance to meet someone special at your celebration',
+                weddingVenues: 'Wedding Venues',
+                weddingVenuesDesc: 'Stand out with a unique modern amenity that couples love and increases booking rates',
+                weddingPlanners: 'Wedding Planners',
+                weddingPlannersDesc: 'Become the most talked-about planner with an innovative service that creates real connections',
+                // CTA section
+                ctaTitle: 'Ready to Add Magic to Your Wedding?',
+                ctaSubtitle: 'Get started with your custom QR code',
+                bookDemo: 'Book Your Demo',
+                // Footer
+                footerProduct: 'Product',
+                footerContact: 'Contact',
+                footerCopyright: '© 2026 flick. Turn a look into hello.',
+                footerPrivacy: 'Privacy',
+                footerTerms: 'Terms',
             },
             es: {
                 bookDemo: 'Reservar Demo',
@@ -365,6 +403,44 @@
                 guestsBecome: 'Donde los invitados se convierten en <span class="text-flick-pink">historias de amor</span>',
                 seeFlickTitle: 'Ve flick en Acción',
                 seeFlickSubtitle: 'Elegante, apropiado para bodas, sin esfuerzo',
+                // Phone mockup
+                singlesAtWedding: 'Solteros en la boda',
+                scanQRTitle: 'Escanea el Código QR de la Boda',
+                scanQRDesc: 'Apunta tu cámara al código QR',
+                signOut: 'Cerrar Sesión',
+                sarahMikeWedding: 'Boda de Sarah y Mike',
+                singleGuestsNearby: 'invitados solteros cerca',
+                away: 'de distancia',
+                flickBtn: 'Flick',
+                itsAMatch: '¡Es un Match!',
+                bothFlicked: 'Ambos se dieron flick',
+                startChat: 'Iniciar Chat 💬',
+                backToBrowse: 'Volver a Explorar',
+                // Steps
+                step1Label: 'Paso 1: Escanear',
+                step1LabelDesc: 'Apunta tu cámara al código QR en el lugar',
+                step2Label: 'Paso 2: Explorar',
+                step2LabelDesc: 'Ve otros invitados solteros<br/>y da "flick" a las personas que te gusten',
+                step3Label: 'Paso 3: Conectar',
+                step3LabelDesc: 'Los matches mutuos pueden chatear<br/>y planear conocerse durante la recepción',
+                // Built For section
+                builtForTitle: 'Diseñado Para Bodas Que<br/><span class="text-flick-pink">Crean Historias de Amor</span>',
+                weddingCouples: 'Parejas de Novios',
+                weddingCouplesDesc: 'Dale a tus amigos solteros un regalo inolvidable — una oportunidad de conocer a alguien especial en tu celebración',
+                weddingVenues: 'Lugares para Bodas',
+                weddingVenuesDesc: 'Destaca con una amenidad moderna única que las parejas aman y aumenta las tasas de reserva',
+                weddingPlanners: 'Planificadores de Bodas',
+                weddingPlannersDesc: 'Conviértete en el planificador más comentado con un servicio innovador que crea conexiones reales',
+                // CTA section
+                ctaTitle: '¿Listo para Agregar Magia a tu Boda?',
+                ctaSubtitle: 'Comienza con tu código QR personalizado',
+                bookDemo: 'Reserva tu Demo',
+                // Footer
+                footerProduct: 'Producto',
+                footerContact: 'Contacto',
+                footerCopyright: '© 2026 flick. Convierte una mirada en un hola.',
+                footerPrivacy: 'Privacidad',
+                footerTerms: 'Términos',
             }
         };
 
@@ -456,6 +532,153 @@
             if (seeFlickHeading && seeFlickHeading.textContent.includes('See flick in Action')) {
                 seeFlickHeading.innerHTML = t.seeFlickTitle + '<br/><span class="text-flick-pink text-2xl">' + t.seeFlickSubtitle + '</span>';
             }
+
+            // Update phone mockup content
+            const singlesTitle = document.querySelector('.text-2xl.font-black.text-black.mb-1');
+            if (singlesTitle && singlesTitle.textContent.includes('Singles at')) {
+                singlesTitle.textContent = t.singlesAtWedding;
+            }
+
+            // Update "Scan Wedding QR Code"
+            const scanTitle = document.querySelector('.text-2xl.font-bold.text-flick-dark.mb-2');
+            if (scanTitle && scanTitle.textContent.includes('Scan Wedding')) {
+                scanTitle.textContent = t.scanQRTitle;
+            }
+            const scanDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[0];
+            if (scanDesc && scanDesc.textContent.includes('Point your camera')) {
+                scanDesc.textContent = t.scanQRDesc;
+            }
+
+            // Update "Sign Out"
+            const signOutText = document.querySelectorAll('.text-sm.text-flick-dark\\/80')[1];
+            if (signOutText && signOutText.textContent.includes('Sign Out')) {
+                signOutText.textContent = t.signOut;
+            }
+
+            // Update "Sarah & Mike's Wedding"
+            const weddingName = document.querySelector('.text-sm.font-bold.text-flick-pink');
+            if (weddingName && weddingName.textContent.includes("Sarah & Mike's")) {
+                weddingName.textContent = t.sarahMikeWedding;
+            }
+
+            // Update "single guests nearby"
+            const guestsNearby = document.querySelector('.text-xs.text-flick-dark\\/80');
+            if (guestsNearby && guestsNearby.textContent.includes('single guests nearby')) {
+                guestsNearby.textContent = `12 ${t.singleGuestsNearby}`;
+            }
+
+            // Update "Flick" buttons
+            document.querySelectorAll('.bg-flick-pink.px-4.py-2.rounded-lg.text-black.text-sm.font-bold').forEach(btn => {
+                if (btn.textContent.trim() === 'Flick') {
+                    btn.textContent = t.flickBtn;
+                }
+            });
+
+            // Update "It's a Match!"
+            const matchTitle = document.querySelector('.text-3xl.font-black.text-flick-dark.mb-6');
+            if (matchTitle && matchTitle.textContent.includes("It's a Match")) {
+                matchTitle.textContent = t.itsAMatch;
+            }
+
+            // Update "You both flicked each other"
+            const bothFlicked = document.querySelector('.text-sm.text-flick-dark\\/80');
+            if (bothFlicked && bothFlicked.textContent.includes('You both flicked')) {
+                bothFlicked.textContent = t.bothFlicked;
+            }
+
+            // Update "Start Chat" and "Back to Browse" buttons
+            const startChatBtn = document.querySelector('.w-full.bg-flick-dark.text-white.font-bold.py-4.rounded-xl.text-lg');
+            if (startChatBtn && startChatBtn.textContent.includes('Start Chat')) {
+                startChatBtn.textContent = t.startChat;
+            }
+            const backBtn = document.querySelector('.w-full.border-2.border-flick-dark\\/30.text-flick-dark.font-bold.py-4.rounded-xl.text-lg');
+            if (backBtn && backBtn.textContent.includes('Back to Browse')) {
+                backBtn.textContent = t.backToBrowse;
+            }
+
+            // Update step labels under phone mockups
+            const step1Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[0];
+            if (step1Label && step1Label.textContent.includes('Step 1: Scan')) {
+                step1Label.textContent = t.step1Label;
+            }
+            const step1LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[1];
+            if (step1LabelDesc && step1LabelDesc.textContent.includes('Point your camera at the QR code at the venue')) {
+                step1LabelDesc.textContent = t.step1LabelDesc;
+            }
+
+            const step2Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[1];
+            if (step2Label && step2Label.textContent.includes('Step 2: Browse')) {
+                step2Label.textContent = t.step2Label;
+            }
+            const step2LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[2];
+            if (step2LabelDesc) {
+                step2LabelDesc.innerHTML = t.step2LabelDesc;
+            }
+
+            const step3Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[2];
+            if (step3Label && step3Label.textContent.includes('Step 3: Connect')) {
+                step3Label.textContent = t.step3Label;
+            }
+            const step3LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[3];
+            if (step3LabelDesc) {
+                step3LabelDesc.innerHTML = t.step3LabelDesc;
+            }
+
+            // Update "Built For" section
+            const builtForTitle = document.querySelectorAll('.text-center h2')[2];
+            if (builtForTitle && builtForTitle.textContent.includes('Built For Weddings')) {
+                builtForTitle.innerHTML = t.builtForTitle;
+            }
+
+            const weddingCouplesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[0];
+            if (weddingCouplesTitle && weddingCouplesTitle.textContent.includes('Wedding Couples')) {
+                weddingCouplesTitle.textContent = t.weddingCouples;
+            }
+            const weddingCouplesDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[0];
+            if (weddingCouplesDesc) weddingCouplesDesc.textContent = t.weddingCouplesDesc;
+
+            const weddingVenuesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[1];
+            if (weddingVenuesTitle && weddingVenuesTitle.textContent.includes('Wedding Venues')) {
+                weddingVenuesTitle.textContent = t.weddingVenues;
+            }
+            const weddingVenuesDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[1];
+            if (weddingVenuesDesc) weddingVenuesDesc.textContent = t.weddingVenuesDesc;
+
+            const weddingPlannersTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[2];
+            if (weddingPlannersTitle && weddingPlannersTitle.textContent.includes('Wedding Planners')) {
+                weddingPlannersTitle.textContent = t.weddingPlanners;
+            }
+            const weddingPlannersDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[2];
+            if (weddingPlannersDesc) weddingPlannersDesc.textContent = t.weddingPlannersDesc;
+
+            // Update CTA section
+            const ctaTitle = document.querySelector('.text-4xl.md\\:text-5xl.font-black.mb-6');
+            if (ctaTitle && ctaTitle.textContent.includes('Ready to Add Magic')) {
+                ctaTitle.textContent = t.ctaTitle;
+            }
+            const ctaSubtitle = document.querySelector('.text-xl.text-flick-dark\\/80.mb-10');
+            if (ctaSubtitle && ctaSubtitle.textContent.includes('Get started with')) {
+                ctaSubtitle.textContent = t.ctaSubtitle;
+            }
+
+            // Update footer
+            const footerProduct = document.querySelector('h4.font-bold.mb-3');
+            if (footerProduct && footerProduct.textContent === 'Product') {
+                footerProduct.textContent = t.footerProduct;
+            }
+            const footerContact = document.querySelectorAll('h4.font-bold.mb-3')[1];
+            if (footerContact && footerContact.textContent === 'Contact') {
+                footerContact.textContent = t.footerContact;
+            }
+            const footerCopyright = document.querySelector('.text-flick-dark\\/60.text-sm.mb-4');
+            if (footerCopyright && footerCopyright.textContent.includes('© 2026 flick')) {
+                footerCopyright.textContent = t.footerCopyright;
+            }
+            const footerLinks = document.querySelectorAll('a.text-flick-dark\\/60');
+            footerLinks.forEach(link => {
+                if (link.textContent === 'Privacy') link.textContent = t.footerPrivacy;
+                if (link.textContent === 'Terms') link.textContent = t.footerTerms;
+            });
         }
     </script>
 
