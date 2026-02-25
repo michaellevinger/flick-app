@@ -656,28 +656,29 @@
 
                 // Step 1: Scan
                 if (stepContainers[0]) {
-                    const step1Label = stepContainers[0].querySelector('h3');
+                    // Select h3 and p that are direct children (not inside mockup)
+                    const step1Label = stepContainers[0].querySelector(':scope > h3');
                     if (step1Label) step1Label.textContent = t.step1Label;
 
-                    const step1LabelDesc = stepContainers[0].querySelector('p');
+                    const step1LabelDesc = stepContainers[0].querySelector(':scope > p');
                     if (step1LabelDesc) step1LabelDesc.innerHTML = t.step1LabelDesc;
                 }
 
                 // Step 2: Browse
                 if (stepContainers[1]) {
-                    const step2Label = stepContainers[1].querySelector('h3');
+                    const step2Label = stepContainers[1].querySelector(':scope > h3');
                     if (step2Label) step2Label.textContent = t.step2Label;
 
-                    const step2LabelDesc = stepContainers[1].querySelector('p');
+                    const step2LabelDesc = stepContainers[1].querySelector(':scope > p');
                     if (step2LabelDesc) step2LabelDesc.innerHTML = t.step2LabelDesc;
                 }
 
                 // Step 3: Connect
                 if (stepContainers[2]) {
-                    const step3Label = stepContainers[2].querySelector('h3');
+                    const step3Label = stepContainers[2].querySelector(':scope > h3');
                     if (step3Label) step3Label.textContent = t.step3Label;
 
-                    const step3LabelDesc = stepContainers[2].querySelector('p');
+                    const step3LabelDesc = stepContainers[2].querySelector(':scope > p');
                     if (step3LabelDesc) step3LabelDesc.innerHTML = t.step3LabelDesc;
                 }
             }
