@@ -383,8 +383,10 @@
                 ctaSubtitle: 'Get started with your custom QR code',
                 bookDemo: 'Book Your Demo',
                 // Footer
+                footerDescription: 'Turn wedding guests into connections',
                 footerTagline: 'Book your demo today • Setup in under 5 minutes • Risk-free guarantee',
                 footerProduct: 'Product',
+                footerHowItWorks: 'How It Works',
                 footerContact: 'Contact',
                 footerCopyright: '© 2026 flick. Turn a look into hello.',
                 footerPrivacy: 'Privacy',
@@ -449,8 +451,10 @@
                 ctaSubtitle: 'Comienza con tu código QR personalizado',
                 bookDemo: 'Reserva tu Demo',
                 // Footer
+                footerDescription: 'Convierte invitados de boda en conexiones',
                 footerTagline: 'Reserva tu demo hoy • Configuración en menos de 5 minutos • Garantía sin riesgo',
                 footerProduct: 'Producto',
+                footerHowItWorks: 'Cómo Funciona',
                 footerContact: 'Contacto',
                 footerCopyright: '© 2026 flick. Convierte una mirada en un hola.',
                 footerPrivacy: 'Privacidad',
@@ -752,10 +756,23 @@
             }
 
             // Update footer
+            // Update footer description "Turn wedding guests into connections"
+            const footerDescription = document.querySelector('footer p.text-flick-dark\\/80.text-sm');
+            if (footerDescription && (footerDescription.textContent.includes('Turn wedding guests into connections') || footerDescription.textContent.includes('Convierte invitados de boda en conexiones'))) {
+                footerDescription.textContent = t.footerDescription;
+            }
+
             const footerProduct = document.querySelector('h4.font-bold.mb-3');
             if (footerProduct && (footerProduct.textContent === 'Product' || footerProduct.textContent === 'Producto')) {
                 footerProduct.textContent = t.footerProduct;
             }
+
+            // Update "How It Works" link in footer
+            const footerHowItWorksLink = document.querySelector('a[href="#how-it-works"]');
+            if (footerHowItWorksLink && (footerHowItWorksLink.textContent.includes('How It Works') || footerHowItWorksLink.textContent.includes('Cómo Funciona'))) {
+                footerHowItWorksLink.textContent = t.footerHowItWorks;
+            }
+
             const footerContact = document.querySelectorAll('h4.font-bold.mb-3')[1];
             if (footerContact && (footerContact.textContent === 'Contact' || footerContact.textContent === 'Contacto')) {
                 footerContact.textContent = t.footerContact;
