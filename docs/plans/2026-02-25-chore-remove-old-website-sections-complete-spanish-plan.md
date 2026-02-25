@@ -56,8 +56,10 @@ Clean up redundant website directories (weddings, bars, colleges) and ensure com
 - [x] Fixed step 1, 2, 3 descriptions to translate properly (under phone mockups)
 - [x] Fixed selector to use :scope > p to avoid selecting nested paragraphs inside mockups
 - [x] Fixed "Built For" section cards (Wedding Couples, Wedding Venues, Wedding Planners)
+- [x] Fixed footer description "Turn wedding guests into connections"
+- [x] Fixed footer "Product" and "How It Works" links
 - [ ] Test on mobile and desktop
-- [x] Check for any English text remaining when Spanish is active - ALL FIXED (including "Guests scan the QR code...")
+- [x] Check for any English text remaining when Spanish is active - ALL FIXED
 
 ### 3. Update Documentation
 
