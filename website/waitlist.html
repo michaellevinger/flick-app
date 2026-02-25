@@ -455,16 +455,25 @@
                 feature5Desc: 'Start meaningful conversations when both of you are interested',
                 feature6Title: 'Ephemeral by Design',
                 feature6Desc: 'Profiles exist only for the event—no permanent digital footprint',
-                formTitle: 'Be the First to Know',
-                formSubtitle: 'Join our exclusive waitlist and get early access when we launch',
-                nameLabel: 'Name',
-                namePlaceholder: 'Your name',
-                emailLabel: 'Email',
-                emailPlaceholder: 'your@email.com',
-                phoneLabel: 'Phone (optional)',
-                phonePlaceholder: '+1 (555) 000-0000',
+                formTitle: 'Join the Waitlist',
+                formSubtitle: 'Be the first to know when we launch. No spam, just updates.',
+                firstNameLabel: 'First Name *',
+                firstNamePlaceholder: 'Alex',
+                lastNameLabel: 'Last Name *',
+                lastNamePlaceholder: 'Smith',
+                emailLabel: 'Email Address *',
+                emailPlaceholder: 'alex@example.com',
+                ageRangeLabel: 'Age Range',
+                ageRangeDefault: 'Prefer not to say',
+                locationLabel: 'City / Location',
+                locationPlaceholder: 'New York, NY',
+                referralLabel: 'How did you hear about us?',
+                referralDefault: 'Select one',
+                commentsLabel: 'What excites you most about flick?',
+                commentsPlaceholder: 'Tell us what you're looking for in a dating app...',
                 submitBtn: 'Join the Waitlist',
                 submittingBtn: 'Joining...',
+                disclaimer: 'By joining, you agree to receive updates about flick. Unsubscribe anytime.',
                 successTitle: '🎉 You're on the list!',
                 successMessage: 'We'll send you an email when flick launches. Get ready to turn looks into hellos.',
                 footerCopyright: '© 2026 flick. Turn a look into hello.',
@@ -489,16 +498,25 @@
                 feature5Desc: 'Comienza conversaciones significativas cuando ambos estén interesados',
                 feature6Title: 'Efímero por Diseño',
                 feature6Desc: 'Los perfiles existen solo durante el evento—sin huella digital permanente',
-                formTitle: 'Sé el Primero en Saber',
-                formSubtitle: 'Únete a nuestra lista de espera exclusiva y obtén acceso anticipado cuando lancemos',
-                nameLabel: 'Nombre',
-                namePlaceholder: 'Tu nombre',
-                emailLabel: 'Correo electrónico',
-                emailPlaceholder: 'tu@email.com',
-                phoneLabel: 'Teléfono (opcional)',
-                phonePlaceholder: '+1 (555) 000-0000',
+                formTitle: 'Únete a la Lista de Espera',
+                formSubtitle: 'Sé el primero en saber cuando lancemos. Sin spam, solo actualizaciones.',
+                firstNameLabel: 'Nombre *',
+                firstNamePlaceholder: 'Alex',
+                lastNameLabel: 'Apellido *',
+                lastNamePlaceholder: 'García',
+                emailLabel: 'Correo Electrónico *',
+                emailPlaceholder: 'alex@ejemplo.com',
+                ageRangeLabel: 'Rango de Edad',
+                ageRangeDefault: 'Prefiero no decir',
+                locationLabel: 'Ciudad / Ubicación',
+                locationPlaceholder: 'Madrid, España',
+                referralLabel: '¿Cómo te enteraste de nosotros?',
+                referralDefault: 'Selecciona una opción',
+                commentsLabel: '¿Qué te emociona más de flick?',
+                commentsPlaceholder: 'Cuéntanos qué buscas en una app de citas...',
                 submitBtn: 'Únete a la Lista de Espera',
                 submittingBtn: 'Uniéndose...',
+                disclaimer: 'Al unirte, aceptas recibir actualizaciones sobre flick. Cancela en cualquier momento.',
                 successTitle: '🎉 ¡Estás en la lista!',
                 successMessage: 'Te enviaremos un correo cuando flick se lance. Prepárate para convertir miradas en saludos.',
                 footerCopyright: '© 2026 flick. Convierte una mirada en un hola.',
@@ -568,27 +586,70 @@
             if (featureDescs[5]) featureDescs[5].textContent = t.feature6Desc;
 
             // Update form section
-            const formTitle = document.querySelector('#waitlist-form h2');
-            if (formTitle) formTitle.innerHTML = t.formTitle;
+            const formTitle = document.querySelector('.text-3xl.font-bold.mb-3');
+            if (formTitle && (formTitle.textContent.includes('Join the Waitlist') || formTitle.textContent.includes('Únete a la Lista'))) {
+                formTitle.textContent = t.formTitle;
+            }
 
-            const formSubtitle = document.querySelector('#waitlist-form .text-flick-dark\\/70.mb-12');
-            if (formSubtitle) formSubtitle.textContent = t.formSubtitle;
+            const formSubtitle = document.querySelector('.text-flick-dark\\/60');
+            if (formSubtitle && (formSubtitle.textContent.includes('Be the first to know') || formSubtitle.textContent.includes('Sé el primero'))) {
+                formSubtitle.textContent = t.formSubtitle;
+            }
 
-            // Update form labels
-            const labels = document.querySelectorAll('label');
-            if (labels[0]) labels[0].textContent = t.nameLabel;
-            if (labels[1]) labels[1].textContent = t.emailLabel;
-            if (labels[2]) labels[2].textContent = t.phoneLabel;
+            // Update form labels by field ID
+            const firstNameLabel = document.querySelector('label[for="firstName"]');
+            if (firstNameLabel) firstNameLabel.textContent = t.firstNameLabel;
+
+            const lastNameLabel = document.querySelector('label[for="lastName"]');
+            if (lastNameLabel) lastNameLabel.textContent = t.lastNameLabel;
+
+            const emailLabel = document.querySelector('label[for="email"]');
+            if (emailLabel) emailLabel.textContent = t.emailLabel;
+
+            const ageRangeLabel = document.querySelector('label[for="ageRange"]');
+            if (ageRangeLabel) ageRangeLabel.textContent = t.ageRangeLabel;
+
+            const locationLabel = document.querySelector('label[for="location"]');
+            if (locationLabel) locationLabel.textContent = t.locationLabel;
+
+            const referralLabel = document.querySelector('label[for="referralSource"]');
+            if (referralLabel) referralLabel.textContent = t.referralLabel;
+
+            const commentsLabel = document.querySelector('label[for="comments"]');
+            if (commentsLabel) commentsLabel.textContent = t.commentsLabel;
 
             // Update form placeholders
-            const nameInput = document.querySelector('input[name="name"]');
-            if (nameInput) nameInput.placeholder = t.namePlaceholder;
+            const firstNameInput = document.querySelector('input[name="firstName"]');
+            if (firstNameInput) firstNameInput.placeholder = t.firstNamePlaceholder;
+
+            const lastNameInput = document.querySelector('input[name="lastName"]');
+            if (lastNameInput) lastNameInput.placeholder = t.lastNamePlaceholder;
 
             const emailInput = document.querySelector('input[name="email"]');
             if (emailInput) emailInput.placeholder = t.emailPlaceholder;
 
-            const phoneInput = document.querySelector('input[name="phone"]');
-            if (phoneInput) phoneInput.placeholder = t.phonePlaceholder;
+            const locationInput = document.querySelector('input[name="location"]');
+            if (locationInput) locationInput.placeholder = t.locationPlaceholder;
+
+            const commentsInput = document.querySelector('textarea[name="comments"]');
+            if (commentsInput) commentsInput.placeholder = t.commentsPlaceholder;
+
+            // Update dropdown default options
+            const ageRangeSelect = document.querySelector('select[name="ageRange"]');
+            if (ageRangeSelect && ageRangeSelect.options[0]) {
+                ageRangeSelect.options[0].textContent = t.ageRangeDefault;
+            }
+
+            const referralSelect = document.querySelector('select[name="referralSource"]');
+            if (referralSelect && referralSelect.options[0]) {
+                referralSelect.options[0].textContent = t.referralDefault;
+            }
+
+            // Update disclaimer text
+            const disclaimer = document.querySelector('.text-xs.text-flick-dark\\/40');
+            if (disclaimer && (disclaimer.textContent.includes('By joining') || disclaimer.textContent.includes('Al unirte'))) {
+                disclaimer.textContent = t.disclaimer;
+            }
 
             // Update submit button (if not already submitting)
             const submitBtn = document.getElementById('submitBtn');
