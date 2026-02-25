@@ -359,11 +359,11 @@
                 backToBrowse: 'Back to Browse',
                 // Steps
                 step1Label: 'Step 1: Scan',
-                step1LabelDesc: 'Point your camera at the QR code at the venue',
+                step1LabelDesc: 'Guests scan the QR code from your invitation or table card',
                 step2Label: 'Step 2: Browse',
-                step2LabelDesc: 'See other single guests<br/>and "flick" people they\'d like to meet',
+                step2LabelDesc: 'See other single guests and "flick" people they\'d like to meet',
                 step3Label: 'Step 3: Connect',
-                step3LabelDesc: 'Mutual matches can chat<br/>and plan to meet during the reception',
+                step3LabelDesc: 'Mutual matches can chat and plan to meet during the reception',
                 // Built For section
                 builtForTitle: 'Built For Weddings That<br/><span class="text-flick-pink">Create Love Stories</span>',
                 weddingCouples: 'Wedding Couples',
@@ -418,11 +418,11 @@
                 backToBrowse: 'Volver a Explorar',
                 // Steps
                 step1Label: 'Paso 1: Escanear',
-                step1LabelDesc: 'Apunta tu cámara al código QR en el lugar',
+                step1LabelDesc: 'Los invitados escanean el código QR de tu invitación o tarjeta de mesa',
                 step2Label: 'Paso 2: Explorar',
-                step2LabelDesc: 'Ve otros invitados solteros<br/>y da "flick" a las personas que te gusten',
+                step2LabelDesc: 'Ve otros invitados solteros y da "flick" a quienes te gusten',
                 step3Label: 'Paso 3: Conectar',
-                step3LabelDesc: 'Los matches mutuos pueden chatear<br/>y planear conocerse durante la recepción',
+                step3LabelDesc: 'Los matches mutuos pueden chatear y planear conocerse durante la recepción',
                 // Built For section
                 builtForTitle: 'Diseñado Para Bodas Que<br/><span class="text-flick-pink">Crean Historias de Amor</span>',
                 weddingCouples: 'Parejas de Novios',
@@ -503,23 +503,28 @@
                 howItWorksTitle.innerHTML = t.howItWorksTitle + '<br/><span class="text-flick-pink">' + t.howItWorksSubtitle + '</span>';
             }
 
-            // Update Step 1
-            const step1Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(1)');
-            if (step1Title) step1Title.textContent = t.step1Title;
-            const step1Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(1) + p');
-            if (step1Desc) step1Desc.textContent = t.step1Desc;
+            // Update Steps in How It Works section
+            const howItWorksSteps = document.querySelectorAll('#how-it-works h3.text-2xl.font-bold.mb-4');
+            howItWorksSteps.forEach((step) => {
+                const text = step.textContent.trim();
+                const desc = step.nextElementSibling;
 
-            // Update Step 2
-            const step2Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(2)');
-            if (step2Title) step2Title.textContent = t.step2Title;
-            const step2Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(2) + p');
-            if (step2Desc) step2Desc.textContent = t.step2Desc;
-
-            // Update Step 3
-            const step3Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(3)');
-            if (step3Title) step3Title.textContent = t.step3Title;
-            const step3Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(3) + p');
-            if (step3Desc) step3Desc.textContent = t.step3Desc;
+                // Step 1: You Get a QR Code / Recibes un Código QR
+                if (text.includes('QR Code') || text.includes('Código QR')) {
+                    step.textContent = t.step1Title;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.step1Desc;
+                }
+                // Step 2: Guests Scan & Connect / Los Invitados Escanean y Conectan
+                else if (text.includes('Guests Scan') || text.includes('Invitados Escanean')) {
+                    step.textContent = t.step2Title;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.step2Desc;
+                }
+                // Step 3: Magic Happens / La Magia Sucede
+                else if (text.includes('Magic') || text.includes('Magia')) {
+                    step.textContent = t.step3Title;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.step3Desc;
+                }
+            });
 
             // Update "Where guests become love stories"
             const guestsBecome = document.querySelector('.text-xl.text-flick-dark.font-bold');
@@ -597,31 +602,37 @@
             }
 
             // Update step labels under phone mockups
-            const step1Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[0];
-            if (step1Label && step1Label.textContent.includes('Step 1: Scan')) {
-                step1Label.textContent = t.step1Label;
-            }
-            const step1LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[1];
-            if (step1LabelDesc && step1LabelDesc.textContent.includes('Point your camera at the QR code at the venue')) {
-                step1LabelDesc.textContent = t.step1LabelDesc;
-            }
+            // Target the grid container with the three phone mockups
+            const phoneGrid = document.querySelector('.grid.md\\:grid-cols-3.gap-8');
+            if (phoneGrid) {
+                const stepContainers = phoneGrid.querySelectorAll('.text-center');
 
-            const step2Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[1];
-            if (step2Label && step2Label.textContent.includes('Step 2: Browse')) {
-                step2Label.textContent = t.step2Label;
-            }
-            const step2LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[2];
-            if (step2LabelDesc) {
-                step2LabelDesc.innerHTML = t.step2LabelDesc;
-            }
+                // Step 1: Scan
+                if (stepContainers[0]) {
+                    const step1Label = stepContainers[0].querySelector('.text-xl.font-bold.mb-2');
+                    if (step1Label) step1Label.textContent = t.step1Label;
 
-            const step3Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[2];
-            if (step3Label && step3Label.textContent.includes('Step 3: Connect')) {
-                step3Label.textContent = t.step3Label;
-            }
-            const step3LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[3];
-            if (step3LabelDesc) {
-                step3LabelDesc.innerHTML = t.step3LabelDesc;
+                    const step1LabelDesc = stepContainers[0].querySelector('.text-flick-dark\\/80.text-sm');
+                    if (step1LabelDesc) step1LabelDesc.innerHTML = t.step1LabelDesc;
+                }
+
+                // Step 2: Browse
+                if (stepContainers[1]) {
+                    const step2Label = stepContainers[1].querySelector('.text-xl.font-bold.mb-2');
+                    if (step2Label) step2Label.textContent = t.step2Label;
+
+                    const step2LabelDesc = stepContainers[1].querySelector('.text-flick-dark\\/80.text-sm');
+                    if (step2LabelDesc) step2LabelDesc.innerHTML = t.step2LabelDesc;
+                }
+
+                // Step 3: Connect
+                if (stepContainers[2]) {
+                    const step3Label = stepContainers[2].querySelector('.text-xl.font-bold.mb-2');
+                    if (step3Label) step3Label.textContent = t.step3Label;
+
+                    const step3LabelDesc = stepContainers[2].querySelector('.text-flick-dark\\/80.text-sm');
+                    if (step3LabelDesc) step3LabelDesc.innerHTML = t.step3LabelDesc;
+                }
             }
 
             // Update "Built For" section
@@ -926,8 +937,8 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 1: Scan</h3>
-                    <p class="text-flick-dark/80 text-sm">
-                        Guests scan the QR code<br/>from your invitation or table card
+                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
+                        Guests scan the QR code from your invitation or table card
                     </p>
                 </div>
 
@@ -1003,8 +1014,8 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 2: Browse</h3>
-                    <p class="text-flick-dark/80 text-sm">
-                        See other single guests<br/>and "flick" people they'd like to meet
+                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
+                        See other single guests and "flick" people they'd like to meet
                     </p>
                 </div>
 
@@ -1052,8 +1063,8 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 3: Connect</h3>
-                    <p class="text-flick-dark/80 text-sm">
-                        Mutual matches can chat<br/>and plan to meet during the reception
+                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
+                        Mutual matches can chat and plan to meet during the reception
                     </p>
                 </div>
             </div>
