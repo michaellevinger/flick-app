@@ -715,7 +715,8 @@
             if (weddingPlannersDesc) weddingPlannersDesc.textContent = t.weddingPlannersDesc;
 
             // Update CTA section
-            const ctaTitle = document.querySelector('.text-4xl.md\\:text-5xl.font-black.mb-6');
+            const ctaTitles = document.querySelectorAll('.text-4xl.md\\:text-5xl.font-black.mb-6');
+            const ctaTitle = ctaTitles[ctaTitles.length - 1]; // Get the last one (CTA section)
             if (ctaTitle && (ctaTitle.textContent.includes('Ready to Add Magic') || ctaTitle.textContent.includes('¿Listo para Agregar Magia'))) {
                 ctaTitle.textContent = t.ctaTitle;
             }
