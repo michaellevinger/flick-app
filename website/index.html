@@ -359,7 +359,7 @@
                 backToBrowse: 'Back to Browse',
                 // Steps
                 step1Label: 'Step 1: Scan',
-                step1LabelDesc: 'Point your camera at the QR code at the venue',
+                step1LabelDesc: 'Guests scan the QR code<br/>from your invitation or table card',
                 step2Label: 'Step 2: Browse',
                 step2LabelDesc: 'See other single guests<br/>and "flick" people they\'d like to meet',
                 step3Label: 'Step 3: Connect',
@@ -418,9 +418,9 @@
                 backToBrowse: 'Volver a Explorar',
                 // Steps
                 step1Label: 'Paso 1: Escanear',
-                step1LabelDesc: 'Apunta tu cámara al código QR en el lugar',
+                step1LabelDesc: 'Los invitados escanean el código QR<br/>de tu invitación o tarjeta de mesa',
                 step2Label: 'Paso 2: Explorar',
-                step2LabelDesc: 'Ve otros invitados solteros<br/>y da "flick" a las personas que te gusten',
+                step2LabelDesc: 'Ve otros invitados solteros<br/>y da "flick" a quienes te gusten',
                 step3Label: 'Paso 3: Conectar',
                 step3LabelDesc: 'Los matches mutuos pueden chatear<br/>y planear conocerse durante la recepción',
                 // Built For section
@@ -493,7 +493,7 @@
 
             // Update phone mockup guest count
             const guestCount = document.querySelector('.text-sm.text-flick-dark\\/70');
-            if (guestCount && guestCount.textContent.includes('guests ready')) {
+            if (guestCount && (guestCount.textContent.includes('guests ready') || guestCount.textContent.includes('invitados listos'))) {
                 guestCount.textContent = `7 ${t.guestsReady}`;
             }
 
@@ -503,149 +503,161 @@
                 howItWorksTitle.innerHTML = t.howItWorksTitle + '<br/><span class="text-flick-pink">' + t.howItWorksSubtitle + '</span>';
             }
 
-            // Update Step 1
-            const step1Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(1)');
-            if (step1Title) step1Title.textContent = t.step1Title;
-            const step1Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(1) + p');
-            if (step1Desc) step1Desc.textContent = t.step1Desc;
+            // Update Steps in How It Works section
+            const howItWorksSteps = document.querySelectorAll('#how-it-works h3.text-2xl.font-bold.mb-4');
+            howItWorksSteps.forEach((step) => {
+                const text = step.textContent.trim();
+                const desc = step.nextElementSibling;
 
-            // Update Step 2
-            const step2Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(2)');
-            if (step2Title) step2Title.textContent = t.step2Title;
-            const step2Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(2) + p');
-            if (step2Desc) step2Desc.textContent = t.step2Desc;
-
-            // Update Step 3
-            const step3Title = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(3)');
-            if (step3Title) step3Title.textContent = t.step3Title;
-            const step3Desc = document.querySelector('#how-it-works h3.text-2xl:nth-of-type(3) + p');
-            if (step3Desc) step3Desc.textContent = t.step3Desc;
+                // Step 1: You Get a QR Code / Recibes un Código QR
+                if (text.includes('QR Code') || text.includes('Código QR')) {
+                    step.textContent = t.step1Title;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.step1Desc;
+                }
+                // Step 2: Guests Scan & Connect / Los Invitados Escanean y Conectan
+                else if (text.includes('Guests Scan') || text.includes('Invitados Escanean')) {
+                    step.textContent = t.step2Title;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.step2Desc;
+                }
+                // Step 3: Magic Happens / La Magia Sucede
+                else if (text.includes('Magic') || text.includes('Magia')) {
+                    step.textContent = t.step3Title;
+                    if (desc && desc.tagName === 'P') desc.textContent = t.step3Desc;
+                }
+            });
 
             // Update "Where guests become love stories"
-            const guestsBecome = document.querySelector('.text-xl.text-flick-dark.font-bold');
-            if (guestsBecome && guestsBecome.textContent.includes('Where guests become')) {
+            const guestsBecome = document.querySelector('p.text-xl.text-flick-dark.font-bold');
+            if (guestsBecome) {
                 guestsBecome.innerHTML = t.guestsBecome;
             }
 
             // Update "See flick in Action" section
             const seeFlickHeading = document.querySelectorAll('.text-center h2')[1];
-            if (seeFlickHeading && seeFlickHeading.textContent.includes('See flick in Action')) {
+            if (seeFlickHeading && (seeFlickHeading.textContent.includes('See flick in Action') || seeFlickHeading.textContent.includes('Ve flick en Acción'))) {
                 seeFlickHeading.innerHTML = t.seeFlickTitle + '<br/><span class="text-flick-pink text-2xl">' + t.seeFlickSubtitle + '</span>';
             }
 
             // Update phone mockup content
             const singlesTitle = document.querySelector('.text-2xl.font-black.text-black.mb-1');
-            if (singlesTitle && singlesTitle.textContent.includes('Singles at')) {
+            if (singlesTitle && (singlesTitle.textContent.includes('Singles at') || singlesTitle.textContent.includes('Solteros en'))) {
                 singlesTitle.textContent = t.singlesAtWedding;
             }
 
             // Update "Scan Wedding QR Code"
             const scanTitle = document.querySelector('.text-2xl.font-bold.text-flick-dark.mb-2');
-            if (scanTitle && scanTitle.textContent.includes('Scan Wedding')) {
+            if (scanTitle && (scanTitle.textContent.includes('Scan Wedding') || scanTitle.textContent.includes('Escanea el Código'))) {
                 scanTitle.textContent = t.scanQRTitle;
             }
             const scanDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[0];
-            if (scanDesc && scanDesc.textContent.includes('Point your camera')) {
+            if (scanDesc && (scanDesc.textContent.includes('Point your camera') || scanDesc.textContent.includes('Apunta tu cámara'))) {
                 scanDesc.textContent = t.scanQRDesc;
             }
 
             // Update "Sign Out"
             const signOutText = document.querySelectorAll('.text-sm.text-flick-dark\\/80')[1];
-            if (signOutText && signOutText.textContent.includes('Sign Out')) {
+            if (signOutText && (signOutText.textContent.includes('Sign Out') || signOutText.textContent.includes('Cerrar Sesión'))) {
                 signOutText.textContent = t.signOut;
             }
 
             // Update "Sarah & Mike's Wedding"
             const weddingName = document.querySelector('.text-sm.font-bold.text-flick-pink');
-            if (weddingName && weddingName.textContent.includes("Sarah & Mike's")) {
+            if (weddingName && (weddingName.textContent.includes("Sarah & Mike's") || weddingName.textContent.includes("Boda de Sarah"))) {
                 weddingName.textContent = t.sarahMikeWedding;
             }
 
             // Update "single guests nearby"
             const guestsNearby = document.querySelector('.text-xs.text-flick-dark\\/80');
-            if (guestsNearby && guestsNearby.textContent.includes('single guests nearby')) {
+            if (guestsNearby && (guestsNearby.textContent.includes('single guests nearby') || guestsNearby.textContent.includes('invitados solteros cerca'))) {
                 guestsNearby.textContent = `12 ${t.singleGuestsNearby}`;
             }
 
             // Update "Flick" buttons
             document.querySelectorAll('.bg-flick-pink.px-4.py-2.rounded-lg.text-black.text-sm.font-bold').forEach(btn => {
-                if (btn.textContent.trim() === 'Flick') {
+                const text = btn.textContent.trim();
+                if (text === 'Flick' || text === 'Flick') {
                     btn.textContent = t.flickBtn;
                 }
             });
 
             // Update "It's a Match!"
             const matchTitle = document.querySelector('.text-3xl.font-black.text-flick-dark.mb-6');
-            if (matchTitle && matchTitle.textContent.includes("It's a Match")) {
+            if (matchTitle && (matchTitle.textContent.includes("It's a Match") || matchTitle.textContent.includes("¡Es un Match!"))) {
                 matchTitle.textContent = t.itsAMatch;
             }
 
             // Update "You both flicked each other"
             const bothFlicked = document.querySelector('.text-sm.text-flick-dark\\/80');
-            if (bothFlicked && bothFlicked.textContent.includes('You both flicked')) {
+            if (bothFlicked && (bothFlicked.textContent.includes('You both flicked') || bothFlicked.textContent.includes('Ambos se dieron flick'))) {
                 bothFlicked.textContent = t.bothFlicked;
             }
 
             // Update "Start Chat" and "Back to Browse" buttons
             const startChatBtn = document.querySelector('.w-full.bg-flick-dark.text-white.font-bold.py-4.rounded-xl.text-lg');
-            if (startChatBtn && startChatBtn.textContent.includes('Start Chat')) {
+            if (startChatBtn && (startChatBtn.textContent.includes('Start Chat') || startChatBtn.textContent.includes('Iniciar Chat'))) {
                 startChatBtn.textContent = t.startChat;
             }
             const backBtn = document.querySelector('.w-full.border-2.border-flick-dark\\/30.text-flick-dark.font-bold.py-4.rounded-xl.text-lg');
-            if (backBtn && backBtn.textContent.includes('Back to Browse')) {
+            if (backBtn && (backBtn.textContent.includes('Back to Browse') || backBtn.textContent.includes('Volver a Explorar'))) {
                 backBtn.textContent = t.backToBrowse;
             }
 
             // Update step labels under phone mockups
-            const step1Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[0];
-            if (step1Label && step1Label.textContent.includes('Step 1: Scan')) {
-                step1Label.textContent = t.step1Label;
-            }
-            const step1LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[1];
-            if (step1LabelDesc && step1LabelDesc.textContent.includes('Point your camera at the QR code at the venue')) {
-                step1LabelDesc.textContent = t.step1LabelDesc;
-            }
+            // Target the grid container with the three phone mockups
+            const phoneGrid = document.querySelector('.grid.md\\:grid-cols-3.gap-8');
+            if (phoneGrid) {
+                const stepContainers = phoneGrid.querySelectorAll('.text-center');
 
-            const step2Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[1];
-            if (step2Label && step2Label.textContent.includes('Step 2: Browse')) {
-                step2Label.textContent = t.step2Label;
-            }
-            const step2LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[2];
-            if (step2LabelDesc) {
-                step2LabelDesc.innerHTML = t.step2LabelDesc;
-            }
+                // Step 1: Scan
+                if (stepContainers[0]) {
+                    const step1Label = stepContainers[0].querySelector('.text-xl.font-bold.mb-2');
+                    if (step1Label) step1Label.textContent = t.step1Label;
 
-            const step3Label = document.querySelectorAll('.text-xl.font-bold.mb-2')[2];
-            if (step3Label && step3Label.textContent.includes('Step 3: Connect')) {
-                step3Label.textContent = t.step3Label;
-            }
-            const step3LabelDesc = document.querySelectorAll('.text-flick-dark\\/80.text-sm')[3];
-            if (step3LabelDesc) {
-                step3LabelDesc.innerHTML = t.step3LabelDesc;
+                    const step1LabelDesc = stepContainers[0].querySelector('.text-flick-dark\\/80.text-sm');
+                    if (step1LabelDesc) step1LabelDesc.innerHTML = t.step1LabelDesc;
+                }
+
+                // Step 2: Browse
+                if (stepContainers[1]) {
+                    const step2Label = stepContainers[1].querySelector('.text-xl.font-bold.mb-2');
+                    if (step2Label) step2Label.textContent = t.step2Label;
+
+                    const step2LabelDesc = stepContainers[1].querySelector('.text-flick-dark\\/80.text-sm');
+                    if (step2LabelDesc) step2LabelDesc.innerHTML = t.step2LabelDesc;
+                }
+
+                // Step 3: Connect
+                if (stepContainers[2]) {
+                    const step3Label = stepContainers[2].querySelector('.text-xl.font-bold.mb-2');
+                    if (step3Label) step3Label.textContent = t.step3Label;
+
+                    const step3LabelDesc = stepContainers[2].querySelector('.text-flick-dark\\/80.text-sm');
+                    if (step3LabelDesc) step3LabelDesc.innerHTML = t.step3LabelDesc;
+                }
             }
 
             // Update "Built For" section
             const builtForTitle = document.querySelectorAll('.text-center h2')[2];
-            if (builtForTitle && builtForTitle.textContent.includes('Built For Weddings')) {
+            if (builtForTitle && (builtForTitle.textContent.includes('Built For Weddings') || builtForTitle.textContent.includes('Diseñado Para Bodas'))) {
                 builtForTitle.innerHTML = t.builtForTitle;
             }
 
             const weddingCouplesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[0];
-            if (weddingCouplesTitle && weddingCouplesTitle.textContent.includes('Wedding Couples')) {
+            if (weddingCouplesTitle && (weddingCouplesTitle.textContent.includes('Wedding Couples') || weddingCouplesTitle.textContent.includes('Parejas de Novios'))) {
                 weddingCouplesTitle.textContent = t.weddingCouples;
             }
             const weddingCouplesDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[0];
             if (weddingCouplesDesc) weddingCouplesDesc.textContent = t.weddingCouplesDesc;
 
             const weddingVenuesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[1];
-            if (weddingVenuesTitle && weddingVenuesTitle.textContent.includes('Wedding Venues')) {
+            if (weddingVenuesTitle && (weddingVenuesTitle.textContent.includes('Wedding Venues') || weddingVenuesTitle.textContent.includes('Lugares de Bodas'))) {
                 weddingVenuesTitle.textContent = t.weddingVenues;
             }
             const weddingVenuesDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[1];
             if (weddingVenuesDesc) weddingVenuesDesc.textContent = t.weddingVenuesDesc;
 
             const weddingPlannersTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[2];
-            if (weddingPlannersTitle && weddingPlannersTitle.textContent.includes('Wedding Planners')) {
+            if (weddingPlannersTitle && (weddingPlannersTitle.textContent.includes('Wedding Planners') || weddingPlannersTitle.textContent.includes('Planificadores de Bodas'))) {
                 weddingPlannersTitle.textContent = t.weddingPlanners;
             }
             const weddingPlannersDesc = document.querySelectorAll('.text-flick-dark\\/80.text-lg.leading-relaxed')[2];
@@ -653,21 +665,21 @@
 
             // Update CTA section
             const ctaTitle = document.querySelector('.text-4xl.md\\:text-5xl.font-black.mb-6');
-            if (ctaTitle && ctaTitle.textContent.includes('Ready to Add Magic')) {
+            if (ctaTitle && (ctaTitle.textContent.includes('Ready to Add Magic') || ctaTitle.textContent.includes('¿Listo para Agregar Magia'))) {
                 ctaTitle.textContent = t.ctaTitle;
             }
             const ctaSubtitle = document.querySelector('.text-xl.text-flick-dark\\/80.mb-10');
-            if (ctaSubtitle && ctaSubtitle.textContent.includes('Get started with')) {
+            if (ctaSubtitle && (ctaSubtitle.textContent.includes('Get started with') || ctaSubtitle.textContent.includes('Comienza con tu código QR'))) {
                 ctaSubtitle.textContent = t.ctaSubtitle;
             }
 
             // Update footer
             const footerProduct = document.querySelector('h4.font-bold.mb-3');
-            if (footerProduct && footerProduct.textContent === 'Product') {
+            if (footerProduct && (footerProduct.textContent === 'Product' || footerProduct.textContent === 'Producto')) {
                 footerProduct.textContent = t.footerProduct;
             }
             const footerContact = document.querySelectorAll('h4.font-bold.mb-3')[1];
-            if (footerContact && footerContact.textContent === 'Contact') {
+            if (footerContact && (footerContact.textContent === 'Contact' || footerContact.textContent === 'Contacto')) {
                 footerContact.textContent = t.footerContact;
             }
             const footerCopyright = document.querySelector('.text-flick-dark\\/60.text-sm.mb-4');
@@ -676,8 +688,9 @@
             }
             const footerLinks = document.querySelectorAll('a.text-flick-dark\\/60');
             footerLinks.forEach(link => {
-                if (link.textContent === 'Privacy') link.textContent = t.footerPrivacy;
-                if (link.textContent === 'Terms') link.textContent = t.footerTerms;
+                const text = link.textContent.trim();
+                if (text === 'Privacy' || text === 'Privacidad') link.textContent = t.footerPrivacy;
+                if (text === 'Terms' || text === 'Términos') link.textContent = t.footerTerms;
             });
         }
     </script>
@@ -738,7 +751,7 @@
                                 <div class="grid grid-cols-3 gap-2">
                                     <!-- Person 1 -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4]">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-1.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-1.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                                             <div class="text-white font-bold text-xs">Sarah</div>
                                             <div class="text-white/80 text-[10px]">26 • Friend of bride</div>
@@ -747,7 +760,7 @@
 
                                     <!-- Person 2 -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4]">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-2.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-2.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                                             <div class="text-white font-bold text-xs">Emma</div>
                                             <div class="text-white/80 text-[10px]">24 • Bride's sister</div>
@@ -756,7 +769,7 @@
 
                                     <!-- Person 3 with Pink Border (Flicked You) -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4] ring-2 ring-flick-pink">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-3.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-3.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute top-1 right-1 bg-flick-pink text-black text-[8px] font-bold px-1.5 py-0.5 rounded">
                                             FLICKED
                                         </div>
@@ -768,7 +781,7 @@
 
                                     <!-- Person 4 -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4]">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-4.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-4.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                                             <div class="text-white font-bold text-xs">Sophia</div>
                                             <div class="text-white/80 text-[10px]">43 • Work friend</div>
@@ -777,7 +790,7 @@
 
                                     <!-- Person 5 -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4]">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-7.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-7.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                                             <div class="text-white font-bold text-xs">Isabella</div>
                                             <div class="text-white/80 text-[10px]">28 • Cousin</div>
@@ -786,7 +799,7 @@
 
                                     <!-- Person 6 -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4]">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-8.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-8.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                                             <div class="text-white font-bold text-xs">Mia</div>
                                             <div class="text-white/80 text-[10px]">38 • Roommate</div>
@@ -795,7 +808,7 @@
 
                                     <!-- Person 7 -->
                                     <div class="relative rounded-xl overflow-hidden aspect-[3/4]">
-                                        <img src="/weddings/images/screenshots/phone_screen_profile/wedding-guest-9.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
+                                        <img src="/images/screenshots/phone_screen_profile/wedding-guest-9.png?v=4" alt="Wedding guest" class="w-full h-full object-cover">
                                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                                             <div class="text-white font-bold text-xs">Chloe</div>
                                             <div class="text-white/80 text-[10px]">27 • Book club friend</div>
@@ -864,7 +877,7 @@
                 <!-- Couple Image -->
                 <div>
                     <div class="rounded-3xl overflow-hidden border-4 border-flick-pink/20 hover:border-flick-pink transition-all duration-300 shadow-2xl shadow-flick-pink/10">
-                        <img src="/weddings/images/screenshots/couple.jpg?v=5" alt="Wedding guests connecting" class="w-full h-auto object-cover">
+                        <img src="/images/screenshots/couple.jpg?v=5" alt="Wedding guests connecting" class="w-full h-auto object-cover">
                     </div>
                     <div class="text-center mt-6">
                         <p class="text-xl text-flick-dark font-bold">Where guests become <span class="text-flick-pink">love stories</span></p>
@@ -926,8 +939,8 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 1: Scan</h3>
-                    <p class="text-flick-dark/80 text-sm">
-                        Guests scan the QR code<br/>from your invitation or table card
+                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
+                        Guests scan the QR code from your invitation or table card
                     </p>
                 </div>
 
@@ -961,7 +974,7 @@
                                     <!-- Profile Card 1 -->
                                     <div class="profile-card mb-4">
                                         <div class="profile-image" style="background: none !important; padding: 0 !important; display: block !important;">
-                                            <img src="/weddings/images/screenshots/profile-1.jpg?v=1771000418" alt="David" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                            <img src="/images/screenshots/profile-1.jpg?v=1771000418" alt="David" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                         </div>
                                         <div class="profile-info">
                                             <div class="flex items-center justify-between mb-2">
@@ -979,7 +992,7 @@
                                     <!-- Profile Card 2 -->
                                     <div class="profile-card">
                                         <div class="profile-image" style="background: none !important; padding: 0 !important; display: block !important;">
-                                            <img src="/weddings/images/screenshots/profile-2.jpg?v=1771000418" alt="Michael" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                            <img src="/images/screenshots/profile-2.jpg?v=1771000418" alt="Michael" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                         </div>
                                         <div class="profile-info">
                                             <div class="flex items-center justify-between mb-2">
@@ -1003,8 +1016,8 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 2: Browse</h3>
-                    <p class="text-flick-dark/80 text-sm">
-                        See other single guests<br/>and "flick" people they'd like to meet
+                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
+                        See other single guests and "flick" people they'd like to meet
                     </p>
                 </div>
 
@@ -1029,7 +1042,7 @@
                                 <div class="relative mb-6">
                                     <div class="absolute inset-0 bg-flick-pink/20 rounded-full blur-2xl animate-pulse"></div>
                                     <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-flick-dark/20">
-                                        <img src="/weddings/images/screenshots/profile-1.jpg?v=1771000418" alt="David" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <img src="/images/screenshots/profile-1.jpg?v=1771000418" alt="David" style="width: 100%; height: 100%; object-fit: cover;">
                                     </div>
                                 </div>
 
@@ -1052,8 +1065,8 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-bold mb-2">Step 3: Connect</h3>
-                    <p class="text-flick-dark/80 text-sm">
-                        Mutual matches can chat<br/>and plan to meet during the reception
+                    <p class="text-flick-dark/80 text-sm max-w-xs mx-auto leading-relaxed">
+                        Mutual matches can chat and plan to meet during the reception
                     </p>
                 </div>
             </div>

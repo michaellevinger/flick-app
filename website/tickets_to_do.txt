@@ -1,0 +1,101 @@
+Ticket No.1: Build Customizable Client Onboarding Experience
+Description:
+Create a self-serve onboarding platform for couples/wedding planners where they can personalize their wedding interaction experience inside Flick.
+
+Scope:
+
+Allow couples to:
+
+Change theme colors (primary / secondary palette)
+
+Add custom event title (e.g., “Daniel & Maya’s Wedding”)
+
+Add custom questions (free text input)
+
+Example prompts:
+
+“Meet me at the bar”
+
+“Want to dance to the next song?”
+
+Generate AI-powered icebreaker questions about the couple
+
+e.g., “How did they meet?” style fun trivia
+
+Preview mode before publishing
+
+Save & edit capability
+
+Acceptance Criteria:
+
+User can customize and preview experience
+
+Changes are saved in real-time
+
+UX is simple and mobile-friendly
+
+Ticket No.2: Develop a Dynamic & Designed QR Code Generator
+Description:
+At the end of onboarding, generate a dynamic QR code that guests scan during the wedding.
+
+Scope:
+
+Auto-generate QR linked to the couple’s event page
+
+Multiple QR design options:
+
+Clean classic
+
+With couple’s photos embedded
+
+With wedding theme colors
+
+Minimal black & white
+
+Download options (PNG / PDF ready for print)
+
+QR preview before download
+
+Acceptance Criteria:
+
+QR works instantly and routes to correct event
+
+Users can select between at least 3 design templates
+
+QR remains active throughout event
+
+Ticket No.3: Event Analytics Dashboard + Automated Report
+Description:
+Provide couples with analytics insights after the wedding.
+
+Scope:
+
+Real-time analytics during event:
+
+Number of scans
+
+Engagement per question
+
+Most popular icebreaker
+
+Interaction rate
+
+Post-event summary report:
+
+Total participants
+
+Most voted / selected answers
+
+Peak engagement time
+
+Automated PDF report sent after event
+
+Dashboard view inside platform
+
+Acceptance Criteria:
+
+Analytics update in real-time
+
+Report auto-generated within 24h after event
+
+Clear, visual presentation (graphs + summary insights)
