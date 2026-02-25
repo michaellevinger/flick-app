@@ -378,9 +378,11 @@
                 everyWeddingAfter: '— but they rarely get a chance to actually connect',
                 // CTA section
                 ctaTitle: 'Ready to Add Magic to Your Wedding?',
+                ctaCouplesCount: "Join 50+ couples who've created unforgettable connection moments at their weddings",
                 ctaSubtitle: 'Get started with your custom QR code',
                 bookDemo: 'Book Your Demo',
                 // Footer
+                footerTagline: 'Book your demo today • Setup in under 5 minutes • Risk-free guarantee',
                 footerProduct: 'Product',
                 footerContact: 'Contact',
                 footerCopyright: '© 2026 flick. Turn a look into hello.',
@@ -441,9 +443,11 @@
                 everyWeddingAfter: '— pero rara vez tienen la oportunidad de conectar realmente',
                 // CTA section
                 ctaTitle: '¿Listo para Agregar Magia a tu Boda?',
+                ctaCouplesCount: 'Únete a más de 50 parejas que han creado momentos de conexión inolvidables en sus bodas',
                 ctaSubtitle: 'Comienza con tu código QR personalizado',
                 bookDemo: 'Reserva tu Demo',
                 // Footer
+                footerTagline: 'Reserva tu demo hoy • Configuración en menos de 5 minutos • Garantía sin riesgo',
                 footerProduct: 'Producto',
                 footerContact: 'Contacto',
                 footerCopyright: '© 2026 flick. Convierte una mirada en un hola.',
@@ -670,14 +674,17 @@
             }
 
             // Update "Every wedding" section
-            const everyWeddingText = document.querySelector('.text-2xl.mb-4.leading-relaxed');
-            if (everyWeddingText && (everyWeddingText.textContent.includes('Every wedding has') || everyWeddingText.textContent.includes('Cada boda tiene'))) {
-                everyWeddingText.innerHTML = t.everyWedding;
-            }
+            const everyWeddingParagraphs = document.querySelectorAll('.text-2xl.md\\:text-3xl.text-flick-dark\\/80.max-w-4xl.mx-auto.leading-relaxed');
+            if (everyWeddingParagraphs.length >= 2) {
+                const everyWeddingText = everyWeddingParagraphs[0];
+                if (everyWeddingText && (everyWeddingText.textContent.includes('Every wedding has') || everyWeddingText.textContent.includes('Cada boda tiene'))) {
+                    everyWeddingText.innerHTML = t.everyWedding;
+                }
 
-            const everyWeddingAfter = document.querySelector('.text-xl.text-flick-dark\\/80.leading-relaxed');
-            if (everyWeddingAfter && (everyWeddingAfter.textContent.includes('but they rarely') || everyWeddingAfter.textContent.includes('pero rara vez'))) {
-                everyWeddingAfter.textContent = t.everyWeddingAfter;
+                const everyWeddingAfter = everyWeddingParagraphs[1];
+                if (everyWeddingAfter && (everyWeddingAfter.textContent.includes('but they rarely') || everyWeddingAfter.textContent.includes('pero rara vez'))) {
+                    everyWeddingAfter.textContent = t.everyWeddingAfter;
+                }
             }
 
             const weddingCouplesTitle = document.querySelectorAll('.text-2xl.font-bold.mb-4')[0];
@@ -706,6 +713,13 @@
             if (ctaTitle && (ctaTitle.textContent.includes('Ready to Add Magic') || ctaTitle.textContent.includes('¿Listo para Agregar Magia'))) {
                 ctaTitle.textContent = t.ctaTitle;
             }
+
+            // Update CTA couples count
+            const ctaCouplesCount = document.querySelector('.text-xl.text-flick-dark\\/80.mb-12');
+            if (ctaCouplesCount && (ctaCouplesCount.textContent.includes('Join 50+ couples') || ctaCouplesCount.textContent.includes('Únete a más de 50'))) {
+                ctaCouplesCount.textContent = t.ctaCouplesCount;
+            }
+
             const ctaSubtitle = document.querySelector('.text-xl.text-flick-dark\\/80.mb-10');
             if (ctaSubtitle && (ctaSubtitle.textContent.includes('Get started with') || ctaSubtitle.textContent.includes('Comienza con tu código QR'))) {
                 ctaSubtitle.textContent = t.ctaSubtitle;
@@ -730,6 +744,12 @@
                 if (text === 'Privacy' || text === 'Privacidad') link.textContent = t.footerPrivacy;
                 if (text === 'Terms' || text === 'Términos') link.textContent = t.footerTerms;
             });
+
+            // Update footer tagline
+            const footerTagline = document.querySelector('.text-sm.text-flick-dark\\/60.mt-4');
+            if (footerTagline && (footerTagline.textContent.includes('Book your demo today') || footerTagline.textContent.includes('Reserva tu demo hoy'))) {
+                footerTagline.textContent = t.footerTagline;
+            }
         }
     </script>
 
