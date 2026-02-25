@@ -137,7 +137,10 @@ Current `vercel.json` has routes like:
 - [ ] Toggle to English (ENG) - entire page should be English
 - [ ] Check mobile responsiveness in both languages
 - [ ] Verify no 404 errors for old routes (or intentional 404s)
-- [ ] Test waitlist page works (if keeping it)
+- [x] Test waitlist page works (restored from git history)
+- [x] Waitlist page Spanish translation system complete (ENG/ESP toggle)
+- [x] All form labels translate properly (firstName, lastName, email, ageRange, location, referralSource, comments)
+- [x] Form submissions save to Formspree with success message display
 - [ ] Check all links in footer and navigation work
 
 ## References
