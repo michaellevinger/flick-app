@@ -280,6 +280,18 @@
                         >
                     </div>
 
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium mb-2 text-flick-dark/80">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="form-input w-full px-4 py-3 rounded-xl"
+                            placeholder="+1 (555) 123-4567"
+                        >
+                    </div>
+
                     <!-- Age Range -->
                     <div>
                         <label for="ageRange" class="block text-sm font-medium mb-2 text-flick-dark/80">Age Range</label>
@@ -386,6 +398,8 @@
                 lastNamePlaceholder: 'Smith',
                 emailLabel: 'Email Address *',
                 emailPlaceholder: 'alex@example.com',
+                phoneLabel: 'Phone Number',
+                phonePlaceholder: '+1 (555) 123-4567',
                 ageRangeLabel: 'Age Range',
                 ageRangeDefault: 'Prefer not to say',
                 locationLabel: 'City / Location',
@@ -416,6 +430,8 @@
                 lastNamePlaceholder: 'García',
                 emailLabel: 'Correo Electrónico *',
                 emailPlaceholder: 'alex@ejemplo.com',
+                phoneLabel: 'Número de Teléfono',
+                phonePlaceholder: '+34 612 345 678',
                 ageRangeLabel: 'Rango de Edad',
                 ageRangeDefault: 'Prefiero no decir',
                 locationLabel: 'Ciudad / Ubicación',
@@ -524,6 +540,9 @@
             const emailLabel = document.querySelector('label[for="email"]');
             if (emailLabel) emailLabel.textContent = t.emailLabel;
 
+            const phoneLabel = document.querySelector('label[for="phone"]');
+            if (phoneLabel) phoneLabel.textContent = t.phoneLabel;
+
             const ageRangeLabel = document.querySelector('label[for="ageRange"]');
             if (ageRangeLabel) ageRangeLabel.textContent = t.ageRangeLabel;
 
@@ -545,6 +564,9 @@
 
             const emailInput = document.querySelector('input[name="email"]');
             if (emailInput) emailInput.placeholder = t.emailPlaceholder;
+
+            const phoneInput = document.querySelector('input[name="phone"]');
+            if (phoneInput) phoneInput.placeholder = t.phonePlaceholder;
 
             const locationInput = document.querySelector('input[name="location"]');
             if (locationInput) locationInput.placeholder = t.locationPlaceholder;
