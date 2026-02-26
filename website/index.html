@@ -334,6 +334,8 @@
                 joinWaitlist: 'Join Waitlist',
                 seeHow: 'See How It Works',
                 guestsReady: 'guests ready to connect',
+                featuredTitle: 'As Featured On',
+                featuredDescription: 'Hear how flick is changing the wedding experience',
                 howItWorksTitle: 'Turn a Look into Hello',
                 howItWorksSubtitle: 'Simple Setup, Magical Results',
                 step1Title: 'You Get a QR Code',
@@ -403,6 +405,8 @@
                 joinWaitlist: 'Únete a la Lista',
                 seeHow: 'Ver Cómo Funciona',
                 guestsReady: 'invitados listos para conectar',
+                featuredTitle: 'Destacado En',
+                featuredDescription: 'Escucha cómo flick está cambiando la experiencia de bodas',
                 howItWorksTitle: 'Convierte una Mirada en un Hola',
                 howItWorksSubtitle: 'Configuración Simple, Resultados Mágicos',
                 step1Title: 'Recibes un Código QR',
@@ -517,6 +521,13 @@
             if (guestCount && (guestCount.textContent.includes('guests ready') || guestCount.textContent.includes('invitados listos'))) {
                 guestCount.textContent = `7 ${t.guestsReady}`;
             }
+
+            // Update Featured section
+            const featuredTitle = document.getElementById('featuredTitle');
+            if (featuredTitle) featuredTitle.textContent = t.featuredTitle;
+
+            const featuredDescription = document.getElementById('featuredDescription');
+            if (featuredDescription) featuredDescription.textContent = t.featuredDescription;
 
             // Update How It Works section
             const howItWorksTitle = document.querySelector('#how-it-works h2');
@@ -933,6 +944,20 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- As Featured On Section -->
+    <section class="py-20 px-6 bg-flick-pink/5">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 id="featuredTitle" class="text-3xl md:text-4xl font-black mb-4">As Featured On</h2>
+                <p id="featuredDescription" class="text-lg text-flick-dark/70">Hear how flick is changing the wedding experience</p>
+            </div>
+
+            <div class="max-w-2xl mx-auto bg-white/60 backdrop-blur-lg rounded-3xl p-6 border border-flick-dark/10">
+                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1M7sNQfgikW8fP0PsjNUPY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
         </div>
     </section>
