@@ -24,7 +24,6 @@ export default function CreateEventScreen({ navigation }) {
   const { user } = useUser();
   const [eventName, setEventName] = useState('');
   const [venue, setVenue] = useState('');
-  const [sponsorName, setSponsorName] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)); // 1 week from now
   const [showStartPicker, setShowStartPicker] = useState(false);
@@ -85,7 +84,6 @@ export default function CreateEventScreen({ navigation }) {
         venue: venue.trim(),
         startDate,
         endDate,
-        sponsorName: sponsorName.trim() || null,
         hostUserId: user?.id || null,
       });
 
@@ -203,21 +201,6 @@ export default function CreateEventScreen({ navigation }) {
                       minimumDate={startDate}
                     />
                   )}
-                </View>
-
-                {/* Sponsor Name (Optional) */}
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>Sponsor Name (Optional)</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={sponsorName}
-                    onChangeText={setSponsorName}
-                    placeholder="Coca-Cola"
-                    placeholderTextColor="rgba(255,255,255,0.5)"
-                    maxLength={100}
-                    returnKeyType="done"
-                    onSubmitEditing={Keyboard.dismiss}
-                  />
                 </View>
 
                 {/* Create Button */}

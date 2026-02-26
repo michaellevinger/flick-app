@@ -45,6 +45,7 @@ export default function DashboardScreen({ navigation }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentFestival, setCurrentFestival] = useState(null);
   const [countdown, setCountdown] = useState('');
+  const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const subscriptionRef = useRef(null);
   const flickSubscriptionRef = useRef(null);
 
@@ -388,50 +389,126 @@ export default function DashboardScreen({ navigation }) {
   }
 
   const visibleUsers = nearbyUsers.filter((u) => !hiddenUsers.has(u.id));
+  const currentUser = visibleUsers[currentUserIndex];
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: () => navigation.replace('Welcome') },
+      ]
+    );
+  };
+
+  const handlePrevUser = () => {
+    if (currentUserIndex > 0) {
+      setCurrentUserIndex(currentUserIndex - 1);
+    }
+  };
+
+  const handleNextUser = () => {
+    if (currentUserIndex < visibleUsers.length - 1) {
+      setCurrentUserIndex(currentUserIndex + 1);
+    }
+  };
+
+  const formatEventDate = () => {
+    if (!currentFestival?.start_date) return '';
+    const date = new Date(currentFestival.start_date);
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+
+  // Reset index when users list changes
+  useEffect(() => {
+    if (currentUserIndex >= visibleUsers.length) {
+      setCurrentUserIndex(Math.max(0, visibleUsers.length - 1));
+    }
+  }, [visibleUsers.length]);
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.logo}>♥ flick</Text>
+        <Text style={styles.logo}>flick</Text>
+        <TouchableOpacity onPress={handleSignOut}>
+          <Text style={styles.signOutButton}>Sign Out</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Title Section */}
-      <View style={styles.titleSection}>
-        <Text style={styles.title}>
-          {currentFestival ? `Singles at ${currentFestival.name}` : 'Discover'}
-        </Text>
-        {countdown ? (
-          <Text style={styles.subtitle}>Everything expires in {countdown}</Text>
-        ) : (
-          <Text style={styles.subtitle}>{visibleUsers.length} people nearby</Text>
-        )}
-      </View>
+      {/* Event Card */}
+      {currentFestival && (
+        <View style={styles.eventCard}>
+          <Text style={styles.eventName}>{currentFestival.name}</Text>
+          <Text style={styles.eventDate}>{formatEventDate()}</Text>
+        </View>
+      )}
 
-      {/* Grid */}
-      <FlatList
-        data={visibleUsers}
-        renderItem={renderUserCard}
-        keyExtractor={(item) => item.id}
-        numColumns={3}
-        contentContainerStyle={styles.gridContainer}
-        columnWrapperStyle={styles.gridRow}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor="#C44CE0"
-          />
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyStateEmoji}>👀</Text>
-            <Text style={styles.emptyStateText}>No one here yet</Text>
-            <Text style={styles.emptyStateSubtext}>Pull down to refresh</Text>
+      {/* Profile Card */}
+      {currentUser ? (
+        <View style={styles.profileCardContainer}>
+          <View style={styles.profileCard}>
+            <TouchableOpacity
+              style={styles.profileImageContainer}
+              onPress={() => navigation.navigate('UserProfile', { userId: currentUser.id })}
+            >
+              <Image
+                source={{ uri: currentUser.selfieUrl || currentUser.selfie_url }}
+                style={styles.profileImage}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>
+                {currentUser.name}, {currentUser.age}
+              </Text>
+              <Text style={styles.profileDistance}>
+                {currentUser.distance_meters ? `${currentUser.distance_meters}m away` : 'Nearby'}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.flickButton}
+              onPress={() => handleFlick(currentUser)}
+            >
+              <Text style={styles.flickButtonText}>Flick</Text>
+            </TouchableOpacity>
           </View>
-        }
-      />
+
+          {/* Navigation Arrows */}
+          {visibleUsers.length > 1 && (
+            <View style={styles.navigation}>
+              <TouchableOpacity
+                style={[styles.navButton, currentUserIndex === 0 && styles.navButtonDisabled]}
+                onPress={handlePrevUser}
+                disabled={currentUserIndex === 0}
+              >
+                <Text style={styles.navButtonText}>←</Text>
+              </TouchableOpacity>
+              <Text style={styles.navCounter}>
+                {currentUserIndex + 1} / {visibleUsers.length}
+              </Text>
+              <TouchableOpacity
+                style={[styles.navButton, currentUserIndex === visibleUsers.length - 1 && styles.navButtonDisabled]}
+                onPress={handleNextUser}
+                disabled={currentUserIndex === visibleUsers.length - 1}
+              >
+                <Text style={styles.navButtonText}>→</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      ) : (
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyStateEmoji}>👀</Text>
+          <Text style={styles.emptyStateText}>No one here yet</Text>
+          <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
+            <Text style={styles.refreshButtonText}>Refresh</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Full-Screen Photo Modal */}
       <Modal
@@ -459,18 +536,152 @@ export default function DashboardScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F8F8',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
-    paddingHorizontal: GRID_PADDING,
-    paddingTop: 8,
-    paddingBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
   },
   logo: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#C44CE0',
+    color: '#000000',
+  },
+  signOutButton: {
+    fontSize: 16,
+    color: '#666666',
+  },
+  eventCard: {
+    backgroundColor: '#FFE5F0',
+    marginHorizontal: 20,
+    marginTop: 16,
+    marginBottom: 24,
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  eventName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FF6B9D',
+    marginBottom: 4,
+  },
+  eventDate: {
+    fontSize: 14,
+    color: '#666666',
+  },
+  profileCardContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  profileCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  profileImageContainer: {
+    width: '100%',
+    aspectRatio: 0.75,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+  },
+  profileInfo: {
+    marginBottom: 16,
+  },
+  profileName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 4,
+  },
+  profileDistance: {
+    fontSize: 16,
+    color: '#666666',
+  },
+  flickButton: {
+    backgroundColor: '#FF6B9D',
+    paddingVertical: 16,
+    borderRadius: 30,
+    alignItems: 'center',
+  },
+  flickButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  navigation: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    gap: 40,
+  },
+  navButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  navButtonDisabled: {
+    opacity: 0.3,
+  },
+  navButtonText: {
+    fontSize: 24,
+    color: '#000000',
+  },
+  navCounter: {
+    fontSize: 16,
+    color: '#666666',
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  emptyStateEmoji: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyStateText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  refreshButton: {
+    marginTop: 16,
+    backgroundColor: '#FF6B9D',
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
+  refreshButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   titleSection: {
     paddingHorizontal: GRID_PADDING,

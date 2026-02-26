@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,18 @@ import {
   Platform,
   StatusBar,
   Alert,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import ViewShot from 'react-native-view-shot';
 
 export default function EventSuccessScreen({ route, navigation }) {
   const { event } = route.params;
+  const qrRef = useRef();
 
   const handleDone = () => {
     // Navigate back to Welcome screen
@@ -27,17 +30,28 @@ export default function EventSuccessScreen({ route, navigation }) {
 
   const handleShare = async () => {
     try {
-      // Simple share - QR code would need additional setup to share as image
-      Alert.alert(
-        'QR Code Created',
-        `Your event "${event.name}" is ready! Share the event ID: ${event.id}`,
-        [
-          { text: 'Copy ID', onPress: () => {} },
-          { text: 'OK', style: 'cancel' },
-        ]
-      );
+      // Capture the QR code as an image
+      const uri = await qrRef.current.capture();
+
+      // Check if sharing is available
+      const isAvailable = await Sharing.isAvailableAsync();
+
+      if (!isAvailable) {
+        Alert.alert('Sharing not available', 'Unable to share on this device.');
+        return;
+      }
+
+      // Share the QR code image
+      await Sharing.shareAsync(uri, {
+        mimeType: 'image/png',
+        dialogTitle: `${event.name} - Event QR Code`,
+        UTI: 'public.png',
+      });
+
+      console.log('QR code shared successfully');
     } catch (error) {
-      console.error('Failed to share:', error);
+      console.error('Failed to share QR code:', error);
+      Alert.alert('Share Failed', 'Unable to share QR code. Please try again.');
     }
   };
 
@@ -75,14 +89,17 @@ export default function EventSuccessScreen({ route, navigation }) {
 
           {/* QR Code */}
           <View style={styles.qrContainer}>
-            <View style={styles.qrBackground}>
-              <QRCode
-                value={event.id}
-                size={220}
-                backgroundColor="white"
-                color="black"
-              />
-            </View>
+            <ViewShot ref={qrRef} options={{ format: 'png', quality: 1.0 }}>
+              <View style={styles.qrBackground}>
+                <QRCode
+                  value={event.id}
+                  size={220}
+                  backgroundColor="white"
+                  color="black"
+                />
+                <Text style={styles.qrEventName}>{event.name}</Text>
+              </View>
+            </ViewShot>
           </View>
 
           <Text style={styles.instructions}>
@@ -94,7 +111,8 @@ export default function EventSuccessScreen({ route, navigation }) {
           {/* Buttons */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.outlineButton} onPress={handleShare}>
-              <Text style={styles.outlineButtonText}>Share Event</Text>
+              <Text style={styles.outlineButtonIcon}>📤</Text>
+              <Text style={styles.outlineButtonText}>Share QR</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={handleDone}>
@@ -165,6 +183,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    alignItems: 'center',
+  },
+  qrEventName: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
   },
   instructions: {
     fontSize: 16,
@@ -197,6 +223,13 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 30,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+  },
+  outlineButtonIcon: {
+    fontSize: 16,
+    color: '#FFFFFF',
   },
   outlineButtonText: {
     fontSize: 18,

@@ -32,8 +32,8 @@ export default function WelcomeScreen({ navigation }) {
       return;
     }
 
-    // User is authenticated, proceed to host onboarding
-    navigation.navigate('HostOnboarding1');
+    // User is authenticated, proceed directly to create event
+    navigation.navigate('CreateEvent');
   };
 
   return (
