@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../lib/userContext';
 
 export default function WelcomeScreen({ navigation }) {
@@ -34,6 +35,30 @@ export default function WelcomeScreen({ navigation }) {
 
     // User is authenticated, proceed directly to create event
     navigation.navigate('CreateEvent');
+  };
+
+  // DEBUG: Clear all cached data
+  const handleClearCache = async () => {
+    Alert.alert(
+      'Clear App Data',
+      'This will clear all cached data including festival ID. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('festivalId');
+              await AsyncStorage.removeItem('user');
+              Alert.alert('Success', 'Cache cleared! Please restart the app.');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to clear cache');
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -67,6 +92,14 @@ export default function WelcomeScreen({ navigation }) {
               <Text style={styles.outlineButtonText}>Host An Event</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Debug: Clear Cache Button */}
+          <TouchableOpacity
+            style={styles.debugButton}
+            onPress={handleClearCache}
+          >
+            <Text style={styles.debugButtonText}>Clear Cache (Debug)</Text>
+          </TouchableOpacity>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -148,5 +181,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  debugButton: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  debugButtonText: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
   },
 });
