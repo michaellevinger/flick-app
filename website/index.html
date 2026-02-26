@@ -339,8 +339,11 @@
                 joinWaitlist: 'Join Waitlist',
                 seeHow: 'See How It Works',
                 guestsReady: 'guests ready to connect',
-                featuredTitle: 'As Featured On',
-                featuredDescription: 'Hear how flick is changing the wedding experience',
+                featuredTitle: 'Hear Our Story',
+                featuredDescription: 'From podcast to reality—listen to the vision behind flick',
+                featuredQuote1: 'Open bar, good music, and a room full of people who believe in love? Hello Flick makes weddings the ultimate singles scene—in the best possible way, combining technology and kismet!',
+                featuredQuote2: 'Your person might already be in the room! Hello Flick turns wedding receptions into the perfect meet-cute—because the love of your life could be dancing three tables over.',
+                featuredQuote3: 'The best wedding favor isn\'t a shot glass with your wedding date on it; it\'s giving your single guests a chance to meet someone special.',
                 howItWorksTitle: 'Turn a Look into Hello',
                 howItWorksSubtitle: 'Simple Setup, Magical Results',
                 step1Title: 'You Get a QR Code',
@@ -410,8 +413,11 @@
                 joinWaitlist: 'Únete a la Lista',
                 seeHow: 'Ver Cómo Funciona',
                 guestsReady: 'invitados listos para conectar',
-                featuredTitle: 'Destacado En',
-                featuredDescription: 'Escucha cómo flick está cambiando la experiencia de bodas',
+                featuredTitle: 'Nuestra Historia',
+                featuredDescription: 'Del podcast a la realidad—escucha la visión detrás de flick',
+                featuredQuote1: 'Barra libre, buena música y una sala llena de personas que creen en el amor? Hello Flick convierte las bodas en el lugar perfecto para solteros—de la mejor manera posible, combinando tecnología y destino!',
+                featuredQuote2: 'Tu persona especial podría estar ya en la sala! Hello Flick convierte las recepciones de bodas en el encuentro perfecto—porque el amor de tu vida podría estar bailando tres mesas más allá.',
+                featuredQuote3: 'El mejor recuerdo de boda no es un vaso con la fecha de tu boda; es darles a tus invitados solteros la oportunidad de conocer a alguien especial.',
                 howItWorksTitle: 'Convierte una Mirada en un Hola',
                 howItWorksSubtitle: 'Configuración Simple, Resultados Mágicos',
                 step1Title: 'Recibes un Código QR',
@@ -533,6 +539,15 @@
 
             const featuredDescription = document.getElementById('featuredDescription');
             if (featuredDescription) featuredDescription.textContent = t.featuredDescription;
+
+            const featuredQuote1 = document.getElementById('featuredQuote1');
+            if (featuredQuote1) featuredQuote1.textContent = `"${t.featuredQuote1}"`;
+
+            const featuredQuote2 = document.getElementById('featuredQuote2');
+            if (featuredQuote2) featuredQuote2.textContent = `"${t.featuredQuote2}"`;
+
+            const featuredQuote3 = document.getElementById('featuredQuote3');
+            if (featuredQuote3) featuredQuote3.textContent = `"${t.featuredQuote3}"`;
 
             // Update How It Works section
             const howItWorksTitle = document.querySelector('#how-it-works h2');
@@ -1240,16 +1255,38 @@
         </div>
     </section>
 
-    <!-- As Featured On Section -->
+    <!-- Hear Our Story Section -->
     <section class="py-20 px-6">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-10">
-                <h2 id="featuredTitle" class="text-3xl md:text-4xl font-black mb-4">As Featured On</h2>
-                <p id="featuredDescription" class="text-lg text-flick-dark/70">Hear how flick is changing the wedding experience</p>
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 id="featuredTitle" class="text-3xl md:text-4xl font-black mb-4">Hear Our Story</h2>
+                <p id="featuredDescription" class="text-lg text-flick-dark/70">From podcast to reality—listen to the vision behind flick</p>
             </div>
 
-            <div class="max-w-2xl mx-auto bg-white/60 backdrop-blur-lg rounded-3xl p-6 border border-flick-dark/10">
-                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1M7sNQfgikW8fP0PsjNUPY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Quote Section -->
+                <div class="space-y-6">
+                    <div class="bg-white/60 backdrop-blur-lg rounded-2xl p-8 border border-flick-pink/20">
+                        <p id="featuredQuote1" class="text-lg text-flick-dark/90 italic leading-relaxed">
+                            "Open bar, good music, and a room full of people who believe in love? Hello Flick makes weddings the ultimate singles scene—in the best possible way, combining technology and kismet!"
+                        </p>
+                    </div>
+                    <div class="bg-white/60 backdrop-blur-lg rounded-2xl p-8 border border-flick-pink/20">
+                        <p id="featuredQuote2" class="text-lg text-flick-dark/90 italic leading-relaxed">
+                            "Your person might already be in the room! Hello Flick turns wedding receptions into the perfect meet-cute—because the love of your life could be dancing three tables over."
+                        </p>
+                    </div>
+                    <div class="bg-white/60 backdrop-blur-lg rounded-2xl p-8 border border-flick-pink/20">
+                        <p id="featuredQuote3" class="text-lg text-flick-dark/90 italic leading-relaxed">
+                            "The best wedding favor isn't a shot glass with your wedding date on it; it's giving your single guests a chance to meet someone special."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Spotify Embed -->
+                <div class="bg-white/60 backdrop-blur-lg rounded-3xl p-6 border border-flick-dark/10">
+                    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/episode/1M7sNQfgikW8fP0PsjNUPY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
             </div>
         </div>
     </section>
