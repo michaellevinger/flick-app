@@ -14,6 +14,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 import { findNearbyUsers, subscribeToNearbyUsers, getCurrentFestival, findUsersInFestival } from '../lib/database';
@@ -41,7 +42,6 @@ export default function DashboardScreen({ navigation }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [flickedUsers, setFlickdUsers] = useState(new Set());
   const [usersWhoFlickedMe, setUsersWhoFlickdMe] = useState(new Set());
-  const [hiddenUsers, setHiddenUsers] = useState(new Set());
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentFestival, setCurrentFestival] = useState(null);
   const [countdown, setCountdown] = useState('');
@@ -239,11 +239,6 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const handlePass = (targetUser) => {
-    // Add user to hidden list
-    setHiddenUsers((prev) => new Set(prev).add(targetUser.id));
-  };
-
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -331,65 +326,11 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
-  const renderUserCard = ({ item: nearbyUser }) => {
-    const theyFlickdMe = usersWhoFlickedMe.has(nearbyUser.id);
-    const iFlickdThem = flickedUsers.has(nearbyUser.id);
-
-    return (
-      <TouchableOpacity
-        style={[
-          styles.gridCard,
-          theyFlickdMe && styles.gridCardInterested,
-        ]}
-        onPress={() => navigation.navigate('UserProfile', {
-          user: nearbyUser,
-          onFlick: handleFlick,
-          onPass: handlePass,
-        })}
-        onLongPress={() => setSelectedPhoto(nearbyUser.selfie_url)}
-        activeOpacity={0.8}
-      >
-        {nearbyUser.selfie_url ? (
-          <Image
-            source={{ uri: nearbyUser.selfie_url }}
-            style={styles.gridPhoto}
-          />
-        ) : (
-          <View style={styles.gridPhotoPlaceholder}>
-            <Text style={styles.placeholderText}>?</Text>
-          </View>
-        )}
-
-        {/* Gradient overlay for name visibility */}
-        <View style={styles.nameOverlay}>
-          <Text style={styles.gridName} numberOfLines={1}>
-            {nearbyUser.name}
-          </Text>
-        </View>
-
-        {/* Flicked indicator */}
-        {iFlickdThem && (
-          <View style={styles.flickedBadge}>
-            <Text style={styles.flickedBadgeText}>✓</Text>
-          </View>
-        )}
-
-        {/* They flicked me indicator */}
-        {theyFlickdMe && !iFlickdThem && (
-          <View style={styles.interestedBadge}>
-            <Text style={styles.interestedBadgeText}>♥</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    );
-  };
-
   if (!user) {
     return null;
   }
 
-  const visibleUsers = nearbyUsers.filter((u) => !hiddenUsers.has(u.id));
-  const currentUser = visibleUsers[currentUserIndex];
+  const currentUser = nearbyUsers[currentUserIndex];
 
   const handleSignOut = () => {
     Alert.alert(
@@ -409,7 +350,7 @@ export default function DashboardScreen({ navigation }) {
   };
 
   const handleNextUser = () => {
-    if (currentUserIndex < visibleUsers.length - 1) {
+    if (currentUserIndex < nearbyUsers.length - 1) {
       setCurrentUserIndex(currentUserIndex + 1);
     }
   };
@@ -422,93 +363,123 @@ export default function DashboardScreen({ navigation }) {
 
   // Reset index when users list changes
   useEffect(() => {
-    if (currentUserIndex >= visibleUsers.length) {
-      setCurrentUserIndex(Math.max(0, visibleUsers.length - 1));
+    if (currentUserIndex >= nearbyUsers.length) {
+      setCurrentUserIndex(Math.max(0, nearbyUsers.length - 1));
     }
-  }, [visibleUsers.length]);
+  }, [nearbyUsers.length]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.logo}>flick</Text>
-        <TouchableOpacity onPress={handleSignOut}>
-          <Text style={styles.signOutButton}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Event Card */}
-      {currentFestival && (
-        <View style={styles.eventCard}>
-          <Text style={styles.eventName}>{currentFestival.name}</Text>
-          <Text style={styles.eventDate}>{formatEventDate()}</Text>
-        </View>
-      )}
-
-      {/* Profile Card */}
-      {currentUser ? (
-        <View style={styles.profileCardContainer}>
-          <View style={styles.profileCard}>
-            <TouchableOpacity
-              style={styles.profileImageContainer}
-              onPress={() => navigation.navigate('UserProfile', { userId: currentUser.id })}
-            >
-              <Image
-                source={{ uri: currentUser.selfieUrl || currentUser.selfie_url }}
-                style={styles.profileImage}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>
-                {currentUser.name}, {currentUser.age}
-              </Text>
-              <Text style={styles.profileDistance}>
-                {currentUser.distance_meters ? `${currentUser.distance_meters}m away` : 'Nearby'}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={styles.flickButton}
-              onPress={() => handleFlick(currentUser)}
-            >
-              <Text style={styles.flickButtonText}>Flick</Text>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#C44CE0', '#FF6B9D']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+      >
+        <SafeAreaView style={styles.safeArea}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.logo}>flick</Text>
+            <TouchableOpacity onPress={handleSignOut}>
+              <Text style={styles.signOutButton}>Sign Out</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Navigation Arrows */}
-          {visibleUsers.length > 1 && (
-            <View style={styles.navigation}>
-              <TouchableOpacity
-                style={[styles.navButton, currentUserIndex === 0 && styles.navButtonDisabled]}
-                onPress={handlePrevUser}
-                disabled={currentUserIndex === 0}
-              >
-                <Text style={styles.navButtonText}>←</Text>
-              </TouchableOpacity>
-              <Text style={styles.navCounter}>
-                {currentUserIndex + 1} / {visibleUsers.length}
-              </Text>
-              <TouchableOpacity
-                style={[styles.navButton, currentUserIndex === visibleUsers.length - 1 && styles.navButtonDisabled]}
-                onPress={handleNextUser}
-                disabled={currentUserIndex === visibleUsers.length - 1}
-              >
-                <Text style={styles.navButtonText}>→</Text>
+          {/* Event Card */}
+          {currentFestival && (
+            <View style={styles.eventCard}>
+              <Text style={styles.eventName}>{currentFestival.name}</Text>
+              <Text style={styles.eventDate}>{formatEventDate()}</Text>
+            </View>
+          )}
+
+          {/* Profile Card */}
+          {currentUser ? (
+            <View style={styles.profileCardContainer}>
+              <View style={[
+                styles.profileCard,
+                usersWhoFlickedMe.has(currentUser.id) && styles.profileCardInterested
+              ]}>
+                <TouchableOpacity
+                  style={styles.profileImageContainer}
+                  onPress={() => navigation.navigate('UserProfile', { userId: currentUser.id })}
+                >
+                  <Image
+                    source={{ uri: currentUser.selfieUrl || currentUser.selfie_url }}
+                    style={styles.profileImage}
+                    resizeMode="cover"
+                  />
+                  {usersWhoFlickedMe.has(currentUser.id) && (
+                    <View style={styles.interestedBadge}>
+                      <Text style={styles.interestedBadgeText}>♥</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+
+                <View style={styles.profileInfo}>
+                  <Text style={styles.profileName}>
+                    {currentUser.name}, {currentUser.age}
+                  </Text>
+                  <Text style={styles.profileDistance}>
+                    {currentUser.distance_meters ? `${currentUser.distance_meters}m away` : 'Nearby'}
+                  </Text>
+                  {usersWhoFlickedMe.has(currentUser.id) && (
+                    <Text style={styles.interestedLabel}>Wants to meet you! 💫</Text>
+                  )}
+                </View>
+
+                <LinearGradient
+                  colors={flickedUsers.has(currentUser.id) ? ['#9CA3AF', '#6B7280'] : ['#C44CE0', '#FF6B9D']}
+                  style={styles.flickButton}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <TouchableOpacity
+                    style={styles.flickButtonInner}
+                    onPress={() => handleFlick(currentUser)}
+                  >
+                    <Text style={styles.flickButtonText}>
+                      {flickedUsers.has(currentUser.id) ? 'Flicked ✓' : 'Flick'}
+                    </Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+              </View>
+
+              {/* Navigation Arrows */}
+              {nearbyUsers.length > 1 && (
+                <View style={styles.navigation}>
+                  <TouchableOpacity
+                    style={[styles.navButton, currentUserIndex === 0 && styles.navButtonDisabled]}
+                    onPress={handlePrevUser}
+                    disabled={currentUserIndex === 0}
+                  >
+                    <Text style={styles.navButtonText}>←</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.navCounter}>
+                    {currentUserIndex + 1} / {nearbyUsers.length}
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.navButton, currentUserIndex === nearbyUsers.length - 1 && styles.navButtonDisabled]}
+                    onPress={handleNextUser}
+                    disabled={currentUserIndex === nearbyUsers.length - 1}
+                  >
+                    <Text style={styles.navButtonText}>→</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateEmoji}>👀</Text>
+              <Text style={styles.emptyStateText}>No one here yet</Text>
+              <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
+                <Text style={styles.refreshButtonText}>Refresh</Text>
               </TouchableOpacity>
             </View>
           )}
-        </View>
-      ) : (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateEmoji}>👀</Text>
-          <Text style={styles.emptyStateText}>No one here yet</Text>
-          <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
-            <Text style={styles.refreshButtonText}>Refresh</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+
+        </SafeAreaView>
+      </LinearGradient>
 
       {/* Full-Screen Photo Modal */}
       <Modal
@@ -529,14 +500,19 @@ export default function DashboardScreen({ navigation }) {
           />
         </TouchableOpacity>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F8F8',
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -545,49 +521,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
   },
   logo: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#FFFFFF',
   },
   signOutButton: {
     fontSize: 16,
-    color: '#666666',
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
   eventCard: {
-    backgroundColor: '#FFE5F0',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     marginHorizontal: 20,
     marginTop: 16,
     marginBottom: 24,
     padding: 20,
     borderRadius: 16,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   eventName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FF6B9D',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   eventDate: {
     fontSize: 14,
-    color: '#666666',
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
   profileCardContainer: {
     flex: 1,
     paddingHorizontal: 20,
+    justifyContent: 'center',
   },
   profileCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  profileCardInterested: {
+    borderWidth: 3,
+    borderColor: '#FF6B9D',
+    shadowColor: '#FF6B9D',
+    shadowOpacity: 0.3,
   },
   profileImageContainer: {
     width: '100%',
@@ -595,16 +582,37 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 16,
+    position: 'relative',
   },
   profileImage: {
     width: '100%',
     height: '100%',
   },
+  interestedBadge: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FF6B9D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  interestedBadgeText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+  },
   profileInfo: {
     marginBottom: 16,
   },
   profileName: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#000000',
     marginBottom: 4,
@@ -612,12 +620,22 @@ const styles = StyleSheet.create({
   profileDistance: {
     fontSize: 16,
     color: '#666666',
+    marginBottom: 4,
+  },
+  interestedLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FF6B9D',
+    marginTop: 4,
   },
   flickButton: {
-    backgroundColor: '#FF6B9D',
-    paddingVertical: 16,
     borderRadius: 30,
+    overflow: 'hidden',
+  },
+  flickButtonInner: {
+    paddingVertical: 16,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   flickButtonText: {
     fontSize: 18,
@@ -628,32 +646,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
-    gap: 40,
+    marginTop: 24,
+    gap: 50,
   },
   navButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#FFFFFF',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   navButtonDisabled: {
-    opacity: 0.3,
+    opacity: 0.4,
   },
   navButtonText: {
-    fontSize: 24,
-    color: '#000000',
+    fontSize: 28,
+    color: '#C44CE0',
+    fontWeight: 'bold',
   },
   navCounter: {
-    fontSize: 16,
-    color: '#666666',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   emptyState: {
     flex: 1,
@@ -666,140 +686,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   emptyStateText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '600',
-    color: '#333333',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   refreshButton: {
     marginTop: 16,
-    backgroundColor: '#FF6B9D',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     paddingHorizontal: 32,
-    paddingVertical: 12,
-    borderRadius: 24,
+    paddingVertical: 14,
+    borderRadius: 28,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   refreshButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  titleSection: {
-    paddingHorizontal: GRID_PADDING,
-    paddingBottom: 12,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 2,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: '#888888',
-  },
-  gridContainer: {
-    paddingHorizontal: GRID_PADDING,
-    paddingBottom: 80,
-  },
-  gridRow: {
-    justifyContent: 'flex-start',
-    gap: CARD_GAP,
-    marginBottom: CARD_GAP,
-  },
-  gridCard: {
-    width: CARD_WIDTH,
-    height: CARD_WIDTH * 1.3,
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#F0F0F0',
-  },
-  gridCardInterested: {
-    borderWidth: 3,
-    borderColor: '#FF6B9D',
-    shadowColor: '#FF6B9D',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  gridPhoto: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  gridPhotoPlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#CCCCCC',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    fontSize: 32,
-    color: '#888888',
-  },
-  nameOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
-  gridName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  flickedBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#C44CE0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  flickedBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  interestedBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FF4466',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  interestedBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-  emptyStateEmoji: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  emptyStateText: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 4,
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    color: '#888888',
+    fontWeight: 'bold',
+    color: '#C44CE0',
   },
   photoModalOverlay: {
     flex: 1,
