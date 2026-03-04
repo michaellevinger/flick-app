@@ -49,9 +49,6 @@ export default function QRScannerScreen({ navigation }) {
     setScanned(true);
     setIsJoining(true);
 
-    console.log('🔍 DEBUG: QR Code data received:', data);
-    console.log('🔍 DEBUG: Calling validateAndJoinFestival with festivalCode:', data);
-
     try {
       const festival = await validateAndJoinFestival(null, data);
 

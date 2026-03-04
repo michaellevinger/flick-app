@@ -5,14 +5,10 @@ import { supabase } from './supabase';
  */
 export async function validateAndJoinFestival(userId, festivalCode) {
   try {
-    console.log('🔍 DEBUG validateAndJoinFestival called with:', { userId, festivalCode });
-
     // Get festival info
     const { data: festival, error: festivalError } = await supabase
       .rpc('get_festival_info', { festival_code: festivalCode })
       .single();
-
-    console.log('🔍 DEBUG get_festival_info result:', { festival, festivalError });
 
     if (festivalError || !festival) {
       console.error('Festival validation error:', festivalError);
@@ -21,7 +17,6 @@ export async function validateAndJoinFestival(userId, festivalCode) {
 
     // If userId provided, update user's festival_id
     if (userId) {
-      console.log('🔍 DEBUG Updating user festival_id:', { userId, festivalCode });
       const { error: updateError } = await supabase
         .from('users')
         .update({ festival_id: festivalCode })

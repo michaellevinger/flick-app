@@ -44,12 +44,9 @@ export function UserProvider({ children }) {
       if (userData) {
         const parsedUser = JSON.parse(userData);
 
-        console.log('🔍 DEBUG loadUser - cached user festival_id:', parsedUser.festival_id);
-
         // Clean up invalid festival_ids from old test data
         const INVALID_FESTIVALS = ['coachella2024', 'tomorrowland2024', 'lollapalooza2024', 'test-wedding-1', 'test-wedding-2'];
         if (INVALID_FESTIVALS.includes(parsedUser.festival_id)) {
-          console.log('🔍 DEBUG Removing invalid festival_id:', parsedUser.festival_id);
           parsedUser.festival_id = null;
           await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
 
@@ -59,7 +56,6 @@ export function UserProvider({ children }) {
               .from('users')
               .update({ festival_id: null })
               .eq('id', parsedUser.id);
-            console.log('🔍 DEBUG Database festival_id cleared for user:', parsedUser.id);
           } catch (dbError) {
             console.error('Error clearing festival_id in database:', dbError);
           }
@@ -223,9 +219,6 @@ export function UserProvider({ children }) {
     try {
       // Merge updates with current user data
       const updatedUser = { ...user, ...updates };
-
-      console.log('🔍 DEBUG updateUser called with updates:', updates);
-      console.log('🔍 DEBUG updatedUser.festival_id:', updatedUser.festival_id);
 
       // Update user in database
       await upsertUser({
