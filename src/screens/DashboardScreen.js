@@ -110,6 +110,41 @@ export default function DashboardScreen({ navigation }) {
     return () => clearInterval(interval);
   }, [currentFestival?.ends_at]);
 
+  // Validate festival on mount - redirect if festival doesn't exist
+  useEffect(() => {
+    const validateFestival = async () => {
+      // Only validate if user has a festival_id but currentFestival failed to load
+      if (user?.festival_id && currentFestival === null) {
+        // Give it a moment to load (avoid false positives on initial render)
+        const timeoutId = setTimeout(async () => {
+          try {
+            const festival = await getCurrentFestival(user.id);
+
+            if (!festival) {
+              Alert.alert(
+                'Event Not Found',
+                'This event is no longer available. Please scan a new QR code to join an event.',
+                [
+                  {
+                    text: 'Scan QR Code',
+                    onPress: () => navigation.replace('QRScanner'),
+                  },
+                ],
+                { cancelable: false }
+              );
+            }
+          } catch (error) {
+            console.error('Error validating festival:', error);
+          }
+        }, 2000); // Wait 2 seconds for initial load
+
+        return () => clearTimeout(timeoutId);
+      }
+    };
+
+    validateFestival();
+  }, [user?.festival_id, currentFestival]);
+
   const initializeLocation = async () => {
     const hasPermission = await requestLocationPermission();
     if (!hasPermission) {

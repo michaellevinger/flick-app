@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../lib/userContext';
+import { supabase } from '../lib/supabase';
 
 export default function WelcomeScreen({ navigation }) {
   const { user } = useUser();
@@ -40,20 +41,40 @@ export default function WelcomeScreen({ navigation }) {
   // DEBUG: Clear all cached data
   const handleClearCache = async () => {
     Alert.alert(
-      'Clear App Data',
-      'This will clear all cached data including festival ID. Continue?',
+      'Clear All Data',
+      'This will delete your profile and all data. Continue?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Clear',
+          text: 'Clear Everything',
           style: 'destructive',
           onPress: async () => {
             try {
+              // Get user ID before clearing AsyncStorage
+              const userData = await AsyncStorage.getItem('user');
+              const storedUser = userData ? JSON.parse(userData) : null;
+
+              // Clear AsyncStorage first (never fails)
               await AsyncStorage.removeItem('festivalId');
               await AsyncStorage.removeItem('user');
-              Alert.alert('Success', 'Cache cleared! Please restart the app.');
+
+              // Then try to delete from database
+              if (storedUser?.id) {
+                const { error } = await supabase
+                  .from('users')
+                  .delete()
+                  .eq('id', storedUser.id);
+
+                if (error) throw error;
+              }
+
+              Alert.alert('Success', 'All data cleared!');
             } catch (error) {
-              Alert.alert('Error', 'Failed to clear cache');
+              console.error('Clear cache error:', error);
+              Alert.alert(
+                'Partial Success',
+                'Cache cleared. Database cleanup may have failed. You can still use the app.'
+              );
             }
           },
         },

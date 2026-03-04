@@ -40,7 +40,7 @@ export default function QRScannerScreen({ navigation }) {
   };
 
   const handleSkip = () => {
-    handleBarCodeScanned({ data: 'coachella2024' });
+    handleBarCodeScanned({ data: 'test-festival' });
   };
 
   const handleBarCodeScanned = async ({ type, data }) => {
@@ -138,9 +138,11 @@ export default function QRScannerScreen({ navigation }) {
             <TouchableOpacity style={styles.grantButton} onPress={requestPermission}>
               <Text style={styles.grantButtonText}>Grant Camera Access</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
-              <Text style={styles.skipLinkText}>Skip - Join Test Event</Text>
-            </TouchableOpacity>
+            {__DEV__ && (
+              <TouchableOpacity style={styles.skipLink} onPress={handleSkip}>
+                <Text style={styles.skipLinkText}>Skip - Join Test Event</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </LinearGradient>
       </View>
@@ -182,9 +184,11 @@ export default function QRScannerScreen({ navigation }) {
         <Text style={styles.hintText}>Pinch to zoom in or out</Text>
 
         {/* Skip button for testing */}
-        <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-          <Text style={styles.skipButtonText}>Skip - Join Test Event</Text>
-        </TouchableOpacity>
+        {__DEV__ && (
+          <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+            <Text style={styles.skipButtonText}>Skip - Join Test Event</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {isJoining && (
