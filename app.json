@@ -4,6 +4,8 @@
     "slug": "flick",
     "version": "1.0.0",
     "orientation": "portrait",
+    "privacy": "public",
+    "privacyPolicyUrl": "https://www.helloflick.com/privacy.html",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
