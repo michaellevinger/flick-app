@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 13.2.0"
+    "version": ">= 13.2.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "preview": {
@@ -10,10 +11,11 @@
     },
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "aab"
       },
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "resourceClass": "m-medium"
       }
     }
   },
