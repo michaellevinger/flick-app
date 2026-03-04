@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Flick",
-    "slug": "flick-fresh-dev",
+    "slug": "flick",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,23 +12,27 @@
       "backgroundColor": "#FFFFFF"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.flick.fresh",
+      "supportsTablet": false,
+      "bundleIdentifier": "com.michaellevinger.flick",
+      "buildNumber": "1",
       "infoPlist": {
-        "NSCameraUsageDescription": "Flick needs access to your camera to take a fresh check-in selfie.",
-        "NSLocationWhenInUseUsageDescription": "Flick uses your location to show you people nearby within 100m."
+        "NSCameraUsageDescription": "flick needs camera access to take your profile photo and scan event QR codes",
+        "NSPhotoLibraryUsageDescription": "flick needs photo library access to select profile photos",
+        "NSLocationWhenInUseUsageDescription": "flick uses your location to show you singles nearby at your event (within 500m)"
       }
     },
     "android": {
-      "package": "com.flick.fresh",
+      "package": "com.michaellevinger.flick",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FF6B9D"
       },
       "permissions": [
         "CAMERA",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -42,7 +46,19 @@
       }
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-camera",
+      "expo-location",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          }
+        }
+      ]
     ]
   }
 }
