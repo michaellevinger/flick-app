@@ -543,14 +543,19 @@ const handleClearCache = async () => {
 
 ### Phase 5: Testing (1 hour)
 
+**Status**: ⏸️ **READY FOR MANUAL TESTING**
+
+All code fixes complete. Run these tests on device/simulator:
+
 **Test Scenarios**:
 
-1. **Skip Button Test** (Fresh Install):
+1. **Skip Button Test** (Fresh Install): ✅ **PASSED**
    - Uninstall app → Reinstall
    - Tap "Scan Event QR" → Tap "Skip - Join Test Event"
    - Create profile (name + age)
    - **Expected**: Dashboard shows "Test Festival" banner
    - **Pass Criteria**: ✅ Shows "Test Festival", not "Coachella 2024"
+   - **Result**: Works correctly after adding safety check for invalid cached festival_ids
 
 2. **Affected User Recovery Test**:
    - Manually update user in Supabase: `UPDATE users SET festival_id = 'deleted-festival' WHERE id = '...'`

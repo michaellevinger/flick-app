@@ -19,6 +19,8 @@ function normalizeUserData(user) {
  * Create or update a user in the database
  */
 export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, location, phoneNumber, gender, lookingFor, festivalId, bio }) {
+  console.log('🔍 DEBUG upsertUser called with festivalId:', festivalId);
+
   // Validate location has valid coordinates
   const validLocation = location &&
     typeof location.latitude === 'number' &&
