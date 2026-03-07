@@ -1,0 +1,27 @@
+# Documentation
+*.md
+docs/
+.archive/
+
+# Website (not needed for mobile builds)
+website/
+
+# Development files
+.vscode/
+.idea/
+
+# Test files
+__tests__/
+**/*.test.js
+**/*.spec.js
+
+# Large assets not used in app
+node_modules/.cache/
+.expo/
+
+# Git
+.git/
+
+# Misc
+*.log
+.DS_Store

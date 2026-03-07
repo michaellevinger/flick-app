@@ -74,15 +74,10 @@
 - [x] Database Migrations - Clean SQL files for chat system setup
 
 ### 🔮 Next Up
-- [x] Run system messages migration in Supabase - ✅ COMPLETE
-- [x] Number exchange chat integration - ✅ COMPLETE
-- [x] Gender-based flick rules - ✅ COMPLETE
-- [x] Phone number profile editing - ✅ COMPLETE
-- [x] Deploy website to Vercel - ✅ LIVE at helloflick.com
-- [ ] Test complete number exchange flow with real devices
+- [ ] Build EAS test versions (APK for Android, TestFlight for iOS)
+- [ ] Test with real devices and friends
 - [ ] App Store submission (iOS/Android)
 - [ ] Push notifications
-- [ ] Marketing: Share website on social media
 
 ---
 
@@ -500,36 +495,9 @@ RETURNS INTEGER
 
 ---
 
-## 🎯 Next Steps: Polish & Testing (Task #10)
+## 🎯 Ready for Testing
 
-Now that all core features are complete, focus on polish and real-world testing:
-
-### Polish Tasks
-- [x] Add loading states (chat sending indicators, optimistic updates)
-- [x] Improve message sending UX (instant feedback)
-- [x] Fix image upload reliability (proper blob conversion)
-- [x] Profile view from chat (tap header to see full profile)
-- [x] Remove redundant UI elements (profile icons in headers)
-- [ ] Improve animation smoothness
-- [ ] Add empty state illustrations
-- [ ] Optimize image loading and caching
-- [ ] Add retry logic for failed requests
-- [ ] Implement offline detection
-
-### Testing Tasks
-- [ ] Test with 5+ real users simultaneously
-- [ ] Test edge cases (airplane mode, poor connection, etc.)
-- [ ] Verify auto-wipe works in production
-- [ ] Test distance dissolution with real movement
-- [ ] Performance testing with many nearby users
-- [ ] Battery usage optimization
-
-### Optional Enhancements
-- [ ] Add sound effects for matches
-- [ ] Implement push notifications (Expo Notifications)
-- [ ] Add onboarding tutorial
-- [ ] Create app icon and splash screen
-- [ ] Add analytics (privacy-friendly)
+All core features complete. Next: Build test versions and get feedback from real users.
 
 ---
 
@@ -578,5 +546,5 @@ Claude, write a test scenario to verify that [specific behavior from CLAUDE.md] 
 
 ---
 
-**Last Updated:** 2026-02-25
-**Version:** 0.5.0 (Wedding Landing Page LIVE at helloflick.com - Bilingual ENG/ESP Support)
+**Last Updated:** 2026-03-07
+**Version:** 1.0.0 (All features complete - Ready for EAS builds and real-world testing)
