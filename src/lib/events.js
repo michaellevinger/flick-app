@@ -18,10 +18,11 @@ function generateFestivalId() {
  * @param {Date} eventData.startDate - Event start date (required)
  * @param {Date} eventData.endDate - Event end date (required)
  * @param {string} eventData.sponsorName - Sponsor name (optional)
- * @param {string} eventData.hostUserId - Host user ID (optional, for auth tracking)
+ * @param {string} eventData.hostUserId - Host user ID (optional, legacy, for backward compatibility)
+ * @param {string} eventData.authHostId - Authenticated host user ID (optional, for auth.users tracking)
  * @returns {Promise<Object>} Created festival object with id, name, dates, etc.
  */
-export async function createEvent({ name, venue, startDate, endDate, sponsorName, hostUserId }) {
+export async function createEvent({ name, venue, startDate, endDate, sponsorName, hostUserId, authHostId }) {
   try {
     // Generate unique festival ID
     const festivalId = generateFestivalId();
@@ -36,7 +37,8 @@ export async function createEvent({ name, venue, startDate, endDate, sponsorName
         start_date: startDate.toISOString(),
         end_date: endDate.toISOString(),
         sponsor_name: sponsorName?.trim() || null,
-        host_user_id: hostUserId || null,
+        host_user_id: hostUserId || null, // Legacy field
+        auth_host_id: authHostId || null, // New authenticated host field
         is_active: true,
       })
       .select()
@@ -54,7 +56,8 @@ export async function createEvent({ name, venue, startDate, endDate, sponsorName
       startDate: new Date(data.start_date),
       endDate: new Date(data.end_date),
       sponsorName: data.sponsor_name,
-      hostUserId: data.host_user_id,
+      hostUserId: data.host_user_id, // Legacy field
+      authHostId: data.auth_host_id, // New authenticated host field
       isActive: data.is_active,
       createdAt: new Date(data.created_at),
     };

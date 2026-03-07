@@ -40,7 +40,9 @@ import CreateEventScreen from './src/screens/CreateEventScreen';
 import EventSuccessScreen from './src/screens/EventSuccessScreen';
 import HelpSupportScreen from './src/screens/HelpSupportScreen';
 import NotificationSettingsScreen from './src/screens/NotificationSettingsScreen';
+import HostAuthScreen from './src/screens/HostAuthScreen';
 import { COLORS } from './src/constants/theme';
+import { AuthProvider } from './src/lib/authContext';
 import { UserProvider } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
 
@@ -119,10 +121,11 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <UserProvider>
-          <MatchesProvider>
-            <StatusBar style="dark" />
-            <NavigationContainer>
+        <AuthProvider>
+          <UserProvider>
+            <MatchesProvider>
+              <StatusBar style="dark" />
+              <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Welcome"
               screenOptions={{
@@ -148,6 +151,7 @@ export default function App() {
               <Stack.Screen name="Setup3" component={Setup3Screen} />
 
               {/* Host Event Flow */}
+              <Stack.Screen name="HostAuth" component={HostAuthScreen} options={{ title: 'Sign In' }} />
               <Stack.Screen name="HostOnboarding1" component={HostOnboarding1Screen} />
               <Stack.Screen name="HostOnboarding2" component={HostOnboarding2Screen} />
               <Stack.Screen name="HostOnboarding3" component={HostOnboarding3Screen} />
@@ -218,8 +222,9 @@ export default function App() {
               />
             </Stack.Navigator>
           </NavigationContainer>
-        </MatchesProvider>
-      </UserProvider>
+            </MatchesProvider>
+          </UserProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

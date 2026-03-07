@@ -11,31 +11,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../lib/userContext';
+import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 
 export default function WelcomeScreen({ navigation }) {
   const { user } = useUser();
+  const { isAuthenticated } = useAuth();
 
   const handleScanQR = () => {
     navigation.navigate('QRScanner');
   };
 
   const handleHostEvent = () => {
-    // Check if user is authenticated
-    if (!user) {
-      Alert.alert(
-        'Create Profile First',
-        'You need to create a profile before hosting an event. Scan any event QR code to get started!',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Scan QR Code', onPress: () => navigation.navigate('QRScanner') },
-        ]
-      );
-      return;
+    // Check if host is authenticated (not guest user)
+    if (!isAuthenticated) {
+      // Navigate to authentication screen
+      navigation.navigate('HostAuth', { returnTo: 'CreateEvent' });
+    } else {
+      // Already authenticated, go straight to event creation
+      navigation.navigate('CreateEvent');
     }
-
-    // User is authenticated, proceed directly to create event
-    navigation.navigate('CreateEvent');
   };
 
   // DEBUG: Clear all cached data

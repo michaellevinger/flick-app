@@ -19,9 +19,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { createEvent, validateEventData } from '../lib/events';
 import { useUser } from '../lib/userContext';
+import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 export default function CreateEventScreen({ navigation }) {
   const { user } = useUser();
+  const { session } = useAuth();
   const [eventName, setEventName] = useState('');
   const [venue, setVenue] = useState('');
   const [startDate, setStartDate] = useState(new Date());
@@ -79,13 +82,20 @@ export default function CreateEventScreen({ navigation }) {
     setErrors({});
 
     try {
+      const authHostId = session?.user?.id || null;
+
       const event = await createEvent({
         name: eventName,
         venue: venue.trim(),
         startDate,
         endDate,
-        hostUserId: user?.id || null,
+        authHostId,
       });
+
+      // Increment events_created counter in host_profiles
+      if (authHostId) {
+        await supabase.rpc('increment_events_created', { host_id: authHostId });
+      }
 
       // Navigate to success screen with event details
       navigation.replace('EventSuccess', { event });
