@@ -2,12 +2,15 @@ import React from 'react';
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
   Platform,
   Alert,
   ActivityIndicator,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   GoogleSignin,
@@ -19,7 +22,13 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 
 export default function HostAuthScreen({ navigation, route }) {
-  const { session } = useAuth();
+  const { session, signUpWithEmail, signInWithEmail } = useAuth();
+  const [mode, setMode] = React.useState('signin'); // 'signin' or 'signup'
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
+  const [emailError, setEmailError] = React.useState('');
+  const [passwordError, setPasswordError] = React.useState('');
   const [isSigningIn, setIsSigningIn] = React.useState(false);
   const returnTo = route.params?.returnTo || 'CreateEvent';
 
@@ -36,6 +45,122 @@ export default function HostAuthScreen({ navigation, route }) {
       webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
     });
   }, []);
+
+  // Map Supabase error codes to user-friendly messages
+  const getAuthErrorMessage = (error) => {
+    if (!error) return 'An unexpected error occurred';
+
+    const errorCode = error.code || error.message;
+
+    // Map common error codes
+    if (errorCode.includes('invalid_credentials') || errorCode.includes('Invalid login credentials')) {
+      return 'Invalid email or password';
+    }
+    if (errorCode.includes('email_exists') || errorCode.includes('already registered')) {
+      return 'Account already exists. Try signing in.';
+    }
+    if (errorCode.includes('weak_password') || errorCode.includes('Password should be')) {
+      return 'Password is too weak. Use a mix of letters and numbers.';
+    }
+    if (errorCode.includes('invalid_email') || errorCode.includes('Unable to validate email')) {
+      return 'Please enter a valid email address';
+    }
+    if (errorCode.includes('Email not confirmed')) {
+      return 'Please verify your email address before signing in';
+    }
+
+    // Default to the original error message
+    return error.message || 'An unexpected error occurred';
+  };
+
+  // Email validation
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Validate email field
+  const validateEmail = () => {
+    if (!email.trim()) {
+      setEmailError('Email is required');
+      return false;
+    }
+    if (!isValidEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  // Validate password field
+  const validatePassword = () => {
+    if (!password) {
+      setPasswordError('Password is required');
+      return false;
+    }
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
+  // Handle email/password authentication
+  const handleEmailAuth = async () => {
+    // Clear previous errors
+    setEmailError('');
+    setPasswordError('');
+
+    // Validate inputs
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+
+    setIsSigningIn(true);
+
+    try {
+      let result;
+
+      if (mode === 'signup') {
+        // Sign up
+        result = await signUpWithEmail(email, password);
+
+        if (result.error) {
+          // Show user-friendly error message
+          Alert.alert('Sign Up Error', getAuthErrorMessage(result.error));
+        } else {
+          // Success - create host profile
+          await createHostProfile(result.data.user);
+          Alert.alert(
+            'Account Created',
+            'Your account has been created successfully!',
+            [{ text: 'OK', onPress: () => navigation.replace(returnTo) }]
+          );
+        }
+      } else {
+        // Sign in
+        result = await signInWithEmail(email, password);
+
+        if (result.error) {
+          // Show user-friendly error message
+          Alert.alert('Sign In Error', getAuthErrorMessage(result.error));
+        } else {
+          // Success - create host profile if needed
+          await createHostProfile(result.data.user);
+          navigation.replace(returnTo);
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', getAuthErrorMessage(error));
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
 
   const createHostProfile = async (user, additionalData = {}) => {
     try {
@@ -145,52 +270,166 @@ export default function HostAuthScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Sign in to host events</Text>
-        <Text style={styles.subtitle}>
-          Create your host account to generate event QR codes
-        </Text>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Host an Event</Text>
+          <Text style={styles.subtitle}>
+            Create your host account to generate event QR codes
+          </Text>
 
-        {isSigningIn && (
-          <ActivityIndicator
-            size="large"
-            color="#00FF00"
-            style={styles.loader}
-          />
-        )}
-
-        <View style={styles.buttonContainer}>
-          {/* Apple Sign-In (iOS only) */}
-          {Platform.OS === 'ios' && (
-            <AppleAuthentication.AppleAuthenticationButton
-              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-              cornerRadius={8}
-              style={styles.appleButton}
-              onPress={signInWithApple}
+          {/* Mode Toggle Tabs */}
+          <View style={styles.modeToggle}>
+            <TouchableOpacity
+              style={[
+                styles.modeTab,
+                mode === 'signin' && styles.modeTabActive,
+              ]}
+              onPress={() => setMode('signin')}
               disabled={isSigningIn}
+            >
+              <Text
+                style={[
+                  styles.modeTabText,
+                  mode === 'signin' && styles.modeTabTextActive,
+                ]}
+              >
+                Sign In
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.modeTab,
+                mode === 'signup' && styles.modeTabActive,
+              ]}
+              onPress={() => setMode('signup')}
+              disabled={isSigningIn}
+            >
+              <Text
+                style={[
+                  styles.modeTabText,
+                  mode === 'signup' && styles.modeTabTextActive,
+                ]}
+              >
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Email Input */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, emailError && styles.inputError]}
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setEmailError('');
+              }}
+              onBlur={validateEmail}
+              placeholder="your@email.com"
+              placeholderTextColor="#808080"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!isSigningIn}
             />
-          )}
+            {emailError ? (
+              <Text style={styles.errorText}>{emailError}</Text>
+            ) : null}
+          </View>
 
-          {/* Google Sign-In */}
-          <GoogleSigninButton
-            size={GoogleSigninButton.Size.Wide}
-            color={GoogleSigninButton.Color.Dark}
-            onPress={signInWithGoogle}
+          {/* Password Input */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[
+                  styles.input,
+                  styles.passwordInput,
+                  passwordError && styles.inputError,
+                ]}
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setPasswordError('');
+                }}
+                onBlur={validatePassword}
+                placeholder="Enter password"
+                placeholderTextColor="#808080"
+                secureTextEntry={!isPasswordVisible}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isSigningIn}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                disabled={isSigningIn}
+              >
+                <Text style={styles.eyeIcon}>
+                  {isPasswordVisible ? '🙈' : '👁'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {passwordError ? (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            ) : null}
+          </View>
+
+          {/* Continue Button */}
+          <TouchableOpacity
+            style={[styles.continueButton, isSigningIn && styles.continueButtonDisabled]}
+            onPress={handleEmailAuth}
             disabled={isSigningIn}
-            style={styles.googleButton}
-          />
-        </View>
+          >
+            {isSigningIn ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Text style={styles.continueButtonText}>Continue</Text>
+            )}
+          </TouchableOpacity>
 
-        {/* Back to Welcome */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-          disabled={isSigningIn}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-      </View>
+          {/* OR Divider */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          {/* Social Sign-In Buttons */}
+          <View style={styles.buttonContainer}>
+            {/* Apple Sign-In (iOS only) */}
+            {Platform.OS === 'ios' && (
+              <AppleAuthentication.AppleAuthenticationButton
+                buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+                cornerRadius={8}
+                style={styles.appleButton}
+                onPress={signInWithApple}
+                disabled={isSigningIn}
+              />
+            )}
+
+            {/* Google Sign-In */}
+            <GoogleSigninButton
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={signInWithGoogle}
+              disabled={isSigningIn}
+              style={styles.googleButton}
+            />
+          </View>
+
+          {/* Back to Welcome */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            disabled={isSigningIn}
+          >
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -216,12 +455,123 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#808080',
-    marginBottom: 48,
+    marginBottom: 32,
     textAlign: 'center',
   },
-  loader: {
+  // Mode Toggle
+  modeToggle: {
+    flexDirection: 'row',
+    width: '100%',
+    maxWidth: 300,
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 8,
+    overflow: 'hidden',
   },
+  modeTab: {
+    flex: 1,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+  },
+  modeTabActive: {
+    backgroundColor: '#000000',
+  },
+  modeTabText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  modeTabTextActive: {
+    color: '#FFFFFF',
+  },
+  // Input Fields
+  inputGroup: {
+    width: '100%',
+    maxWidth: 300,
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 8,
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#000000',
+    backgroundColor: '#FFFFFF',
+  },
+  inputError: {
+    borderColor: '#FF0000',
+  },
+  errorText: {
+    fontSize: 12,
+    color: '#FF0000',
+    marginTop: 4,
+  },
+  // Password Field
+  passwordContainer: {
+    position: 'relative',
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    padding: 4,
+  },
+  eyeIcon: {
+    fontSize: 20,
+  },
+  // Continue Button
+  continueButton: {
+    width: '100%',
+    maxWidth: 300,
+    height: 50,
+    backgroundColor: '#00FF00',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  continueButtonDisabled: {
+    backgroundColor: '#808080',
+  },
+  continueButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  // Divider
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 300,
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#D3D3D3',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    fontSize: 14,
+    color: '#808080',
+    fontWeight: '600',
+  },
+  // Social Buttons
   buttonContainer: {
     width: '100%',
     maxWidth: 300,

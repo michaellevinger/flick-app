@@ -39,11 +39,45 @@ export function AuthProvider({ children }) {
     return () => subscription.remove();
   }, []);
 
+  // Sign up with email and password
+  const signUpWithEmail = async (email, password) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password: password,
+      });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      return { data: null, error };
+    }
+  };
+
+  // Sign in with email and password
+  const signInWithEmail = async (email, password) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password: password,
+      });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('Sign in error:', error);
+      return { data: null, error };
+    }
+  };
+
   const value = {
     session,
     isLoading,
     isAuthenticated: !!session,
     user: session?.user || null,
+    signUpWithEmail,
+    signInWithEmail,
   };
 
   return (
