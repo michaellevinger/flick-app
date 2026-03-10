@@ -13,9 +13,7 @@ import { useUser } from '../lib/userContext';
 import {
   getActiveExchange,
   deleteExchange,
-  checkExchangeProximity,
 } from '../lib/vault';
-import { getCurrentLocation } from '../lib/location';
 
 export default function VaultScreen({ route, navigation }) {
   const { exchangeId, otherUserName } = route.params;
@@ -24,12 +22,10 @@ export default function VaultScreen({ route, navigation }) {
   const [exchange, setExchange] = useState(null);
   const [isWiping, setIsWiping] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const proximityCheckInterval = useRef(null);
 
   useEffect(() => {
     loadExchange();
     startCountdown();
-    startProximityCheck();
 
     // Pulse animation for urgency
     const pulseAnimation = Animated.loop(
@@ -50,9 +46,6 @@ export default function VaultScreen({ route, navigation }) {
 
     return () => {
       pulseAnimation.stop();
-      if (proximityCheckInterval.current) {
-        clearInterval(proximityCheckInterval.current);
-      }
     };
   }, []);
 
@@ -90,28 +83,6 @@ export default function VaultScreen({ route, navigation }) {
     }, 1000);
 
     return () => clearInterval(interval);
-  };
-
-  const startProximityCheck = () => {
-    // Check every 30 seconds if users are still within proximity radius
-    proximityCheckInterval.current = setInterval(async () => {
-      await checkProximity();
-    }, 30000); // 30 seconds
-  };
-
-  const checkProximity = async () => {
-    if (!user || !exchangeId) return;
-
-    try {
-      const location = await getCurrentLocation();
-      const result = await checkExchangeProximity(user.id, location, exchangeId);
-
-      if (result.shouldWipe) {
-        handleSelfDestruct(`You moved ${Math.round(result.distance)}m apart`);
-      }
-    } catch (error) {
-      console.error('Error checking proximity:', error);
-    }
   };
 
   const handleSelfDestruct = async (reason) => {
@@ -242,13 +213,12 @@ export default function VaultScreen({ route, navigation }) {
         {/* Privacy Notice */}
         <View style={styles.privacyNotice}>
           <Text style={styles.privacyText}>
-            🔒 This exchange will self-destruct if:
+            🔒 This exchange will self-destruct when:
           </Text>
-          <Text style={styles.privacyBullet}>• Timer reaches 00:00</Text>
-          <Text style={styles.privacyBullet}>
-            • Either person moves &gt;500m away
+          <Text style={styles.privacyBullet}>• Timer reaches 00:00 (15 minutes)</Text>
+          <Text style={styles.privacySubtext}>
+            Save the number to your contacts before time runs out!
           </Text>
-          <Text style={styles.privacyBullet}>• You close this screen</Text>
         </View>
       </View>
 
@@ -397,6 +367,11 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     marginLeft: SPACING.md,
     marginTop: SPACING.xs,
+  },
+  privacySubtext: {
+    ...TYPOGRAPHY.caption,
+    marginTop: SPACING.sm,
+    fontStyle: 'italic',
   },
   closeButton: {
     backgroundColor: COLORS.white,

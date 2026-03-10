@@ -12,11 +12,16 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+// Google Sign-in - Optional (not available in Expo Go)
+let GoogleSignin, GoogleSigninButton, statusCodes;
+try {
+  const GoogleSigninModule = require('@react-native-google-signin/google-signin');
+  GoogleSignin = GoogleSigninModule.GoogleSignin;
+  GoogleSigninButton = GoogleSigninModule.GoogleSigninButton;
+  statusCodes = GoogleSigninModule.statusCodes;
+} catch (e) {
+  console.log('Google Sign-in not available (Expo Go)');
+}
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -39,11 +44,13 @@ export default function HostAuthScreen({ navigation, route }) {
     }
   }, [session]);
 
-  // Configure Google Sign-In
+  // Configure Google Sign-In (only if available)
   React.useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    });
+    if (GoogleSignin?.configure) {
+      GoogleSignin.configure({
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+      });
+    }
   }, []);
 
   // Map Supabase error codes to user-friendly messages
@@ -410,14 +417,25 @@ export default function HostAuthScreen({ navigation, route }) {
               />
             )}
 
-            {/* Google Sign-In */}
-            <GoogleSigninButton
-              size={GoogleSigninButton.Size.Wide}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={signInWithGoogle}
-              disabled={isSigningIn}
-              style={styles.googleButton}
-            />
+            {/* Google Sign-In (only in standalone builds) */}
+            {GoogleSigninButton ? (
+              <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Dark}
+                onPress={signInWithGoogle}
+                disabled={isSigningIn}
+                style={styles.googleButton}
+              />
+            ) : (
+              <View style={styles.expoGoNotice}>
+                <Text style={styles.expoGoText}>
+                  📱 Google Sign-in requires a standalone build
+                </Text>
+                <Text style={styles.expoGoSubtext}>
+                  Use email/password or build the app with EAS
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Back to Welcome */}
@@ -584,6 +602,23 @@ const styles = StyleSheet.create({
   googleButton: {
     width: '100%',
     height: 50,
+  },
+  expoGoNotice: {
+    width: '100%',
+    padding: 16,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  expoGoText: {
+    fontSize: 14,
+    color: '#000000',
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  expoGoSubtext: {
+    fontSize: 12,
+    color: '#808080',
   },
   backButton: {
     marginTop: 32,
