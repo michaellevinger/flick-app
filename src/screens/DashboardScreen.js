@@ -17,8 +17,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
-import { findNearbyUsers, subscribeToNearbyUsers, getCurrentFestival, findUsersInFestival } from '../lib/database';
-import { requestLocationPermission, formatDistance } from '../lib/location';
+import { subscribeToNearbyUsers, getCurrentFestival, findUsersInFestival } from '../lib/database';
 import {
   sendFlick,
   checkMutualMatch,
@@ -55,7 +54,6 @@ export default function DashboardScreen({ navigation }) {
       return;
     }
 
-    initializeLocation();
     setupRealtimeSubscription();
     setupFlickSubscription();
     loadFlicksSent();
@@ -145,21 +143,11 @@ export default function DashboardScreen({ navigation }) {
     validateFestival();
   }, [user?.festival_id, currentFestival]);
 
-  const initializeLocation = async () => {
-    const hasPermission = await requestLocationPermission();
-    if (!hasPermission) {
-      Alert.alert(
-        'Location Required',
-        'flick needs your location to show you people nearby. Please enable location access in settings.'
-      );
-    }
-  };
-
   const setupRealtimeSubscription = () => {
     if (!user) return;
 
     subscriptionRef.current = subscribeToNearbyUsers(user.id, () => {
-      if (user.status && user.location) {
+      if (user.status) {
         loadNearbyUsers();
       }
     });

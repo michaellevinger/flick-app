@@ -1,7 +1,6 @@
 import { supabase } from './supabase';
 import * as FileSystem from 'expo-file-system/legacy';
 import Constants from 'expo-constants';
-import { PROXIMITY_RADIUS } from '../constants/theme';
 
 /**
  * Normalize user data to ensure correct types
@@ -18,14 +17,7 @@ function normalizeUserData(user) {
 /**
  * Create or update a user in the database
  */
-export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, location, phoneNumber, gender, lookingFor, festivalId, bio }) {
-  // Validate location has valid coordinates
-  const validLocation = location &&
-    typeof location.latitude === 'number' &&
-    typeof location.longitude === 'number' &&
-    !isNaN(location.latitude) &&
-    !isNaN(location.longitude);
-
+export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, phoneNumber, gender, lookingFor, festivalId, bio }) {
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -37,7 +29,6 @@ export async function upsertUser({ id, name, age, height, selfieUrl, photos, sta
         selfie_url: selfieUrl,
         photos: photos || null, // Array of photo URLs
         status,
-        location: validLocation ? `POINT(${location.longitude} ${location.latitude})` : null,
         phone_number: phoneNumber || null,
         gender: gender || null,
         looking_for: lookingFor || null,
@@ -91,34 +82,6 @@ export async function updateUserStatus(userId, status) {
 }
 
 /**
- * Update user's location
- */
-export async function updateUserLocation(userId, location) {
-  // Validate location has valid coordinates
-  if (!location ||
-      typeof location.latitude !== 'number' ||
-      typeof location.longitude !== 'number' ||
-      isNaN(location.latitude) ||
-      isNaN(location.longitude)) {
-    console.error('Invalid location data:', location);
-    throw new Error('Invalid location: latitude and longitude must be valid numbers');
-  }
-
-  const { error } = await supabase
-    .from('users')
-    .update({
-      location: `POINT(${location.longitude} ${location.latitude})`,
-      last_heartbeat: new Date().toISOString(),
-    })
-    .eq('id', userId);
-
-  if (error) {
-    console.error('Error updating location:', error);
-    throw error;
-  }
-}
-
-/**
  * Update user's bio
  */
 export async function updateUserBio(userId, bio) {
@@ -164,30 +127,6 @@ export async function updateUserPhotos(userId, photos) {
     console.error('Error updating photos:', error);
     throw error;
   }
-}
-
-/**
- * Find users within a given radius (in meters) of a location
- * Uses PostGIS ST_DWithin for efficient geospatial queries
- */
-export async function findNearbyUsers(userId, location, gender, lookingFor, radiusMeters = PROXIMITY_RADIUS) {
-  // Use PostGIS to find users within radius
-  // ST_DWithin uses geography type which handles Earth's curvature
-  const { data, error } = await supabase.rpc('find_nearby_users', {
-    user_lat: location.latitude,
-    user_lng: location.longitude,
-    radius_meters: radiusMeters,
-    current_user_id: userId,
-    current_user_gender: gender,
-    current_user_looking_for: lookingFor,
-  });
-
-  if (error) {
-    console.error('Error finding nearby users:', error);
-    throw error;
-  }
-
-  return (data || []).map(normalizeUserData);
 }
 
 /**

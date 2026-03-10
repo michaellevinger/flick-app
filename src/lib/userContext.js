@@ -6,13 +6,11 @@ import {
   upsertUser,
   updateHeartbeat,
   updateUserStatus,
-  updateUserLocation,
   uploadSelfie,
   uploadPhotos,
   deleteSelfie,
   deleteUser,
 } from './database';
-import { getCurrentLocation } from './location';
 import { deleteAllFlicksForUser } from './flicks';
 
 const UserContext = createContext(null);
@@ -86,16 +84,6 @@ export function UserProvider({ children }) {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      // Try to get current location (optional - will be set later if permissions not granted)
-      let location = null;
-      try {
-        location = await getCurrentLocation();
-        console.log('Location obtained during profile creation:', location);
-      } catch (locationError) {
-        console.log('Location not available during profile creation (will request later):', locationError.message);
-        // Continue without location - it will be set on first heartbeat
-      }
-
       // Upload photos (support both single photoUri and multiple photoUris)
       let photoUrls = [];
       if (photoUris && photoUris.length > 0) {
@@ -119,7 +107,6 @@ export function UserProvider({ children }) {
         selfieUrl,
         photos: photoUrls, // Store all photo URLs
         status: true, // Default to ON
-        location,
         phoneNumber,
         gender,
         lookingFor,
@@ -136,7 +123,6 @@ export function UserProvider({ children }) {
         selfieUrl,
         photos: photoUrls,
         status: true,
-        location,
         phoneNumber,
         gender,
         lookingFor,
@@ -165,22 +151,6 @@ export function UserProvider({ children }) {
     }
   };
 
-  const updateLocation = async () => {
-    if (!user) return null;
-
-    try {
-      const location = await getCurrentLocation();
-      await updateUserLocation(user.id, location);
-      await saveUser({ ...user, location });
-      console.log('Location updated successfully');
-      return location;
-    } catch (error) {
-      console.log('Could not update location:', error.message);
-      // Don't throw - allow heartbeat to continue without location update
-      return null;
-    }
-  };
-
   const startHeartbeat = () => {
     if (heartbeatInterval.current) return;
 
@@ -202,8 +172,7 @@ export function UserProvider({ children }) {
     if (!user) return;
 
     try {
-      // Update location and heartbeat
-      const newLocation = await updateLocation();
+      // Update heartbeat (no location tracking in event-based model)
       await updateHeartbeat(user.id);
 
       // Note: In event-based model, matches persist regardless of distance
@@ -228,7 +197,6 @@ export function UserProvider({ children }) {
         height: updatedUser.height,
         selfieUrl: updatedUser.selfieUrl,
         status: updatedUser.status,
-        location: updatedUser.location,
         phoneNumber: updatedUser.phoneNumber,
         gender: updatedUser.gender,
         lookingFor: updatedUser.lookingFor,
@@ -393,7 +361,6 @@ export function UserProvider({ children }) {
         createUser,
         updateUser,
         toggleStatus,
-        updateLocation,
         updateSelfie,
         leaveEvent,
         logout,
