@@ -43,5 +43,17 @@ export const TYPOGRAPHY = {
   },
 };
 
+export const GENDER = {
+  male: 'male',
+  female: 'female',
+  other: 'other',
+};
+
+export const LOOKING_FOR = {
+  male: 'male',
+  female: 'female',
+  both: 'both',
+};
+
 export const HEARTBEAT_INTERVAL = 60000; // 60 seconds
 export const AUTO_WIPE_TIMEOUT = 1200000; // 20 minutes

@@ -28,6 +28,7 @@ import {
   deleteFlick,
   createMatch,
 } from '../lib/flicks';
+import { hasSeenTip, markTipSeen } from '../lib/tips';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GRID_PADDING = 16;
@@ -36,7 +37,7 @@ const CARD_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (CARD_GAP * 2)) / 3;
 
 export default function DashboardScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const { user, updateLocation } = useUser();
+  const { user } = useUser();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [flickedUsers, setFlickdUsers] = useState(new Set());
@@ -71,12 +72,12 @@ export default function DashboardScreen({ navigation }) {
   }, [user]);
 
   useEffect(() => {
-    if (user?.status && user?.location) {
+    if (user?.status && user?.festival_id) {
       loadNearbyUsers();
     } else {
       setNearbyUsers([]);
     }
-  }, [user?.status, user?.location]);
+  }, [user?.status, user?.festival_id]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -265,7 +266,6 @@ export default function DashboardScreen({ navigation }) {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      await updateLocation();
       await loadNearbyUsers();
       await loadFlicksReceived();
     } catch (error) {
@@ -293,11 +293,19 @@ export default function DashboardScreen({ navigation }) {
     const canInitiateFlick = !isStraightMatch || theyFlickdMe;
 
     if (!canInitiateFlick && !iFlickdThem) {
-      Alert.alert(
-        'Ladies First 💃',
-        'In straight matches, women make the first move. Wait for her to flick you first!',
-        [{ text: 'Got it' }]
-      );
+      const seen = await hasSeenTip('ladies_first');
+      if (!seen) {
+        Alert.alert(
+          'Ladies First',
+          'In straight matches, women make the first move. Wait for her to flick you first!',
+          [{ text: 'Got it', onPress: async () => {
+            await markTipSeen('ladies_first');
+            setCurrentUserIndex(prev => Math.min(prev + 1, nearbyUsers.length - 1));
+          }}]
+        );
+      } else {
+        setCurrentUserIndex(prev => Math.min(prev + 1, nearbyUsers.length - 1));
+      }
       return;
     }
 
@@ -425,7 +433,7 @@ export default function DashboardScreen({ navigation }) {
               ]}>
                 <TouchableOpacity
                   style={styles.profileImageContainer}
-                  onPress={() => navigation.navigate('UserProfile', { userId: currentUser.id })}
+                  onPress={() => navigation.navigate('UserProfile', { user: currentUser, onFlick: handleFlick, onPass: handleNextUser })}
                 >
                   <Image
                     source={{ uri: currentUser.selfieUrl || currentUser.selfie_url }}

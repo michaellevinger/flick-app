@@ -1,16 +1,21 @@
 #!/usr/bin/env node
 
 /**
- * Create Test Profiles Near Your Location
+ * Create Test Users for Festival/Event Testing
  *
- * This script creates fake profiles within 400m of coordinates you provide.
+ * Creates fake profiles in your event and optionally auto-matches them with you.
  *
  * Usage:
- *   1. Get your coordinates from the app (see them in the console when you open radar)
- *   2. Run: node create-test-profiles-nearby.js YOUR_LAT YOUR_LNG
+ *   node create-test-profiles-nearby.js [FESTIVAL_ID] [COUNT] [YOUR_USER_ID]
  *
- * Example:
- *   node create-test-profiles-nearby.js 37.7749 -122.4194
+ * Examples:
+ *   # Create 5 test users in your event (no auto-match)
+ *   node create-test-profiles-nearby.js wedding-sarah-mike-2024 5
+ *
+ *   # Create 5 test users AND auto-match them with you
+ *   node create-test-profiles-nearby.js wedding-sarah-mike-2024 5 user_1234_abc
+ *
+ * To find your user ID, check the console logs in Expo when you open the app.
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -21,26 +26,25 @@ const supabase = createClient(
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
 );
 
-// Get coordinates from command line args
-const lat = parseFloat(process.argv[2]);
-const lng = parseFloat(process.argv[3]);
-const count = parseInt(process.argv[4]) || 5;
-const festivalId = process.argv[5] || null; // Optional festival ID
+const festivalId = process.argv[2];
+const count = parseInt(process.argv[3]) || 5;
+const myUserId = process.argv[4] || null;
 
-if (isNaN(lat) || isNaN(lng)) {
-  console.log('\n❌ Please provide valid coordinates!\n');
-  console.log('Usage: node create-test-profiles-nearby.js [LAT] [LNG] [COUNT] [FESTIVAL_ID]');
-  console.log('Example: node create-test-profiles-nearby.js 37.7749 -122.4194 5 coachella2024\n');
-  console.log('💡 To get your coordinates:');
-  console.log('   1. Open the app');
-  console.log('   2. Check the console logs - it shows your location');
-  console.log('   3. Your festival ID will also be shown in the logs\n');
+if (!festivalId) {
+  console.log('\n❌ Please provide a festival ID!\n');
+  console.log('Usage: node create-test-profiles-nearby.js [FESTIVAL_ID] [COUNT] [YOUR_USER_ID]');
+  console.log('\nExamples:');
+  console.log('  node create-test-profiles-nearby.js wedding-sarah-mike-2024 5');
+  console.log('  node create-test-profiles-nearby.js wedding-sarah-mike-2024 5 user_1234_abc\n');
+  console.log('Pass YOUR_USER_ID as the 3rd arg to auto-match all test users with you.');
+  console.log('Check the Expo console logs to find your user ID and festival ID.\n');
   process.exit(1);
 }
 
 const names = [
   'Alex', 'Bailey', 'Casey', 'Drew', 'Ellis', 'Finley', 'Gray', 'Harper',
   'Indigo', 'Jordan', 'Kai', 'Logan', 'Morgan', 'Navy', 'Oak', 'Parker',
+  'Quinn', 'Riley', 'Sage', 'Taylor', 'Uma', 'Vesper', 'Winter', 'Xen'
 ];
 
 const bios = [
@@ -52,86 +56,100 @@ const bios = [
   'Beach person 🌊',
   'Night owl 🦉',
   'Bookworm 📚',
+  'Gym rat 💪',
+  'Artist 🎨',
+  'Tech geek 💻',
+  'Nature lover 🌲'
 ];
-
-function randomNearby(centerLat, centerLng, radiusMeters) {
-  const radiusDegrees = radiusMeters / 111320;
-  const angle = Math.random() * 2 * Math.PI;
-  const distance = Math.random() * radiusDegrees;
-  return {
-    latitude: centerLat + (distance * Math.cos(angle)),
-    longitude: centerLng + (distance * Math.sin(angle)),
-  };
-}
 
 function generatePhoto(name, gender) {
   const initial = name[0].toUpperCase();
-  const colors = {
-    Male: 'FF6B9D',
-    Female: 'C44CE0',
-    Other: '00FF00'
-  };
-  return `https://ui-avatars.com/api/?name=${initial}&size=400&background=${colors[gender]}&color=fff&bold=true`;
+  const colors = { male: '4A90E2', female: 'E24A90', other: '00FF00' };
+  return `https://ui-avatars.com/api/?name=${initial}&size=400&background=${colors[gender]}&color=fff&bold=true&font-size=0.4`;
 }
 
-async function createProfile(lat, lng, festivalId) {
-  const gender = ['Male', 'Female', 'Other'][Math.floor(Math.random() * 3)];
+// Valid values — must match src/constants/theme.js GENDER/LOOKING_FOR
+const TEST_GENDER = 'female';
+const TEST_LOOKING_FOR = 'male';
+
+async function createProfile(festivalId) {
+  const gender = TEST_GENDER;
   const name = names[Math.floor(Math.random() * names.length)];
-  const age = 18 + Math.floor(Math.random() * 30);
-  const height = 150 + Math.floor(Math.random() * 50);
-  const lookingFor = ['Male', 'Female', 'Both'][Math.floor(Math.random() * 3)];
+  const age = 21 + Math.floor(Math.random() * 15);
+  const height = 155 + Math.floor(Math.random() * 25);
+  const lookingFor = TEST_LOOKING_FOR;
   const bio = bios[Math.floor(Math.random() * bios.length)];
-  const location = randomNearby(lat, lng, 400);
-  const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-  const userData = {
-    id,
-    name,
-    age,
-    height,
-    selfie_url: generatePhoto(name, gender),
-    photos: [generatePhoto(name, gender)],
-    status: true,
-    location: `POINT(${location.longitude} ${location.latitude})`,
-    gender,
-    looking_for: lookingFor,
-    bio,
-    last_heartbeat: new Date().toISOString(),
-  };
-
-  // Only add festival_id if provided
-  if (festivalId) {
-    userData.festival_id = festivalId;
-  }
+  const id = `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const photoUrl = generatePhoto(name, gender);
 
   const { data, error } = await supabase
     .from('users')
-    .insert(userData)
+    .insert({
+      id,
+      name,
+      age,
+      height,
+      selfie_url: photoUrl,
+      photos: [photoUrl],
+      status: true,
+      gender,
+      looking_for: lookingFor,
+      bio,
+      festival_id: festivalId,
+      last_heartbeat: new Date().toISOString(),
+    })
     .select()
     .single();
 
   if (error) throw error;
 
-  console.log(`✅ ${name}, ${age} (${gender}) at ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`);
+  console.log(`  ✅ ${name}, ${age} (${gender}, looking for ${lookingFor})`);
   return data;
 }
 
+async function sendFlickToUser(fromTestUserId, toMyUserId) {
+  // One-way flick: test user flicks you first (ladies first rule)
+  const { error } = await supabase
+    .from('nudges')
+    .insert({ from_user_id: fromTestUserId, to_user_id: toMyUserId });
+
+  if (error && error.code !== '23505') throw error;
+}
+
 async function main() {
-  console.log('\n🎭 Creating Test Profiles\n');
-  console.log(`📍 Center: ${lat}, ${lng}`);
-  console.log(`🎪 Festival: ${festivalId || 'none (will match all festivals)'}`);
-  console.log(`👥 Creating ${count} profiles within 400m\n`);
+  console.log('\n🎭 Creating Test Users\n');
+  console.log(`🎪 Festival: ${festivalId}`);
+  console.log(`👥 Count: ${count}`);
+  console.log(`🤝 Auto-match: ${myUserId ? 'YES (with ' + myUserId + ')' : 'NO (pass your user ID as 3rd arg)'}\n`);
+
+  const createdUsers = [];
 
   for (let i = 0; i < count; i++) {
     try {
-      await createProfile(lat, lng, festivalId);
+      const user = await createProfile(festivalId);
+      createdUsers.push(user);
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch (error) {
-      console.error(`Failed: ${error.message}`);
+      console.error(`  ❌ Failed: ${error.message}`);
     }
   }
 
-  console.log(`\n✨ Done! Profiles created near you.`);
+  if (myUserId && createdUsers.length > 0) {
+    console.log('\n💃 Sending flicks to you (ladies first)...\n');
+    for (const user of createdUsers) {
+      try {
+        await sendFlickToUser(user.id, myUserId);
+        console.log(`  💚 ${user.name} flicked you`);
+      } catch (error) {
+        console.error(`  ❌ Flick failed for ${user.name}: ${error.message}`);
+      }
+    }
+  }
+
+  console.log(`\n✨ Done! ${createdUsers.length} test users created.`);
+  if (myUserId) {
+    console.log(`💃 They all flicked you first — now flick them back for a match!`);
+  }
   console.log(`\n📱 Pull to refresh in the app to see them!\n`);
 }
 
