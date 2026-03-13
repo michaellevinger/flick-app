@@ -6,7 +6,6 @@ import {
   upsertUser,
   updateHeartbeat,
   updateUserStatus,
-  uploadSelfie,
   uploadPhotos,
   deleteSelfie,
   deleteUser,
@@ -91,8 +90,7 @@ export function UserProvider({ children }) {
         photoUrls = await uploadPhotos(userId, photoUris);
       } else if (photoUri) {
         // Old flow: single photo (backward compatibility)
-        const url = await uploadSelfie(userId, photoUri);
-        photoUrls = [url];
+        photoUrls = await uploadPhotos(userId, [photoUri]);
       }
 
       // First photo is the main selfie

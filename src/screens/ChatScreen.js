@@ -18,13 +18,13 @@ import { useUser } from '../lib/userContext';
 import {
   fetchMessages,
   subscribeToMessages,
-  markMessagesAsRead,
   sendTextMessage,
   sendImageMessage,
   sendEmojiReaction,
   getMessageCount,
   sendSystemMessage,
-} from '../lib/messages';
+} from '../lib/chatService';
+import { markMessagesAsRead } from '../lib/matchService';
 import {
   requestNumberExchange,
   subscribeToExchanges,
@@ -34,8 +34,7 @@ import {
 } from '../lib/vault';
 import MessageBubble from '../components/MessageBubble';
 import MessageInput from '../components/MessageInput';
-
-const MESSAGE_LIMIT = 10; // Maximum messages per person
+import { MESSAGE_LIMIT } from '../constants/theme';
 
 export default function ChatScreen({ route, navigation }) {
   const { matchId, otherUser } = route.params;

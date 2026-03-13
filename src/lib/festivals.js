@@ -125,13 +125,21 @@ export async function getFestivalStats(festivalId) {
       .eq('festival_id', festivalId)
       .eq('status', true);
 
-    // Count matches (flicks where both users are in this festival)
-    const { count: matchCount, error: matchError } = await supabase
-      .from('flicks')
-      .select('*', { count: 'exact', head: true })
-      .in('from_user_id', 
-        supabase.from('users').select('id').eq('festival_id', festivalId)
-      );
+    // Get user IDs in this festival first
+    const { data: festivalUsers } = await supabase
+      .from('users')
+      .select('id')
+      .eq('festival_id', festivalId);
+
+    const userIds = (festivalUsers || []).map(u => u.id);
+
+    // Count nudges sent between festival users
+    const { count: matchCount, error: matchError } = userIds.length > 0
+      ? await supabase
+          .from('nudges')
+          .select('*', { count: 'exact', head: true })
+          .in('from_user_id', userIds)
+      : { count: 0, error: null };
 
     return {
       activeUsers: userCount || 0,

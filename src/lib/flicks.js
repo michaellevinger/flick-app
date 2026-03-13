@@ -1,16 +1,5 @@
 import { supabase } from './supabase';
-
-/**
- * Normalize user data to ensure correct types
- */
-function normalizeUserData(user) {
-  if (!user) return null;
-  return {
-    ...user,
-    status: user.status !== undefined ? Boolean(user.status) : undefined,
-    age: user.age !== undefined ? Number(user.age) : undefined,
-  };
-}
+import { getMatchId, normalizeUserData } from '../utils/matchUtils';
 
 /**
  * Send a flick from one user to another
@@ -189,10 +178,7 @@ export async function getMatchedUserInfo(userId) {
  */
 export async function createMatch(user1Id, user2Id) {
   try {
-    // Generate match ID (alphabetically sorted)
-    const matchId = user1Id < user2Id
-      ? `${user1Id}|${user2Id}`
-      : `${user2Id}|${user1Id}`;
+    const matchId = getMatchId(user1Id, user2Id);
 
     // Check if match already exists
     const { data: existingMatch } = await supabase
@@ -238,10 +224,7 @@ export async function unmatchUser(currentUserId, otherUserId) {
     await deleteFlick(currentUserId, otherUserId);
     await deleteFlick(otherUserId, currentUserId);
 
-    // Delete match record
-    const matchId = currentUserId < otherUserId
-      ? `${currentUserId}|${otherUserId}`
-      : `${otherUserId}|${currentUserId}`;
+    const matchId = getMatchId(currentUserId, otherUserId);
 
     const { error: matchError } = await supabase
       .from('matches')

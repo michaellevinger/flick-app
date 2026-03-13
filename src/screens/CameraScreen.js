@@ -17,7 +17,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
-import { uploadSelfie, deleteSelfie } from '../lib/database';
+import { uploadPhotos, deleteSelfie } from '../lib/database';
 
 export default function CameraScreen({ navigation, route }) {
   const { user, isLoading, updateSelfie } = useUser();
@@ -161,7 +161,7 @@ export default function CameraScreen({ navigation, route }) {
         }
 
         // Upload new selfie
-        const newSelfieUrl = await uploadSelfie(user.id, photo.uri);
+        const [newSelfieUrl] = await uploadPhotos(user.id, [photo.uri]);
 
         // Update user using context
         await updateSelfie(newSelfieUrl);

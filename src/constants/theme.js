@@ -56,4 +56,10 @@ export const LOOKING_FOR = {
 };
 
 export const HEARTBEAT_INTERVAL = 60000; // 60 seconds
-export const AUTO_WIPE_TIMEOUT = 1200000; // 20 minutes
+
+export const MESSAGE_LIMIT = 10; // Max messages per person per chat
+
+export const ERROR_CODES = {
+  DUPLICATE_KEY: '23505',  // PostgreSQL unique constraint violation
+  NOT_FOUND: 'PGRST116',  // Supabase row not found
+};

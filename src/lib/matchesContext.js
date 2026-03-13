@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { fetchMatches } from './messages';
+import { fetchMatches } from './matchService';
 import { useUser } from './userContext';
 import { supabase } from './supabase';
 

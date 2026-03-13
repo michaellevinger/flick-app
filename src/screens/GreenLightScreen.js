@@ -22,7 +22,7 @@ import {
   subscribeToExchanges,
   getUserPhoneNumber,
 } from '../lib/vault';
-import { getMatchId } from '../lib/messages';
+import { getMatchId } from '../utils/matchUtils';
 
 const { width, height } = Dimensions.get('window');
 

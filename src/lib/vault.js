@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import { PROXIMITY_RADIUS } from '../constants/theme';
 
 /**
  * Request to exchange numbers with another user
@@ -114,7 +113,7 @@ export async function getActiveExchange(userId) {
 }
 
 /**
- * Delete an exchange (manual cleanup or proximity wipe)
+ * Delete an exchange
  */
 export async function deleteExchange(exchangeId) {
   try {
@@ -167,58 +166,6 @@ export function subscribeToExchanges(userId, onUpdate) {
     .subscribe();
 
   return subscription;
-}
-
-/**
- * Check if distance exceeds PROXIMITY_RADIUS for an exchange (proximity wipe)
- */
-export async function checkExchangeProximity(userId, currentLocation, exchangeId) {
-  try {
-    // Get the exchange to find the other user
-    const { data: exchange, error: exchangeError } = await supabase
-      .from('exchanges')
-      .select('user_a_id, user_b_id')
-      .eq('id', exchangeId)
-      .single();
-
-    if (exchangeError || !exchange) return { shouldWipe: false };
-
-    // Determine the other user's ID
-    const otherUserId = exchange.user_a_id === userId ? exchange.user_b_id : exchange.user_a_id;
-
-    // Get the other user's location
-    const { data: otherUser, error: userError } = await supabase
-      .from('users')
-      .select('location')
-      .eq('id', otherUserId)
-      .single();
-
-    if (userError || !otherUser || !otherUser.location) {
-      return { shouldWipe: false };
-    }
-
-    // Calculate distance (using location helper)
-    const { calculateDistance, parseGeographyPoint } = require('./location');
-    const otherLocation = parseGeographyPoint(otherUser.location);
-
-    if (!otherLocation) return { shouldWipe: false };
-
-    const distance = calculateDistance(
-      currentLocation.latitude,
-      currentLocation.longitude,
-      otherLocation.latitude,
-      otherLocation.longitude
-    );
-
-    // If distance > PROXIMITY_RADIUS, should wipe
-    return {
-      shouldWipe: distance > PROXIMITY_RADIUS,
-      distance,
-    };
-  } catch (error) {
-    console.error('Error checking exchange proximity:', error);
-    return { shouldWipe: false };
-  }
 }
 
 /**

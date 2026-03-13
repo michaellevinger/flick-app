@@ -48,7 +48,7 @@ export default function HelpSupportScreen({ navigation }) {
         <View style={styles.faqCard}>
           <Text style={styles.faqQuestion}>How does Flick work?</Text>
           <Text style={styles.faqAnswer}>
-            Flick helps you meet people at events. Scan the event QR code, create your profile, and browse others within 500 meters. Flick someone to show interest!
+            Flick helps you meet people at events. Scan the event QR code, create your profile, and browse others at the same event. Flick someone to show interest!
           </Text>
         </View>
 
@@ -62,7 +62,7 @@ export default function HelpSupportScreen({ navigation }) {
         <View style={styles.faqCard}>
           <Text style={styles.faqQuestion}>Is my location shared with others?</Text>
           <Text style={styles.faqAnswer}>
-            No. We only show approximate distance ("45m away"). Your exact GPS coordinates are never visible to other users.
+            No. Flick is event-based — you only see other people who joined the same event via the QR code. Your GPS coordinates are never used or shared.
           </Text>
         </View>
 
@@ -76,7 +76,7 @@ export default function HelpSupportScreen({ navigation }) {
         <View style={styles.faqCard}>
           <Text style={styles.faqQuestion}>What happens when I leave the event?</Text>
           <Text style={styles.faqAnswer}>
-            Your profile stays active until you sign out or delete your account. Matches dissolve when you're more than 500m apart.
+            Your profile and matches stay active until you sign out or delete your account.
           </Text>
         </View>
 
