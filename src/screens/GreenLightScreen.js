@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,21 +7,14 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
-  Alert,
-  TextInput,
   Modal,
 } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useUser } from '../lib/userContext';
-import {
-  requestNumberExchange,
-  acceptExchangeRequest,
-  declineExchangeRequest,
-  getExchangeRequest,
-  subscribeToExchanges,
-  getUserPhoneNumber,
-} from '../lib/vault';
+import { usePulseAnimation } from '../hooks/usePulseAnimation';
+import { useHaptics } from '../hooks/useHaptics';
+import { useNumberExchange } from '../hooks/useNumberExchange';
+import NumberExchangeModal from '../components/NumberExchangeModal';
 import { getMatchId } from '../utils/matchUtils';
 
 const { width, height } = Dimensions.get('window');
@@ -29,285 +22,63 @@ const { width, height } = Dimensions.get('window');
 export default function GreenLightScreen({ route, navigation }) {
   const { matchedUser } = route.params;
   const { user } = useUser();
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [exchangeRequest, setExchangeRequest] = useState(null);
-  const [showPhoneInput, setShowPhoneInput] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [showIncomingRequest, setShowIncomingRequest] = useState(false);
-  const [incomingRequest, setIncomingRequest] = useState(null);
-  const exchangeSubscription = useRef(null);
+
+  const { pulseAnim, fadeAnim } = usePulseAnimation();
+  const { triggerHapticPulse } = useHaptics();
+  const {
+    exchangeRequest,
+    showPhoneInput,
+    closePhoneInput,
+    phoneNumber,
+    setPhoneNumber,
+    showIncomingRequest,
+    incomingRequest,
+    handleRequestNumber,
+    handleSubmitPhoneNumber,
+    handleAcceptRequest,
+    handleDeclineRequest,
+  } = useNumberExchange(user, matchedUser, navigation);
 
   useEffect(() => {
-    // Trigger haptic feedback immediately
     triggerHapticPulse();
-
-    // Fade in animation
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-
-    // Continuous pulse animation
-    const pulseAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-
-    pulseAnimation.start();
-
-    // Load existing exchange request
-    checkExistingExchange();
-
-    // Subscribe to exchange updates
-    setupExchangeSubscription();
-
-    // Load user's saved phone number
-    loadPhoneNumber();
-
-    return () => {
-      pulseAnimation.stop();
-      if (exchangeSubscription.current) {
-        exchangeSubscription.current.unsubscribe();
-      }
-    };
   }, []);
 
-  const loadPhoneNumber = async () => {
-    if (!user) return;
-    const savedPhone = await getUserPhoneNumber(user.id);
-    if (savedPhone) {
-      setPhoneNumber(savedPhone);
-    }
-  };
-
-  const checkExistingExchange = async () => {
-    if (!user) return;
-    const existing = await getExchangeRequest(user.id, matchedUser.id);
-    if (existing) {
-      setExchangeRequest(existing);
-      // If there's a pending request TO me, show it
-      if (existing.requested_by === matchedUser.id && existing.status === 'pending') {
-        setIncomingRequest(existing);
-        setShowIncomingRequest(true);
-      }
-      // If accepted, navigate to vault
-      if (existing.status === 'accepted') {
-        Alert.alert(
-          'Match!',
-          `You both matched! Exchange your numbers now.`,
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.navigate('Vault', {
-                  exchangeId: existing.id,
-                  otherUserName: matchedUser.name,
-                });
-              },
-            },
-          ]
-        );
-      }
-    }
-  };
-
-  const setupExchangeSubscription = () => {
-    if (!user) return;
-
-    exchangeSubscription.current = subscribeToExchanges(user.id, (payload) => {
-      const exchange = payload.new;
-
-      // If it's a new request TO me
-      if (
-        exchange &&
-        exchange.requested_by === matchedUser.id &&
-        exchange.status === 'pending'
-      ) {
-        setIncomingRequest(exchange);
-        setShowIncomingRequest(true);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      }
-
-      // If request was accepted
-      if (exchange && exchange.status === 'accepted') {
-        setExchangeRequest(exchange);
-        Alert.alert(
-          'Match!',
-          `You both matched! Exchange your numbers now.`,
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.navigate('Vault', {
-                  exchangeId: exchange.id,
-                  otherUserName: matchedUser.name,
-                });
-              },
-            },
-          ]
-        );
-      }
-    });
-  };
-
-  const triggerHapticPulse = async () => {
-    // Heavy success notification
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-    // Follow up with impact pulses
-    setTimeout(() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    }, 200);
-
-    setTimeout(() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }, 400);
-  };
-
-  const handleClose = () => {
-    navigation.goBack();
-  };
-
-  const handleRequestNumber = () => {
-    setShowPhoneInput(true);
-  };
-
-  const handleSubmitPhoneNumber = async () => {
-    if (!phoneNumber || phoneNumber.length < 10) {
-      Alert.alert('Invalid Number', 'Please enter a valid phone number.');
-      return;
-    }
-
-    if (!user) return;
-
-    try {
-      // Get the matched user's phone number (they must have one set)
-      const theirPhone = await getUserPhoneNumber(matchedUser.id);
-
-      if (!theirPhone) {
-        Alert.alert(
-          'Not Available',
-          `${matchedUser.name} hasn't set their phone number yet.`
-        );
-        return;
-      }
-
-      const result = await requestNumberExchange(
-        user.id,
-        matchedUser.id,
-        phoneNumber,
-        theirPhone
-      );
-
-      setShowPhoneInput(false);
-
-      if (result.alreadyExists) {
-        Alert.alert('Request Pending', 'You already sent a request to this person.');
-      } else {
-        // Request sent silently - no alert needed
-        setExchangeRequest(result.exchange);
-      }
-    } catch (error) {
-      console.error('Error requesting exchange:', error);
-      Alert.alert('Error', 'Failed to send request. Please try again.');
-    }
-  };
-
-  const handleAcceptRequest = async () => {
-    if (!incomingRequest) return;
-
-    try {
-      await acceptExchangeRequest(incomingRequest.id);
-      setShowIncomingRequest(false);
-
-      // Navigate to vault
-      navigation.navigate('Vault', {
-        exchangeId: incomingRequest.id,
-        otherUserName: matchedUser.name,
-      });
-    } catch (error) {
-      console.error('Error accepting request:', error);
-      Alert.alert('Error', 'Failed to accept request. Please try again.');
-    }
-  };
-
-  const handleDeclineRequest = async () => {
-    if (!incomingRequest) return;
-
-    try {
-      await declineExchangeRequest(incomingRequest.id);
-      setShowIncomingRequest(false);
-      setIncomingRequest(null);
-    } catch (error) {
-      console.error('Error declining request:', error);
-    }
+  const handleStartChat = () => {
+    const matchId = getMatchId(user.id, matchedUser.id);
+    navigation.navigate('Chat', { matchId, otherUser: matchedUser });
   };
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      {/* Full-screen green background with pulse */}
+      {/* Pulsing full-screen green background */}
       <Animated.View
-        style={[
-          styles.greenBackground,
-          {
-            transform: [{ scale: pulseAnim }],
-          },
-        ]}
+        style={[styles.greenBackground, { transform: [{ scale: pulseAnim }] }]}
       />
 
-      {/* Content */}
       <View style={styles.content}>
         <Text style={styles.title}>GREEN LIGHT</Text>
 
-        {/* Matched User Info */}
         <View style={styles.userContainer}>
           {matchedUser.selfie_url ? (
             <Animated.Image
               source={{ uri: matchedUser.selfie_url }}
-              style={[
-                styles.userPhoto,
-                {
-                  transform: [{ scale: pulseAnim }],
-                },
-              ]}
+              style={[styles.userPhoto, { transform: [{ scale: pulseAnim }] }]}
             />
           ) : (
             <View style={styles.userPhotoPlaceholder}>
               <Text style={styles.userInitial}>{matchedUser.name[0]}</Text>
             </View>
           )}
-
           <Text style={styles.matchText}>You matched with</Text>
           <Text style={styles.userName}>{matchedUser.name}</Text>
         </View>
 
-        {/* Action Buttons */}
         <View style={styles.actionContainer}>
-          {/* Start Chat Button */}
-          <TouchableOpacity
-            style={styles.chatButton}
-            onPress={() => {
-              const matchId = getMatchId(user.id, matchedUser.id);
-              navigation.navigate('Chat', { matchId, otherUser: matchedUser });
-            }}
-          >
+          <TouchableOpacity style={styles.chatButton} onPress={handleStartChat}>
             <Text style={styles.chatButtonText}>💬 Start Chat</Text>
           </TouchableOpacity>
 
-          {/* Number Exchange */}
-          {exchangeRequest && exchangeRequest.status === 'pending' ? (
+          {exchangeRequest?.status === 'pending' ? (
             <Text style={styles.hint}>Number request pending...</Text>
           ) : (
             <>
@@ -317,66 +88,32 @@ export default function GreenLightScreen({ route, navigation }) {
               >
                 <Text style={styles.requestNumberText}>📞 Request Number</Text>
               </TouchableOpacity>
-              <Text style={styles.hint}>
-                They're nearby. Go say hi!
-              </Text>
+              <Text style={styles.hint}>They're nearby. Go say hi!</Text>
             </>
           )}
         </View>
 
-        {/* Close Button */}
-        <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+        <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
           <Text style={styles.closeButtonText}>Back to Radar</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Phone Number Input Modal */}
-      <Modal
+      {/* Phone number input modal */}
+      <NumberExchangeModal
         visible={showPhoneInput}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowPhoneInput(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Enter Your Phone Number</Text>
-            <Text style={styles.modalSubtitle}>
-              This will be shared with {matchedUser.name} if they accept
-            </Text>
+        phoneNumber={phoneNumber}
+        onChangePhone={setPhoneNumber}
+        otherUserName={matchedUser.name}
+        onSubmit={handleSubmitPhoneNumber}
+        onCancel={closePhoneInput}
+      />
 
-            <TextInput
-              style={styles.phoneInput}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              placeholder="(555) 123-4567"
-              keyboardType="phone-pad"
-              autoFocus
-            />
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.modalButtonCancel}
-                onPress={() => setShowPhoneInput(false)}
-              >
-                <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButtonConfirm}
-                onPress={handleSubmitPhoneNumber}
-              >
-                <Text style={styles.modalButtonText}>Send Request</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Incoming Request Modal */}
+      {/* Incoming request modal */}
       <Modal
         visible={showIncomingRequest}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowIncomingRequest(false)}
+        onRequestClose={() => {}}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -392,16 +129,10 @@ export default function GreenLightScreen({ route, navigation }) {
             </View>
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.modalButtonCancel}
-                onPress={handleDeclineRequest}
-              >
+              <TouchableOpacity style={styles.modalButtonCancel} onPress={handleDeclineRequest}>
                 <Text style={styles.modalButtonText}>Decline</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButtonConfirm}
-                onPress={handleAcceptRequest}
-              >
+              <TouchableOpacity style={styles.modalButtonConfirm} onPress={handleAcceptRequest}>
                 <Text style={styles.modalButtonText}>Accept</Text>
               </TouchableOpacity>
             </View>
@@ -517,6 +248,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
   },
+  closeButton: {
+    backgroundColor: COLORS.black,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.green,
+    fontWeight: 'bold',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -541,15 +283,6 @@ const styles = StyleSheet.create({
   modalSubtitle: {
     ...TYPOGRAPHY.body,
     color: COLORS.gray,
-    marginBottom: SPACING.lg,
-    textAlign: 'center',
-  },
-  phoneInput: {
-    ...TYPOGRAPHY.subtitle,
-    borderWidth: 2,
-    borderColor: COLORS.black,
-    borderRadius: 8,
-    padding: SPACING.md,
     marginBottom: SPACING.lg,
     textAlign: 'center',
   },
@@ -591,16 +324,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.black,
     textAlign: 'center',
-  },
-  closeButton: {
-    backgroundColor: COLORS.black,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.green,
-    fontWeight: 'bold',
   },
 });

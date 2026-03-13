@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -22,23 +23,38 @@ export default function DashboardScreen({ navigation }) {
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
 
   const { festival } = useFestival(user?.id, user?.festival_id, navigation);
-  const { users, refresh } = useFestivalUsers(user);
+  const { users, refresh, reload } = useFestivalUsers(user);
 
-  // Reset carousel index when user list shrinks
-  useEffect(() => {
-    if (currentUserIndex >= users.length) {
-      setCurrentUserIndex(Math.max(0, users.length - 1));
-    }
-  }, [users.length]);
-
+  // Advance to the next card; going past the end shows the empty state
   const handleAdvance = useCallback(() => {
-    setCurrentUserIndex((prev) => Math.min(prev + 1, users.length - 1));
-  }, [users.length]);
+    setCurrentUserIndex((prev) => prev + 1);
+  }, []);
 
   const { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived } = useFlicks(
     user,
     navigation,
     handleAdvance
+  );
+
+  // Hide users already flicked — reuses the flickedUsers Set from useFlicks
+  const visibleUsers = useMemo(
+    () => users.filter((u) => !flickedUsers.has(u.id)),
+    [users, flickedUsers]
+  );
+
+  // When the visible list shrinks, clamp the index so the empty state shows
+  useEffect(() => {
+    if (currentUserIndex > visibleUsers.length) {
+      setCurrentUserIndex(visibleUsers.length);
+    }
+  }, [visibleUsers.length]);
+
+  // Reload silently every time the Radar tab comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+      loadFlicksReceived();
+    }, [])
   );
 
   const handleRefresh = async () => {
@@ -51,7 +67,7 @@ export default function DashboardScreen({ navigation }) {
     return null;
   }
 
-  const currentUser = users[currentUserIndex];
+  const currentUser = visibleUsers[currentUserIndex];
 
   const handleSignOut = () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -94,7 +110,7 @@ export default function DashboardScreen({ navigation }) {
               onPrev={() => setCurrentUserIndex((prev) => prev - 1)}
               onNext={() => setCurrentUserIndex((prev) => prev + 1)}
               currentIndex={currentUserIndex}
-              totalCount={users.length}
+              totalCount={visibleUsers.length}
             />
           ) : (
             <View style={styles.emptyState}>

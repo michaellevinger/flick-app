@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -12,19 +12,11 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, SPACING, TYPOGRAPHY, MESSAGE_LIMIT } from '../constants/theme';
 import { useUser } from '../lib/userContext';
-import {
-  fetchMessages,
-  subscribeToMessages,
-  sendTextMessage,
-  sendImageMessage,
-  sendEmojiReaction,
-  getMessageCount,
-  sendSystemMessage,
-} from '../lib/chatService';
-import { markMessagesAsRead } from '../lib/matchService';
+import { useChatMessages } from '../hooks/useChatMessages';
+import { sendSystemMessage } from '../lib/chatService';
 import {
   requestNumberExchange,
   subscribeToExchanges,
@@ -34,57 +26,48 @@ import {
 } from '../lib/vault';
 import MessageBubble from '../components/MessageBubble';
 import MessageInput from '../components/MessageInput';
-import { MESSAGE_LIMIT } from '../constants/theme';
 
 export default function ChatScreen({ route, navigation }) {
   const { matchId, otherUser } = route.params;
   const { user } = useUser();
   const insets = useSafeAreaInsets();
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [myMessageCount, setMyMessageCount] = useState(0);
-  const [theirMessageCount, setTheirMessageCount] = useState(0);
+
+  const {
+    messages,
+    loading,
+    myMessageCount,
+    theirMessageCount,
+    flatListRef,
+    handleSendText,
+    handleSendImage,
+    markRead,
+  } = useChatMessages(matchId, user?.id, otherUser?.id);
+
   const [exchangeRequest, setExchangeRequest] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
-  const flatListRef = useRef(null);
-  const subscriptionRef = useRef(null);
 
+  // Mark as read when screen regains focus
   useEffect(() => {
-    loadMessages();
-    loadMessageCounts();
-    setupSubscription();
-    markAsRead();
-
-    // Mark as read when screen regains focus
     const unsubscribe = navigation.addListener('focus', () => {
-      markAsRead();
+      markRead();
     });
-
-    return () => {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
-      }
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [matchId]);
 
-  // Show limit modal when user reaches 10 messages
+  // Show limit modal when user reaches the message cap
   useEffect(() => {
     if (myMessageCount >= MESSAGE_LIMIT && !exchangeRequest) {
       setShowLimitModal(true);
     }
   }, [myMessageCount, exchangeRequest]);
 
-  // Subscribe to exchange requests
+  // Subscribe to exchange requests for this match
   useEffect(() => {
     if (!user) return;
 
     const exchangeSub = subscribeToExchanges(user.id, async (exchangeUpdate) => {
       if (exchangeUpdate.status === 'pending') {
-        // Someone requested your number
         setExchangeRequest(exchangeUpdate);
-
-        // Show alert
         Alert.alert(
           'Number Exchange Request',
           `${otherUser.name} wants to exchange phone numbers. Accept?`,
@@ -103,216 +86,18 @@ export default function ChatScreen({ route, navigation }) {
       }
 
       if (exchangeUpdate.status === 'accepted') {
-        // Exchange accepted - navigate to vault
-        Alert.alert(
-          'Exchange Accepted!',
-          'Check your vault to see phone numbers.',
-          [
-            {
-              text: 'View Vault',
-              onPress: () => navigation.navigate('Vault'),
-            },
-          ]
-        );
+        Alert.alert('Exchange Accepted!', 'Check your vault to see phone numbers.', [
+          { text: 'View Vault', onPress: () => navigation.navigate('Vault') },
+        ]);
       }
     });
 
-    return () => {
-      exchangeSub?.unsubscribe();
-    };
+    return () => exchangeSub?.unsubscribe();
   }, [user, otherUser]);
-
-  const loadMessages = async () => {
-    try {
-      const data = await fetchMessages(matchId);
-      // Reverse for FlatList (newest at bottom)
-      setMessages(data.reverse());
-    } catch (error) {
-      console.error('Error loading messages:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadMessageCounts = async () => {
-    if (!user) return;
-    try {
-      const myCount = await getMessageCount(matchId, user.id);
-      const theirCount = await getMessageCount(matchId, otherUser.id);
-      setMyMessageCount(myCount);
-      setTheirMessageCount(theirCount);
-    } catch (error) {
-      console.error('Error loading message counts:', error);
-    }
-  };
-
-  const setupSubscription = () => {
-    subscriptionRef.current = subscribeToMessages(matchId, (newMessage) => {
-      setMessages((prev) => {
-        // Check if this message is already in the list (from optimistic update)
-        const exists = prev.some((msg) => msg.id === newMessage.id);
-        if (exists) {
-          // Replace temp message with real one
-          return prev.map((msg) =>
-            msg.sender_id === newMessage.sender_id &&
-            msg.message_type === newMessage.message_type &&
-            msg.sending
-              ? newMessage
-              : msg
-          );
-        }
-        // New message from other user
-        return [...prev, newMessage];
-      });
-      // Update message counts
-      loadMessageCounts();
-      // Mark as read when receiving new messages while chat is open
-      markAsRead();
-      // Scroll to bottom
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    });
-  };
-
-  const markAsRead = async () => {
-    if (!user) return;
-    try {
-      await markMessagesAsRead(matchId, user.id);
-    } catch (error) {
-      console.error('Error marking as read:', error);
-    }
-  };
-
-  const handleSendText = async (text) => {
-    if (!user) return;
-
-    // Check if limit already reached
-    if (myMessageCount >= MESSAGE_LIMIT) {
-      Alert.alert(
-        'Message Limit Reached',
-        `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
-    // Optimistic update - add message to UI immediately
-    const tempId = `temp_${Date.now()}`;
-    const optimisticMessage = {
-      id: tempId,
-      match_id: matchId,
-      sender_id: user.id,
-      recipient_id: otherUser.id,
-      message_type: 'text',
-      content: text,
-      created_at: new Date().toISOString(),
-      sending: true, // Flag to show sending state
-    };
-
-    setMessages((prev) => [...prev, optimisticMessage]);
-
-    // Scroll immediately
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 50);
-
-    try {
-      const sentMessage = await sendTextMessage(user.id, otherUser.id, text);
-
-      // Replace optimistic message with real one
-      setMessages((prev) =>
-        prev.map((msg) => (msg.id === tempId ? sentMessage : msg))
-      );
-
-      // Update message count
-      loadMessageCounts();
-    } catch (error) {
-      console.error('Failed to send message:', error);
-
-      // Check if it's the limit error
-      if (error.message === 'MESSAGE_LIMIT_REACHED') {
-        Alert.alert(
-          'Message Limit Reached',
-          `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
-          [{ text: 'OK' }]
-        );
-      }
-
-      // Remove failed message
-      setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
-    }
-  };
-
-  const handleSendImage = async (imageUri) => {
-    if (!user) return;
-
-    // Check if limit already reached
-    if (myMessageCount >= MESSAGE_LIMIT) {
-      Alert.alert(
-        'Message Limit Reached',
-        `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
-    // Optimistic update - show image immediately
-    const tempId = `temp_${Date.now()}`;
-    const optimisticMessage = {
-      id: tempId,
-      match_id: matchId,
-      sender_id: user.id,
-      recipient_id: otherUser.id,
-      message_type: 'image',
-      image_url: imageUri, // Show local URI temporarily
-      created_at: new Date().toISOString(),
-      sending: true,
-    };
-
-    setMessages((prev) => [...prev, optimisticMessage]);
-
-    // Scroll immediately
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 50);
-
-    try {
-      const sentMessage = await sendImageMessage(user.id, otherUser.id, imageUri);
-
-      // Replace with uploaded image URL
-      setMessages((prev) =>
-        prev.map((msg) => (msg.id === tempId ? sentMessage : msg))
-      );
-
-      // Update message count
-      loadMessageCounts();
-    } catch (error) {
-      console.error('Failed to send image:', error);
-
-      // Check if it's the limit error
-      if (error.message === 'MESSAGE_LIMIT_REACHED') {
-        Alert.alert(
-          'Message Limit Reached',
-          `You've sent ${MESSAGE_LIMIT} messages. Time to meet in person! 🤝`,
-          [{ text: 'OK' }]
-        );
-      }
-
-      // Remove failed message
-      setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
-    }
-  };
-
-  const handleLongPress = (message) => {
-    // TODO: Implement emoji reactions
-    console.log('Long press on message:', message.id);
-  };
 
   const handleRequestNumber = async () => {
     if (!user) return;
 
-    // Check if user has phone number set
     const myPhone = await getUserPhoneNumber(user.id);
 
     if (!myPhone) {
@@ -324,7 +109,6 @@ export default function ChatScreen({ route, navigation }) {
       return;
     }
 
-    // Confirm request
     Alert.alert(
       'Request Phone Number?',
       `Ask ${otherUser.name} to exchange phone numbers?`,
@@ -334,7 +118,6 @@ export default function ChatScreen({ route, navigation }) {
           text: 'Request',
           onPress: async () => {
             try {
-              // Get their phone number (if they have one)
               const theirPhone = await getUserPhoneNumber(otherUser.id);
 
               if (!theirPhone) {
@@ -346,7 +129,6 @@ export default function ChatScreen({ route, navigation }) {
                 return;
               }
 
-              // Create exchange request
               const result = await requestNumberExchange(
                 user.id,
                 otherUser.id,
@@ -355,28 +137,22 @@ export default function ChatScreen({ route, navigation }) {
               );
 
               if (result.alreadyExists) {
-                Alert.alert(
-                  'Request Pending',
-                  'You already have a pending exchange request.',
-                  [{ text: 'OK' }]
-                );
+                Alert.alert('Request Pending', 'You already have a pending exchange request.', [
+                  { text: 'OK' },
+                ]);
                 return;
               }
 
-              // Send system message to both chats
               await sendSystemMessage(
                 matchId,
                 `${user.name} requested to exchange phone numbers`,
                 { type: 'exchange_request', exchange_id: result.exchange.id }
               );
 
-              Alert.alert(
-                'Request Sent',
-                `Waiting for ${otherUser.name} to accept.`,
-                [{ text: 'OK' }]
-              );
+              Alert.alert('Request Sent', `Waiting for ${otherUser.name} to accept.`, [
+                { text: 'OK' },
+              ]);
 
-              // Close limit modal if open
               setShowLimitModal(false);
             } catch (error) {
               console.error('Error requesting number exchange:', error);
@@ -391,15 +167,9 @@ export default function ChatScreen({ route, navigation }) {
   const handleAcceptExchange = async (exchangeId) => {
     try {
       await acceptExchangeRequest(exchangeId);
-
-      // Send system message
-      await sendSystemMessage(
-        matchId,
-        'Number exchange accepted! Check your vault.',
-        { type: 'exchange_accepted' }
-      );
-
-      // Navigate to vault
+      await sendSystemMessage(matchId, 'Number exchange accepted! Check your vault.', {
+        type: 'exchange_accepted',
+      });
       navigation.navigate('Vault');
     } catch (error) {
       console.error('Error accepting exchange:', error);
@@ -410,14 +180,9 @@ export default function ChatScreen({ route, navigation }) {
   const handleDeclineExchange = async (exchangeId) => {
     try {
       await declineExchangeRequest(exchangeId);
-
-      // Send system message
-      await sendSystemMessage(
-        matchId,
-        'Number exchange declined.',
-        { type: 'exchange_declined' }
-      );
-
+      await sendSystemMessage(matchId, 'Number exchange declined.', {
+        type: 'exchange_declined',
+      });
       setExchangeRequest(null);
     } catch (error) {
       console.error('Error declining exchange:', error);
@@ -425,16 +190,15 @@ export default function ChatScreen({ route, navigation }) {
   };
 
   const renderMessage = ({ item, index }) => {
-    // Calculate message number for this sender
     const isSender = item.sender_id === user?.id;
     let messageNumber = null;
 
     if (isSender && (item.message_type === 'text' || item.message_type === 'image')) {
-      // Count how many text/image messages this sender has sent up to this point
       const messagesToThisPoint = messages.slice(0, index + 1);
       messageNumber = messagesToThisPoint.filter(
-        msg => msg.sender_id === item.sender_id &&
-               (msg.message_type === 'text' || msg.message_type === 'image')
+        (msg) =>
+          msg.sender_id === item.sender_id &&
+          (msg.message_type === 'text' || msg.message_type === 'image')
       ).length;
     }
 
@@ -442,22 +206,16 @@ export default function ChatScreen({ route, navigation }) {
       <MessageBubble
         message={item}
         isSender={isSender}
-        onLongPress={handleLongPress}
+        onLongPress={() => {}}
         messageNumber={messageNumber}
         totalLimit={MESSAGE_LIMIT}
       />
     );
   };
 
-  const handleProfilePress = () => {
-    navigation.navigate('UserProfile', {
-      user: otherUser,
-      onFlick: null, // Already matched, no need to flick
-    });
-  };
-
   const renderHeader = () => {
-    const isLimitReached = myMessageCount >= MESSAGE_LIMIT || theirMessageCount >= MESSAGE_LIMIT;
+    const isLimitReached =
+      myMessageCount >= MESSAGE_LIMIT || theirMessageCount >= MESSAGE_LIMIT;
     const messagesRemaining = MESSAGE_LIMIT - myMessageCount;
 
     return (
@@ -468,7 +226,9 @@ export default function ChatScreen({ route, navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerUser}
-            onPress={handleProfilePress}
+            onPress={() =>
+              navigation.navigate('UserProfile', { user: otherUser, onFlick: null })
+            }
             activeOpacity={0.7}
           >
             {otherUser.selfie_url ? (
@@ -482,7 +242,8 @@ export default function ChatScreen({ route, navigation }) {
               <Text style={styles.headerName}>{otherUser.name}</Text>
               {!isLimitReached && (
                 <Text style={styles.messageCount}>
-                  {messagesRemaining} {messagesRemaining === 1 ? 'message' : 'messages'} left
+                  {messagesRemaining}{' '}
+                  {messagesRemaining === 1 ? 'message' : 'messages'} left
                 </Text>
               )}
             </View>
@@ -491,9 +252,7 @@ export default function ChatScreen({ route, navigation }) {
         {isLimitReached && (
           <View style={styles.limitBanner}>
             <Text style={styles.limitEmoji}>🤝</Text>
-            <Text style={styles.limitText}>
-              Message limit reached! Time to meet in person.
-            </Text>
+            <Text style={styles.limitText}>Message limit reached! Time to meet in person.</Text>
           </View>
         )}
       </>
@@ -542,13 +301,8 @@ export default function ChatScreen({ route, navigation }) {
         messageCount={myMessageCount}
       />
 
-      {/* Show modal when message limit reached */}
       {showLimitModal && (
-        <Modal
-          visible={true}
-          transparent
-          animationType="fade"
-        >
+        <Modal visible transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Message Limit Reached</Text>

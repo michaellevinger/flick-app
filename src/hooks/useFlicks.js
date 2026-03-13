@@ -4,7 +4,6 @@ import {
   sendFlick,
   checkMutualMatch,
   subscribeToFlicks,
-  getMatchedUserInfo,
   getFlicksSentByUser,
   getFlicksForUser,
   deleteFlick,
@@ -59,7 +58,9 @@ export function useFlicks(user, navigation, onAdvance) {
 
       const isMutual = await checkMutualMatch(user.id, flick.from_user_id);
       if (isMutual) {
-        await createMatch(user.id, flick.from_user_id);
+        createMatch(user.id, flick.from_user_id).catch((err) =>
+          console.error('createMatch failed:', err)
+        );
         const matchedUser = await getMatchedUserInfo(flick.from_user_id);
         navigation.navigate('GreenLight', { matchedUser });
       }
@@ -125,11 +126,25 @@ export function useFlicks(user, navigation, onAdvance) {
 
       setFlickedUsers((prev) => new Set([...prev, targetUser.id]));
 
-      // Check for mutual match (they already flicked us, or DB confirms mutual)
-      if (theyFlickedMe || (await checkMutualMatch(user.id, targetUser.id))) {
-        await createMatch(user.id, targetUser.id);
-        const matchedUser = await getMatchedUserInfo(targetUser.id);
-        navigation.navigate('GreenLight', { matchedUser });
+      // Always advance the carousel after a successful flick
+      onAdvance?.();
+
+      // Fast path: they already flicked us — navigate immediately, create match in background
+      if (theyFlickedMe) {
+        createMatch(user.id, targetUser.id).catch((err) =>
+          console.error('createMatch failed:', err)
+        );
+        navigation.navigate('GreenLight', { matchedUser: targetUser });
+        return;
+      }
+
+      // Slow path: check DB to confirm mutual match
+      const isMutual = await checkMutualMatch(user.id, targetUser.id);
+      if (isMutual) {
+        createMatch(user.id, targetUser.id).catch((err) =>
+          console.error('createMatch failed:', err)
+        );
+        navigation.navigate('GreenLight', { matchedUser: targetUser });
       }
     } catch (error) {
       console.error('Error sending flick:', error);
