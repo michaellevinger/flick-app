@@ -10,6 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS, SPACING } from '../constants/theme';
 
 export default function NotificationSettingsScreen({ navigation }) {
   // Notification preferences
@@ -57,8 +58,8 @@ export default function NotificationSettingsScreen({ navigation }) {
             <Switch
               value={matchNotifications}
               onValueChange={() => handleToggle(setMatchNotifications, matchNotifications, 'Match')}
-              trackColor={{ false: '#CCCCCC', true: '#C44CE0' }}
-              thumbColor={matchNotifications ? '#FFFFFF' : '#F4F4F4'}
+              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
+              thumbColor={matchNotifications ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
@@ -74,8 +75,8 @@ export default function NotificationSettingsScreen({ navigation }) {
             <Switch
               value={messageNotifications}
               onValueChange={() => handleToggle(setMessageNotifications, messageNotifications, 'Message')}
-              trackColor={{ false: '#CCCCCC', true: '#C44CE0' }}
-              thumbColor={messageNotifications ? '#FFFFFF' : '#F4F4F4'}
+              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
+              thumbColor={messageNotifications ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
@@ -91,8 +92,8 @@ export default function NotificationSettingsScreen({ navigation }) {
             <Switch
               value={flickNotifications}
               onValueChange={() => handleToggle(setFlickNotifications, flickNotifications, 'Flick')}
-              trackColor={{ false: '#CCCCCC', true: '#C44CE0' }}
-              thumbColor={flickNotifications ? '#FFFFFF' : '#F4F4F4'}
+              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
+              thumbColor={flickNotifications ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
@@ -108,8 +109,8 @@ export default function NotificationSettingsScreen({ navigation }) {
             <Switch
               value={nearbyNotifications}
               onValueChange={() => handleToggle(setNearbyNotifications, nearbyNotifications, 'Nearby')}
-              trackColor={{ false: '#CCCCCC', true: '#C44CE0' }}
-              thumbColor={nearbyNotifications ? '#FFFFFF' : '#F4F4F4'}
+              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
+              thumbColor={nearbyNotifications ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
@@ -128,8 +129,8 @@ export default function NotificationSettingsScreen({ navigation }) {
             <Switch
               value={soundEnabled}
               onValueChange={() => handleToggle(setSoundEnabled, soundEnabled, 'Sound')}
-              trackColor={{ false: '#CCCCCC', true: '#C44CE0' }}
-              thumbColor={soundEnabled ? '#FFFFFF' : '#F4F4F4'}
+              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
+              thumbColor={soundEnabled ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
@@ -145,8 +146,8 @@ export default function NotificationSettingsScreen({ navigation }) {
             <Switch
               value={vibrationEnabled}
               onValueChange={() => handleToggle(setVibrationEnabled, vibrationEnabled, 'Vibration')}
-              trackColor={{ false: '#CCCCCC', true: '#C44CE0' }}
-              thumbColor={vibrationEnabled ? '#FFFFFF' : '#F4F4F4'}
+              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
+              thumbColor={vibrationEnabled ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
@@ -166,18 +167,18 @@ export default function NotificationSettingsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.grayLight,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: COLORS.grayBorder,
   },
   backButton: {
     width: 40,
@@ -187,13 +188,13 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 32,
-    color: '#000000',
+    color: COLORS.black,
     fontWeight: '300',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: COLORS.black,
   },
   headerSpacer: {
     width: 40,
@@ -202,56 +203,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.lg,
     paddingBottom: 40,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 16,
-    marginTop: 8,
+    color: COLORS.black,
+    marginBottom: SPACING.md,
+    marginTop: SPACING.sm,
   },
   settingCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
   },
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: SPACING.md,
   },
   settingInfo: {
     flex: 1,
-    marginRight: 16,
+    marginRight: SPACING.md,
   },
   settingLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333333',
+    color: COLORS.grayDark,
     marginBottom: 4,
   },
   settingDescription: {
     fontSize: 13,
-    color: '#666666',
+    color: COLORS.grayMedium,
     lineHeight: 18,
   },
   menuCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: SPACING.md,
   },
   menuIcon: {
     fontSize: 18,
@@ -261,20 +262,20 @@ const styles = StyleSheet.create({
   menuText: {
     flex: 1,
     fontSize: 16,
-    color: '#333333',
-    marginLeft: 8,
+    color: COLORS.grayDark,
+    marginLeft: SPACING.sm,
   },
   menuChevron: {
     fontSize: 20,
-    color: '#CCCCCC',
+    color: COLORS.grayDisabled,
   },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: 'rgba(196, 76, 224, 0.1)',
     borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
+    padding: SPACING.md,
+    marginTop: SPACING.md,
     borderWidth: 1,
     borderColor: 'rgba(196, 76, 224, 0.2)',
   },
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#666666',
+    color: COLORS.grayMedium,
     lineHeight: 20,
   },
 });

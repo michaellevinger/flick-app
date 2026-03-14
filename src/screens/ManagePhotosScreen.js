@@ -18,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 // TEMPORARY: DraggableFlatList removed to fix Worklets version mismatch
 // import DraggableFlatList from 'react-native-draggable-flatlist';
 import { useUser } from '../lib/userContext';
+import { COLORS, SPACING } from '../constants/theme';
 import { uploadPhotos, updateUserPhotos } from '../lib/database';
 
 export default function ManagePhotosScreen({ navigation }) {
@@ -210,7 +211,7 @@ export default function ManagePhotosScreen({ navigation }) {
           style={styles.saveButton}
         >
           {isSaving ? (
-            <ActivityIndicator size="small" color="#C44CE0" />
+            <ActivityIndicator size="small" color={COLORS.purple} />
           ) : (
             <Text style={styles.saveText}>Save</Text>
           )}
@@ -402,17 +403,17 @@ export default function ManagePhotosScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.grayLight,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: COLORS.grayBorder,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 12 : 12,
   },
   headerBackButton: {
@@ -423,13 +424,13 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 32,
-    color: '#000000',
+    color: COLORS.black,
     fontWeight: '300',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: COLORS.black,
   },
   saveButton: {
     width: 60,
@@ -440,12 +441,12 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#C44CE0',
+    color: COLORS.purple,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.lg,
     paddingBottom: 100,
   },
   contentContainer: {
@@ -453,14 +454,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 16,
+    color: COLORS.grayMedium,
+    marginBottom: SPACING.md,
     textAlign: 'center',
   },
   photoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
     marginHorizontal: -6,
   },
   photoTile: {
@@ -469,15 +470,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     marginHorizontal: 6,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
   },
   photoTileActive: {
     opacity: 0.8,
-    borderColor: '#C44CE0',
+    borderColor: COLORS.purple,
     borderWidth: 2,
   },
   photoTouchable: {
@@ -507,7 +508,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#C44CE0',
+    borderColor: COLORS.purple,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -516,15 +517,15 @@ const styles = StyleSheet.create({
   },
   reorderButtonDisabled: {
     backgroundColor: 'rgba(255,255,255,0.5)',
-    borderColor: '#CCCCCC',
+    borderColor: COLORS.grayDisabled,
   },
   reorderButtonText: {
     fontSize: 18,
-    color: '#C44CE0',
+    color: COLORS.purple,
     fontWeight: 'bold',
   },
   reorderButtonTextDisabled: {
-    color: '#CCCCCC',
+    color: COLORS.grayDisabled,
   },
   dragHandle: {
     position: 'absolute',
@@ -538,14 +539,14 @@ const styles = StyleSheet.create({
   },
   dragHandleText: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
   },
   mainBadge: {
     position: 'absolute',
     top: 6,
     left: 6,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
@@ -553,7 +554,7 @@ const styles = StyleSheet.create({
   mainBadgeText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#C44CE0',
+    color: COLORS.purple,
   },
   removeButton: {
     position: 'absolute',
@@ -568,7 +569,7 @@ const styles = StyleSheet.create({
   },
   removeButtonText: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
     lineHeight: 14,
   },
@@ -577,9 +578,9 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#CCCCCC',
+    borderColor: COLORS.grayDisabled,
     borderStyle: 'dashed',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.grayLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 6,
@@ -589,7 +590,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -600,20 +601,20 @@ const styles = StyleSheet.create({
   },
   plusIcon: {
     fontSize: 36,
-    color: '#C44CE0',
+    color: COLORS.purple,
     fontWeight: '300',
     lineHeight: 36,
   },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
-    padding: 16,
+    padding: SPACING.md,
     gap: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
-    marginTop: 24,
+    borderColor: COLORS.grayBorder,
+    marginTop: SPACING.lg,
     marginBottom: 40,
   },
   infoIcon: {
@@ -622,7 +623,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#666666',
+    color: COLORS.grayMedium,
     lineHeight: 20,
   },
   emptyState: {
@@ -633,39 +634,39 @@ const styles = StyleSheet.create({
   },
   emptyStateIcon: {
     fontSize: 64,
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   emptyStateTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 8,
+    color: COLORS.black,
+    marginBottom: SPACING.sm,
   },
   emptyStateText: {
     fontSize: 16,
-    color: '#666666',
+    color: COLORS.grayMedium,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: SPACING.xl,
     paddingHorizontal: 40,
   },
   addPhotoButton: {
-    backgroundColor: '#C44CE0',
+    backgroundColor: COLORS.purple,
     paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingHorizontal: SPACING.xl,
     borderRadius: 24,
   },
   addPhotoButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   brokenImageContainer: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.grayLight,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
+    padding: SPACING.sm,
   },
   brokenImageIcon: {
     fontSize: 32,
@@ -673,12 +674,12 @@ const styles = StyleSheet.create({
   },
   brokenImageText: {
     fontSize: 12,
-    color: '#666666',
-    marginBottom: 8,
+    color: COLORS.grayMedium,
+    marginBottom: SPACING.sm,
     textAlign: 'center',
   },
   replaceButton: {
-    backgroundColor: '#C44CE0',
+    backgroundColor: COLORS.purple,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
@@ -686,6 +687,6 @@ const styles = StyleSheet.create({
   replaceButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
 });

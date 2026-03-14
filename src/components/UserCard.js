@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SPACING } from '../constants/theme';
 
 /**
  * Displays a single user card with profile info, flick button, and carousel navigation.
@@ -54,7 +55,7 @@ export default function UserCard({
         </View>
 
         <LinearGradient
-          colors={isFlicked ? ['#9CA3AF', '#6B7280'] : ['#C44CE0', '#FF6B9D']}
+          colors={isFlicked ? [COLORS.grayFlicked, COLORS.grayFlickedDark] : [COLORS.purple, COLORS.pink]}
           style={styles.flickButton}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 24,
     padding: 20,
     shadowColor: '#000',
@@ -108,8 +109,8 @@ const styles = StyleSheet.create({
   },
   cardInterested: {
     borderWidth: 3,
-    borderColor: '#FF6B9D',
-    shadowColor: '#FF6B9D',
+    borderColor: COLORS.pink,
+    shadowColor: COLORS.pink,
     shadowOpacity: 0.3,
   },
   photoContainer: {
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     aspectRatio: 0.75,
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: SPACING.md,
     position: 'relative',
   },
   photo: {
@@ -126,12 +127,12 @@ const styles = StyleSheet.create({
   },
   interestedBadge: {
     position: 'absolute',
-    top: 16,
-    right: 16,
+    top: SPACING.md,
+    right: SPACING.md,
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FF6B9D',
+    backgroundColor: COLORS.pink,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -142,26 +143,26 @@ const styles = StyleSheet.create({
   },
   interestedBadgeText: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   info: {
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   name: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#000000',
+    color: COLORS.black,
     marginBottom: 4,
   },
   distance: {
     fontSize: 16,
-    color: '#666666',
+    color: COLORS.grayMedium,
     marginBottom: 4,
   },
   interestedLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FF6B9D',
+    color: COLORS.pink,
     marginTop: 4,
   },
   flickButton: {
@@ -169,20 +170,20 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   flickButtonInner: {
-    paddingVertical: 16,
+    paddingVertical: SPACING.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   flickButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   navigation: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 24,
+    marginTop: SPACING.lg,
     gap: 50,
   },
   navButton: {
@@ -203,12 +204,12 @@ const styles = StyleSheet.create({
   },
   navButtonText: {
     fontSize: 28,
-    color: '#C44CE0',
+    color: COLORS.purple,
     fontWeight: 'bold',
   },
   navCounter: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
 });

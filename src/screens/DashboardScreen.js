@@ -17,6 +17,7 @@ import { useFestivalUsers } from '../hooks/useFestivalUsers';
 import { useFlicks } from '../hooks/useFlicks';
 import EventBanner from '../components/EventBanner';
 import UserCard from '../components/UserCard';
+import { COLORS, SPACING } from '../constants/theme';
 
 export default function DashboardScreen({ navigation }) {
   const { user } = useUser();
@@ -79,7 +80,7 @@ export default function DashboardScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#C44CE0', '#FF6B9D']}
+        colors={[COLORS.purple, COLORS.pink]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
@@ -143,16 +144,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: SPACING.md,
   },
   logo: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   signOutButton: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: COLORS.white,
     opacity: 0.9,
   },
   emptyState: {
@@ -163,18 +164,18 @@ const styles = StyleSheet.create({
   },
   emptyStateEmoji: {
     fontSize: 64,
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   emptyStateText: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 8,
+    color: COLORS.white,
+    marginBottom: SPACING.sm,
   },
   refreshButton: {
-    marginTop: 16,
+    marginTop: SPACING.md,
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    paddingHorizontal: 32,
+    paddingHorizontal: SPACING.xl,
     paddingVertical: 14,
     borderRadius: 28,
     shadowColor: '#000',
@@ -186,6 +187,6 @@ const styles = StyleSheet.create({
   refreshButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#C44CE0',
+    color: COLORS.purple,
   },
 });

@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../lib/userContext';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { COLORS } from '../constants/theme';
 
 export default function WelcomeScreen({ navigation }) {
   const { user } = useUser();
@@ -81,7 +82,7 @@ export default function WelcomeScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['#FF6B9D', '#C44CE0', '#7B5EE3']}
+        colors={[COLORS.pink, COLORS.purple, COLORS.violet]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -140,18 +141,18 @@ const styles = StyleSheet.create({
   },
   heartIcon: {
     fontSize: 100,
-    color: '#FFFFFF',
+    color: COLORS.white,
     marginBottom: -10,
   },
   logoText: {
     fontSize: 56,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: COLORS.white,
     letterSpacing: 2,
   },
   tagline: {
     fontSize: 20,
-    color: '#FFFFFF',
+    color: COLORS.white,
     marginTop: 60,
     textAlign: 'center',
     opacity: 0.95,
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   primaryButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -172,12 +173,12 @@ const styles = StyleSheet.create({
   },
   primaryButtonIcon: {
     fontSize: 20,
-    color: '#333333',
+    color: COLORS.grayDark,
   },
   primaryButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333333',
+    color: COLORS.grayDark,
   },
   outlineButton: {
     borderWidth: 2,
@@ -191,12 +192,12 @@ const styles = StyleSheet.create({
   },
   outlineButtonIcon: {
     fontSize: 18,
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   outlineButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   debugButton: {
     position: 'absolute',

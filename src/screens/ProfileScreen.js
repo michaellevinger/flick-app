@@ -16,6 +16,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio, updateUserPhoneNumber } from '../lib/database';
+import { COLORS, SPACING } from '../constants/theme';
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -194,7 +195,7 @@ export default function ProfileScreen({ navigation }) {
               disabled={!hasChanges || isSaving}
             >
               <LinearGradient
-                colors={hasChanges ? ['#FF6B9D', '#C44CE0'] : ['#CCCCCC', '#AAAAAA']}
+                colors={hasChanges ? [COLORS.pink, COLORS.purple] : [COLORS.grayDisabled, '#AAAAAA']}
                 style={styles.saveButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -249,7 +250,7 @@ export default function ProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   keyboardView: {
@@ -259,11 +260,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: COLORS.grayBorder,
   },
   backButton: {
     justifyContent: 'center',
@@ -271,12 +272,12 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 28,
-    color: '#000000',
+    color: COLORS.black,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: COLORS.black,
   },
   headerSpacer: {
     width: 40,
@@ -285,13 +286,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.lg,
   },
   photoSection: {
     alignSelf: 'center',
-    marginBottom: 16,
+    marginBottom: SPACING.md,
     position: 'relative',
   },
   profilePhoto: {
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 3,
-    borderColor: '#C44CE0',
+    borderColor: COLORS.purple,
   },
   editPhotoButton: {
     position: 'absolute',
@@ -308,43 +309,43 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#C44CE0',
+    backgroundColor: COLORS.purple,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: COLORS.white,
   },
   editPhotoIcon: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   userName: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#000000',
+    color: COLORS.black,
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 16,
     padding: 20,
     marginBottom: 12,
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
-    marginBottom: 8,
+    color: COLORS.grayMedium,
+    marginBottom: SPACING.sm,
   },
   input: {
     fontSize: 16,
-    color: '#333333',
+    color: COLORS.grayDark,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
     borderRadius: 12,
     padding: 14,
     minHeight: 80,
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
   },
   charCount: {
     fontSize: 12,
-    color: '#999999',
+    color: COLORS.graySubtle,
     textAlign: 'right',
     marginTop: 4,
   },
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: 12,
-    color: '#999999',
+    color: COLORS.graySubtle,
     marginTop: 4,
     fontStyle: 'italic',
   },
@@ -379,52 +380,52 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 16,
+    color: COLORS.black,
+    marginBottom: SPACING.md,
   },
   menuCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
   },
   menuCardDanger: {
-    borderColor: '#FF4444',
+    borderColor: COLORS.danger,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: SPACING.md,
   },
   menuIcon: {
     fontSize: 18,
     width: 30,
     textAlign: 'center',
-    color: '#666666',
+    color: COLORS.grayMedium,
   },
   menuIconDanger: {
-    color: '#FF4444',
+    color: COLORS.danger,
   },
   menuText: {
     flex: 1,
     fontSize: 16,
-    color: '#333333',
-    marginLeft: 8,
+    color: COLORS.grayDark,
+    marginLeft: SPACING.sm,
   },
   menuTextDanger: {
-    color: '#FF4444',
+    color: COLORS.danger,
   },
   menuChevron: {
     fontSize: 20,
-    color: '#CCCCCC',
+    color: COLORS.grayDisabled,
   },
   menuChevronDanger: {
-    color: '#FF4444',
+    color: COLORS.danger,
   },
 });

@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.black,
   },
   warningBannerUrgent: {
-    backgroundColor: '#FF0000', // Red for urgency
+    backgroundColor: COLORS.danger,
   },
   warningIcon: {
     fontSize: 32,

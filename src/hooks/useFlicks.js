@@ -8,6 +8,7 @@ import {
   getFlicksForUser,
   deleteFlick,
   createMatch,
+  getMatchedUserInfo,
 } from '../lib/flicks';
 import { hasSeenTip, markTipSeen } from '../lib/tips';
 
@@ -125,9 +126,6 @@ export function useFlicks(user, navigation, onAdvance) {
       }
 
       setFlickedUsers((prev) => new Set([...prev, targetUser.id]));
-
-      // Always advance the carousel after a successful flick
-      onAdvance?.();
 
       // Fast path: they already flicked us — navigate immediately, create match in background
       if (theyFlickedMe) {

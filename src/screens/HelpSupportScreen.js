@@ -10,6 +10,7 @@ import {
   Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS, SPACING } from '../constants/theme';
 
 export default function HelpSupportScreen({ navigation }) {
   const handleContactSupport = () => {
@@ -123,18 +124,18 @@ export default function HelpSupportScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.grayLight,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: COLORS.grayBorder,
   },
   backButton: {
     width: 40,
@@ -144,13 +145,13 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 32,
-    color: '#000000',
+    color: COLORS.black,
     fontWeight: '300',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
+    color: COLORS.black,
   },
   headerSpacer: {
     width: 40,
@@ -159,47 +160,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.lg,
     paddingBottom: 40,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 16,
-    marginTop: 8,
+    color: COLORS.black,
+    marginBottom: SPACING.md,
+    marginTop: SPACING.sm,
   },
   faqCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
-    padding: 16,
+    padding: SPACING.md,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
   },
   faqQuestion: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333333',
-    marginBottom: 8,
+    color: COLORS.grayDark,
+    marginBottom: SPACING.sm,
   },
   faqAnswer: {
     fontSize: 14,
-    color: '#666666',
+    color: COLORS.grayMedium,
     lineHeight: 20,
   },
   menuCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: COLORS.grayBorder,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: SPACING.md,
   },
   menuIcon: {
     fontSize: 18,
@@ -209,26 +210,26 @@ const styles = StyleSheet.create({
   menuText: {
     flex: 1,
     fontSize: 16,
-    color: '#333333',
-    marginLeft: 8,
+    color: COLORS.grayDark,
+    marginLeft: SPACING.sm,
   },
   menuChevron: {
     fontSize: 20,
-    color: '#CCCCCC',
+    color: COLORS.grayDisabled,
   },
   appInfo: {
     alignItems: 'center',
-    marginTop: 32,
-    paddingVertical: 24,
+    marginTop: SPACING.xl,
+    paddingVertical: SPACING.lg,
   },
   appVersion: {
     fontSize: 14,
-    color: '#999999',
+    color: COLORS.graySubtle,
     marginBottom: 4,
   },
   appTagline: {
     fontSize: 12,
-    color: '#C44CE0',
+    color: COLORS.purple,
     fontStyle: 'italic',
   },
 });

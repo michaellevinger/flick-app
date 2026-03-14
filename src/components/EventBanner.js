@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { COLORS, SPACING } from '../constants/theme';
 
 function formatEventDate(festival) {
   if (!festival?.start_date) return '';
@@ -22,8 +23,8 @@ const styles = StyleSheet.create({
   eventCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     marginHorizontal: 20,
-    marginTop: 16,
-    marginBottom: 24,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.lg,
     padding: 20,
     borderRadius: 16,
     alignItems: 'center',
@@ -33,12 +34,12 @@ const styles = StyleSheet.create({
   eventName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: COLORS.white,
     marginBottom: 4,
   },
   eventDate: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: COLORS.white,
     opacity: 0.9,
   },
 });

@@ -15,6 +15,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient';
 import { unmatchUser } from '../lib/flicks';
 import { useUser } from '../lib/userContext';
+import { COLORS, SPACING } from '../constants/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -166,7 +167,7 @@ export default function UserProfileScreen({ route, navigation }) {
 
               <TouchableOpacity style={styles.likeButton} onPress={handleFlick}>
                 <LinearGradient
-                  colors={['#FF6B9D', '#C44CE0']}
+                  colors={[COLORS.pink, COLORS.purple]}
                   style={styles.likeGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -233,7 +234,7 @@ export default function UserProfileScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: COLORS.black,
   },
   header: {
     position: 'absolute',
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     paddingBottom: 12,
     zIndex: 10,
     backgroundColor: 'rgba(0,0,0,0.3)',
@@ -256,20 +257,20 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 32,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: '300',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   headerRight: {
     width: 44,
     height: 44,
   },
   photoContainer: {
-    height: SCREEN_HEIGHT * 0.65, // 65% of screen height
+    height: SCREEN_HEIGHT * 0.65,
     position: 'relative',
   },
   photo: {
@@ -279,13 +280,13 @@ const styles = StyleSheet.create({
   photoPlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#333333',
+    backgroundColor: COLORS.grayDark,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderText: {
     fontSize: 20,
-    color: '#888888',
+    color: COLORS.gray,
   },
   photoIndicators: {
     position: 'absolute',
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.5)',
   },
   indicatorActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     width: 24,
   },
   photoGradient: {
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     marginTop: -24,
@@ -324,50 +325,50 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 24,
+    padding: SPACING.lg,
     paddingBottom: 40,
   },
   nameSection: {
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   nameText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#000000',
+    color: COLORS.black,
     marginBottom: 4,
   },
   distanceText: {
     fontSize: 16,
-    color: '#666666',
+    color: COLORS.grayMedium,
   },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 20,
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: SPACING.lg,
+    marginTop: SPACING.sm,
   },
   passButton: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: COLORS.grayLight,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: COLORS.grayBorder,
   },
   passIcon: {
     fontSize: 28,
-    color: '#888888',
+    color: COLORS.gray,
   },
   likeButton: {
     width: 64,
     height: 64,
     borderRadius: 32,
     overflow: 'hidden',
-    shadowColor: '#C44CE0',
+    shadowColor: COLORS.purple,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -381,7 +382,7 @@ const styles = StyleSheet.create({
   },
   likeIcon: {
     fontSize: 32,
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   aboutSection: {
     marginBottom: 20,
@@ -389,21 +390,21 @@ const styles = StyleSheet.create({
   aboutTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    color: COLORS.black,
+    marginBottom: SPACING.sm,
   },
   aboutText: {
     fontSize: 15,
     lineHeight: 22,
-    color: '#333333',
+    color: COLORS.grayDark,
   },
   infoGrid: {
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
   },
   infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: SPACING.sm,
   },
   infoIcon: {
     fontSize: 18,
@@ -411,29 +412,29 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 15,
-    color: '#666666',
+    color: COLORS.grayMedium,
   },
   matchedSection: {
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: SPACING.sm,
+    marginBottom: SPACING.md,
   },
   unmatchButton: {
-    padding: 16,
+    padding: SPACING.md,
     alignItems: 'center',
   },
   unmatchText: {
     fontSize: 16,
-    color: '#FF3B30',
+    color: COLORS.danger,
     fontWeight: '600',
   },
   reportLink: {
-    paddingVertical: 16,
+    paddingVertical: SPACING.md,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   reportText: {
     fontSize: 14,
-    color: '#999999',
+    color: COLORS.graySubtle,
     textDecorationLine: 'underline',
   },
 });

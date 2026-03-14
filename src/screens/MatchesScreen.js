@@ -43,7 +43,7 @@ export default function MatchesScreen({ navigation }) {
     if (loading) {
       return (
         <View style={styles.emptyContainer}>
-          <ActivityIndicator size="large" color="#C44CE0" />
+          <ActivityIndicator size="large" color={COLORS.purple} />
         </View>
       );
     }
@@ -79,7 +79,7 @@ export default function MatchesScreen({ navigation }) {
           <RefreshControl
             refreshing={loading}
             onRefresh={loadMatches}
-            tintColor="#C44CE0"
+            tintColor={COLORS.purple}
           />
         }
       />
@@ -90,23 +90,23 @@ export default function MatchesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
   },
   logo: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#C44CE0',
-    marginBottom: 8,
+    color: COLORS.purple,
+    marginBottom: SPACING.sm,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000',
+    color: COLORS.black,
   },
   listContent: {
     paddingBottom: 80,

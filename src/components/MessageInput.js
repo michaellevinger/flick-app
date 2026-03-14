@@ -131,7 +131,7 @@ export default function MessageInput({
         value={text}
         onChangeText={setText}
         placeholder={disabled ? "Message limit reached" : "Type a message..."}
-        placeholderTextColor={disabled ? '#CCC' : COLORS.gray}
+        placeholderTextColor={disabled ? COLORS.grayDisabled : COLORS.gray}
         multiline
         maxLength={500}
         editable={!sending && !disabled}
@@ -192,8 +192,8 @@ const styles = StyleSheet.create({
     maxHeight: 100,
   },
   inputDisabled: {
-    backgroundColor: '#F0F0F0',
-    color: '#999',
+    backgroundColor: COLORS.grayLight,
+    color: COLORS.graySubtle,
   },
   sendButton: {
     backgroundColor: COLORS.purple,

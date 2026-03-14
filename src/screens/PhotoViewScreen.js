@@ -11,6 +11,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS, SPACING } from '../constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -89,13 +90,13 @@ export default function PhotoViewScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: COLORS.black,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 12,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     position: 'absolute',
@@ -112,13 +113,13 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   headerSpacer: {
     width: 40,
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   dotActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     width: 24,
   },
 });

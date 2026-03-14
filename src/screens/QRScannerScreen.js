@@ -119,8 +119,8 @@ export default function QRScannerScreen({ navigation }) {
   if (!permission) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={['#FF6B9D', '#C44CE0']} style={styles.gradient}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+        <LinearGradient colors={[COLORS.pink, COLORS.purple]} style={styles.gradient}>
+          <ActivityIndicator size="large" color={COLORS.white} />
         </LinearGradient>
       </View>
     );
@@ -129,7 +129,7 @@ export default function QRScannerScreen({ navigation }) {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={['#FF6B9D', '#C44CE0']} style={styles.gradient}>
+        <LinearGradient colors={[COLORS.pink, COLORS.purple]} style={styles.gradient}>
           <View style={styles.permissionContainer}>
             <Text style={styles.permissionTitle}>Camera Access</Text>
             <Text style={styles.permissionText}>
@@ -152,7 +152,7 @@ export default function QRScannerScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient colors={['#FF6B9D', '#C44CE0']} style={styles.headerGradient} />
+      <LinearGradient colors={[COLORS.pink, COLORS.purple]} style={styles.headerGradient} />
 
       <GestureDetector gesture={pinchGesture}>
         <CameraView
@@ -193,7 +193,7 @@ export default function QRScannerScreen({ navigation }) {
 
       {isJoining && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          <ActivityIndicator size="large" color={COLORS.white} />
           <Text style={styles.loadingText}>Joining event...</Text>
         </View>
       )}
@@ -204,7 +204,7 @@ export default function QRScannerScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: COLORS.black,
   },
   gradient: {
     flex: 1,
@@ -226,35 +226,35 @@ const styles = StyleSheet.create({
   permissionTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 16,
+    color: COLORS.white,
+    marginBottom: SPACING.md,
   },
   permissionText: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: COLORS.white,
     textAlign: 'center',
     opacity: 0.9,
-    marginBottom: 32,
+    marginBottom: SPACING.xl,
     lineHeight: 24,
   },
   grantButton: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
+    backgroundColor: COLORS.white,
+    paddingVertical: SPACING.md,
     paddingHorizontal: 40,
     borderRadius: 30,
   },
   grantButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#C44CE0',
+    color: COLORS.purple,
   },
   skipLink: {
-    marginTop: 24,
+    marginTop: SPACING.lg,
     paddingVertical: 12,
   },
   skipLinkText: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: COLORS.white,
     textDecorationLine: 'underline',
   },
   camera: {
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 20,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: '300',
   },
   overlay: {
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     left: -2,
     borderTopWidth: 4,
     borderLeftWidth: 4,
-    borderColor: '#FFFFFF',
+    borderColor: COLORS.white,
     borderTopLeftRadius: 24,
   },
   topRight: {
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     right: -2,
     borderTopWidth: 4,
     borderRightWidth: 4,
-    borderColor: '#FFFFFF',
+    borderColor: COLORS.white,
     borderTopRightRadius: 24,
   },
   bottomLeft: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     left: -2,
     borderBottomWidth: 4,
     borderLeftWidth: 4,
-    borderColor: '#FFFFFF',
+    borderColor: COLORS.white,
     borderBottomLeftRadius: 24,
   },
   bottomRight: {
@@ -324,13 +324,13 @@ const styles = StyleSheet.create({
     right: -2,
     borderBottomWidth: 4,
     borderRightWidth: 4,
-    borderColor: '#FFFFFF',
+    borderColor: COLORS.white,
     borderBottomRightRadius: 24,
   },
   instructionText: {
     fontSize: 18,
-    color: '#FFFFFF',
-    marginTop: 32,
+    color: COLORS.white,
+    marginTop: SPACING.xl,
     fontWeight: '500',
   },
   hintText: {
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: '#FFFFFF',
-    marginTop: 16,
+    color: COLORS.white,
+    marginTop: SPACING.md,
   },
 });

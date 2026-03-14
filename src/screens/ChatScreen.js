@@ -397,13 +397,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   limitBanner: {
-    backgroundColor: '#FFE4E1',
+    backgroundColor: COLORS.dangerLight,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.md,
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#FFB6B6',
+    borderBottomColor: COLORS.dangerBorder,
   },
   limitEmoji: {
     fontSize: 24,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   limitText: {
     flex: 1,
     fontSize: 14,
-    color: '#D32F2F',
+    color: COLORS.dangerDark,
     fontWeight: '600',
   },
   loadingContainer: {
