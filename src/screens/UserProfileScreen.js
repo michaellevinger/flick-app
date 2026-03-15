@@ -62,7 +62,7 @@ export default function UserProfileScreen({ route, navigation }) {
           onPress: async () => {
             try {
               await unmatchUser(currentUser.id, user.id);
-              navigation.navigate('MatchesTab');
+              navigation.navigate('Dashboard', { screen: 'MatchesTab' });
             } catch (error) {
               console.error('Error unmatching:', error);
               Alert.alert('Error', 'Failed to unmatch. Please try again.');

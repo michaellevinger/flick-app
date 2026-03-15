@@ -7,7 +7,9 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watch"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
@@ -49,9 +51,13 @@
   },
   "private": true,
   "devDependencies": {
+    "@testing-library/react-native": "^13.3.3",
     "eslint": "^8.57.0",
     "eslint-config-expo": "*",
+    "jest": "^30.3.0",
+    "jest-expo": "~54.0.17",
     "ora": "^9.1.0",
-    "prettier": "^3.3.0"
+    "prettier": "^3.3.0",
+    "react-test-renderer": "^19.1.0"
   }
 }

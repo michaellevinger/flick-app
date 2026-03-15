@@ -70,6 +70,14 @@ function randomLocationNear(lat, lng, radiusMeters) {
   return { latitude: newLat, longitude: newLng };
 }
 
+// Generate a mock US phone number
+function generatePhoneNumber() {
+  const areaCode = 200 + Math.floor(Math.random() * 800); // 200-999
+  const prefix = 200 + Math.floor(Math.random() * 800);
+  const line = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+  return `+1${areaCode}${prefix}${line}`;
+}
+
 // Generate profile photo URL (using UI Avatars)
 function generatePhotoUrl(name, gender) {
   const initial = name[0].toUpperCase();
@@ -110,7 +118,7 @@ async function createFakeProfile(centerLat, centerLng, festivalId = 'coachella20
     photos,
     status: true, // Active
     location: `POINT(${location.longitude} ${location.latitude})`,
-    phone_number: null,
+    phone_number: generatePhoneNumber(),
     gender,
     looking_for: lookingFor,
     festival_id: festivalId,

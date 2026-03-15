@@ -12,10 +12,6 @@ import { View, ActivityIndicator, Text, Platform } from 'react-native';
 // WORKAROUND: Disable native screens for Expo SDK 54 compatibility
 enableScreens(false);
 
-import CameraScreen from './src/screens/CameraScreen';
-import Setup1Screen from './src/screens/Setup1Screen';
-import Setup2Screen from './src/screens/Setup2Screen';
-import Setup3Screen from './src/screens/Setup3Screen';
 import NameScreen from './src/screens/NameScreen';
 import BirthdayScreen from './src/screens/BirthdayScreen';
 import GenderScreen from './src/screens/GenderScreen';
@@ -57,12 +53,12 @@ function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#C44CE0',
-        tabBarInactiveTintColor: '#888888',
+        tabBarActiveTintColor: COLORS.purple,
+        tabBarInactiveTintColor: COLORS.gray,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: COLORS.white,
           borderTopWidth: 1,
-          borderTopColor: '#EEEEEE',
+          borderTopColor: COLORS.grayBorder,
         },
       }}
     >
@@ -112,8 +108,8 @@ export default function App() {
   // Continue with system font if Inter fails to load
   if (!fontsLoaded && !fontError) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0B0F0E' }}>
-        <ActivityIndicator size="large" color="#FF6B9D" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.black }}>
+        <ActivityIndicator size="large" color={COLORS.pink} />
       </View>
     );
   }
@@ -144,13 +140,7 @@ export default function App() {
               <Stack.Screen name="BioScreen" component={BioScreen} options={{ headerShown: false }} />
               <Stack.Screen name="Photos" component={PhotosScreen} options={{ headerShown: false }} />
 
-              {/* Old Onboarding (kept for backward compatibility) */}
-              <Stack.Screen name="Camera" component={CameraScreen} />
-              <Stack.Screen name="Setup" component={Setup1Screen} />
-              <Stack.Screen name="Setup2" component={Setup2Screen} />
-              <Stack.Screen name="Setup3" component={Setup3Screen} />
-
-              {/* Host Event Flow */}
+                      {/* Host Event Flow */}
               <Stack.Screen name="HostAuth" component={HostAuthScreen} options={{ title: 'Sign In' }} />
               <Stack.Screen name="HostOnboarding1" component={HostOnboarding1Screen} />
               <Stack.Screen name="HostOnboarding2" component={HostOnboarding2Screen} />

@@ -31,7 +31,7 @@ export default function DashboardScreen({ navigation }) {
     setCurrentUserIndex((prev) => prev + 1);
   }, []);
 
-  const { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived } = useFlicks(
+  const { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived, loadFlicksSent } = useFlicks(
     user,
     navigation,
     handleAdvance
@@ -43,10 +43,10 @@ export default function DashboardScreen({ navigation }) {
     [users, flickedUsers]
   );
 
-  // When the visible list shrinks, clamp the index so the empty state shows
+  // When the visible list shrinks, clamp the index to the last valid card
   useEffect(() => {
-    if (currentUserIndex > visibleUsers.length) {
-      setCurrentUserIndex(visibleUsers.length);
+    if (visibleUsers.length > 0 && currentUserIndex >= visibleUsers.length) {
+      setCurrentUserIndex(visibleUsers.length - 1);
     }
   }, [visibleUsers.length]);
 
@@ -55,6 +55,7 @@ export default function DashboardScreen({ navigation }) {
     useCallback(() => {
       reload();
       loadFlicksReceived();
+      loadFlicksSent();
     }, [])
   );
 

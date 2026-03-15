@@ -41,23 +41,6 @@ export function UserProvider({ children }) {
       if (userData) {
         const parsedUser = JSON.parse(userData);
 
-        // Clean up invalid festival_ids from old test data
-        const INVALID_FESTIVALS = ['coachella2024', 'tomorrowland2024', 'lollapalooza2024', 'test-wedding-1', 'test-wedding-2'];
-        if (INVALID_FESTIVALS.includes(parsedUser.festival_id)) {
-          parsedUser.festival_id = null;
-          await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
-
-          // Also update in database
-          try {
-            await supabase
-              .from('users')
-              .update({ festival_id: null })
-              .eq('id', parsedUser.id);
-          } catch (dbError) {
-            console.error('Error clearing festival_id in database:', dbError);
-          }
-        }
-
         // Ensure status is always a boolean
         parsedUser.status = Boolean(parsedUser.status);
         setUser(parsedUser);

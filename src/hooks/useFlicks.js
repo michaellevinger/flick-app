@@ -150,5 +150,5 @@ export function useFlicks(user, navigation, onAdvance) {
     }
   };
 
-  return { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived };
+  return { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived, loadFlicksSent };
 }

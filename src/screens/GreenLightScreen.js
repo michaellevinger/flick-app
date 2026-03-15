@@ -45,7 +45,7 @@ export default function GreenLightScreen({ route, navigation }) {
 
   const handleStartChat = () => {
     const matchId = getMatchId(user.id, matchedUser.id);
-    navigation.navigate('Chat', { matchId, otherUser: matchedUser });
+    navigation.replace('Chat', { matchId, otherUser: matchedUser });
   };
 
   return (
