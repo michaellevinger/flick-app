@@ -70,6 +70,12 @@ function generatePhoto(name, gender) {
   return `https://ui-avatars.com/api/?name=${initial}&size=400&background=${colors[gender]}&color=fff&bold=true&font-size=0.4`;
 }
 
+function generatePhone() {
+  // +1-555-01xx is a fictional range safe for testing
+  const suffix = String(Math.floor(Math.random() * 100)).padStart(2, '0');
+  return `+155501${suffix}`;
+}
+
 // ---------------------------------------------------------------------------
 // Resolve test user gender from real user's profile
 // ---------------------------------------------------------------------------
@@ -159,6 +165,7 @@ async function createProfile(testGender, testLookingFor) {
       looking_for: testLookingFor,
       bio,
       festival_id: festivalId,
+      phone_number: generatePhone(),
       last_heartbeat: new Date().toISOString(),
     })
     .select()
@@ -244,4 +251,63 @@ async function main() {
   console.log('\nPull to refresh in the app to see them!\n');
 }
 
-main().catch(console.error);
+// ---------------------------------------------------------------------------
+// Delete recent test users by name
+// ---------------------------------------------------------------------------
+
+async function deleteRecentUsers() {
+  const readline = require('readline');
+
+  console.log('\nSearching for users created in the last 5 days with test names...\n');
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, name, age, created_at')
+    .in('name', names)
+    .gte('created_at', new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString())
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Failed to fetch users:', error.message);
+    return;
+  }
+
+  if (data.length === 0) {
+    console.log('No matching users found. Nothing to delete.\n');
+    return;
+  }
+
+  console.log(`Found ${data.length} user(s):\n`);
+  data.forEach(u => {
+    const created = new Date(u.created_at).toLocaleString();
+    console.log(`  ${u.name.padEnd(10)} age ${u.age}  created ${created}  id: ${u.id}`);
+  });
+
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  rl.question(`\nDelete these ${data.length} user(s) and all their data? (y/N) `, async answer => {
+    rl.close();
+    if (answer.trim().toLowerCase() !== 'y') {
+      console.log('Aborted. No users deleted.\n');
+      return;
+    }
+
+    const ids = data.map(u => u.id);
+    const { error: delError } = await supabase.from('users').delete().in('id', ids);
+
+    if (delError) {
+      console.error('Delete failed:', delError.message);
+    } else {
+      console.log(`\nDeleted ${data.length} user(s) and their related data.\n`);
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Entry point
+// ---------------------------------------------------------------------------
+
+if (process.argv[2] === '--delete-recent') {
+  deleteRecentUsers().catch(console.error);
+} else {
+  main().catch(console.error);
+}
