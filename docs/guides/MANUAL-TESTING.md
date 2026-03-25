@@ -195,14 +195,19 @@ Run these from a **separate terminal** while the app is open. Each script reads 
 
 ## Switching Between Accounts
 
-No need to restart expo. Just:
+Switching requires two steps — one for the scripts (Mac), one for the app (phone):
 
-1. Go back to the Welcome screen (sign out or clear cache)
-2. Tap **Login as Male** or **Login as Female**
+**In terminal** (updates `.dev-session.json` so scripts target the right account):
+```bash
+npm run switch:male
+# or
+npm run switch:female
+```
 
-The session switches instantly. The scripts automatically use whoever is active in `.dev-session.json` — which is set when you run `npm run dev:male` or `npm run dev:female`.
+**In app** (updates AsyncStorage on the phone):
+Go to the Welcome screen → tap **Login as Male** or **Login as Female**.
 
-If you ran `npm run dev:male` but then switch to female in the app, run `node scripts/login.js female` in the terminal to update `.dev-session.json` so the scripts target the right account.
+Both steps are needed. If you only tap the button in the app without running the switch script, `npm run seed`, `flick:me`, `match:me`, and `message:me` will still target the old account.
 
 ---
 
@@ -213,8 +218,9 @@ If you ran `npm run dev:male` but then switch to female in the app, run `node sc
 npm run dev:male       # set up as male + start expo
 npm run dev:female     # set up as female + start expo
 
-# In-app only
-# → tap "Login as Male" or "Login as Female" on the Welcome screen
+# Switch accounts mid-session (expo already running)
+npm run switch:male    # update session file → then tap "Login as Male" in app
+npm run switch:female  # update session file → then tap "Login as Female" in app
 
 # While the app is running (separate terminal)
 npm run seed           # reset and re-seed the radar with 10 fresh users

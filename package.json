@@ -6,6 +6,8 @@
     "start": "expo start",
     "dev:male": "node scripts/login.js male && expo start --lan",
     "dev:female": "node scripts/login.js female && expo start --lan",
+    "switch:male": "node scripts/login.js male",
+    "switch:female": "node scripts/login.js female",
     "seed": "node scripts/seed-radar.js",
     "flick:me": "node scripts/flick-me.js",
     "match:me": "node scripts/match-me.js",
