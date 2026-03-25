@@ -13,11 +13,13 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { useMatches } from '../lib/matchesContext';
+import { useUser } from '../lib/userContext';
 import MatchCard from '../components/MatchCard';
 
 export default function MatchesScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { matches, loading, loadMatches } = useMatches();
+  const { user } = useUser();
 
   // Reload matches when screen gains focus (to update unread counts)
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function MatchesScreen({ navigation }) {
   };
 
   const renderMatch = ({ item }) => (
-    <MatchCard match={item} onPress={() => handleMatchPress(item)} />
+    <MatchCard match={item} onPress={() => handleMatchPress(item)} currentUserId={user?.id} />
   );
 
   const renderEmpty = () => {

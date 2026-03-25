@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
-export default function MatchCard({ match, onPress }) {
-  const { otherUser, lastMessageAt, unreadCount } = match;
+export default function MatchCard({ match, onPress, currentUserId }) {
+  const { otherUser, lastMessageAt, unreadCount, lastMessagePreview, lastMessageSenderId } = match;
 
   if (!otherUser) return null;
 
@@ -48,8 +48,13 @@ export default function MatchCard({ match, onPress }) {
             <Text style={styles.timestamp}>{formatTimestamp(lastMessageAt)}</Text>
           )}
         </View>
-        <Text style={styles.preview} numberOfLines={1}>
-          {lastMessageAt ? 'Tap to chat' : 'Start a conversation'}
+        <Text
+          style={[styles.preview, unreadCount > 0 && styles.previewUnread]}
+          numberOfLines={1}
+        >
+          {lastMessagePreview
+            ? `${lastMessageSenderId === currentUserId ? 'You: ' : ''}${lastMessagePreview}`
+            : 'Start a conversation'}
         </Text>
       </View>
     </TouchableOpacity>
@@ -128,5 +133,9 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.body,
     fontSize: 14,
     color: COLORS.gray,
+  },
+  previewUnread: {
+    fontWeight: '600',
+    color: COLORS.grayDark,
   },
 });
