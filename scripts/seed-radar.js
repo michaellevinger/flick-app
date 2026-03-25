@@ -37,10 +37,16 @@ function pickName(used) {
   return available[Math.floor(Math.random() * available.length)];
 }
 
+const usedPortraits = { male: new Set(), female: new Set() };
+
 function generatePhoto(gender) {
-  const colors = { male: '4A90E2', female: 'E24A90', other: '00FF00' };
-  const initials = gender === 'male' ? 'M' : 'F';
-  return `https://ui-avatars.com/api/?name=${initials}&size=400&background=${colors[gender]}&color=fff&bold=true&font-size=0.5`;
+  const folder = gender === 'female' ? 'women' : 'men';
+  let index;
+  do {
+    index = Math.floor(Math.random() * 99);
+  } while (usedPortraits[gender]?.has(index));
+  usedPortraits[gender]?.add(index);
+  return `https://randomuser.me/api/portraits/${folder}/${index}.jpg`;
 }
 
 async function cleanup(festivalId) {
