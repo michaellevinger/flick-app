@@ -16,7 +16,7 @@ import { supabase } from '../lib/supabase';
 import { COLORS } from '../constants/theme';
 
 export default function WelcomeScreen({ navigation }) {
-  const { user } = useUser();
+  const { user, loginAsTestUser } = useUser();
   const { isAuthenticated } = useAuth();
 
   const handleScanQR = () => {
@@ -110,6 +110,38 @@ export default function WelcomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
+          {/* DEV: Test account login buttons */}
+          {__DEV__ && (
+            <View style={styles.devLoginContainer}>
+              <TouchableOpacity
+                style={styles.devLoginButton}
+                onPress={async () => {
+                  try {
+                    await loginAsTestUser('male');
+                    navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] });
+                  } catch (e) {
+                    Alert.alert('Dev Error', `Login as Male failed: ${e.message}`);
+                  }
+                }}
+              >
+                <Text style={styles.devLoginText}>Login as Male</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.devLoginButton}
+                onPress={async () => {
+                  try {
+                    await loginAsTestUser('female');
+                    navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] });
+                  } catch (e) {
+                    Alert.alert('Dev Error', `Login as Female failed: ${e.message}`);
+                  }
+                }}
+              >
+                <Text style={styles.devLoginText}>Login as Female</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Debug: Clear Cache Button */}
           <TouchableOpacity
             style={styles.debugButton}
@@ -198,6 +230,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: COLORS.white,
+  },
+  devLoginContainer: {
+    position: 'absolute',
+    bottom: 48,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  devLoginButton: {
+    backgroundColor: 'rgba(255, 107, 0, 0.75)',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+  },
+  devLoginText: {
+    fontSize: 12,
+    color: COLORS.white,
+    fontWeight: '600',
   },
   debugButton: {
     position: 'absolute',

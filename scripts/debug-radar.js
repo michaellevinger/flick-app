@@ -23,7 +23,7 @@ async function main() {
   // 2. Get all active users
   const { data: allUsers, error } = await supabase
     .from('users')
-    .select('id, name, age, gender, looking_for, festival_id, status, last_heartbeat, location')
+    .select('id, name, age, gender, looking_for, festival_id, status')
     .eq('status', true)
     .order('created_at', { ascending: false })
     .limit(20);

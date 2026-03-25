@@ -22,11 +22,18 @@ import { markMessagesAsRead } from '../lib/matchService';
  * @param {string} userId      Current user's ID
  * @param {string} otherUserId The other user's ID
  */
-export function useChatMessages(matchId, userId, otherUserId) {
+export function useChatMessages(matchId, userId, otherUserId, myGender, theirGender) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [myMessageCount, setMyMessageCount] = useState(0);
   const [theirMessageCount, setTheirMessageCount] = useState(0);
+
+  // In a male+female match, the male cannot send until the female sends first
+  const isLadiesFirstMatch =
+    (myGender === 'male' && theirGender === 'female') ||
+    (myGender === 'female' && theirGender === 'male');
+  const isLadiesFirstBlocked = isLadiesFirstMatch && myGender === 'male' && theirMessageCount === 0;
+
   const flatListRef = useRef(null);
   const subscriptionRef = useRef(null);
 
@@ -96,6 +103,11 @@ export function useChatMessages(matchId, userId, otherUserId) {
   const handleSendText = async (text) => {
     if (!userId) return;
 
+    if (isLadiesFirstBlocked) {
+      Alert.alert('Ladies First', 'She sends the first message.');
+      return;
+    }
+
     if (myMessageCount >= MESSAGE_LIMIT) {
       Alert.alert(
         'Message Limit Reached',
@@ -139,6 +151,11 @@ export function useChatMessages(matchId, userId, otherUserId) {
 
   const handleSendImage = async (imageUri) => {
     if (!userId) return;
+
+    if (isLadiesFirstBlocked) {
+      Alert.alert('Ladies First', 'She sends the first message.');
+      return;
+    }
 
     if (myMessageCount >= MESSAGE_LIMIT) {
       Alert.alert(
@@ -191,5 +208,6 @@ export function useChatMessages(matchId, userId, otherUserId) {
     handleSendImage,
     markRead,
     loadMessageCounts,
+    isLadiesFirstBlocked,
   };
 }

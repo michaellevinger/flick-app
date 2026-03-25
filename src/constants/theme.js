@@ -72,8 +72,6 @@ export const LOOKING_FOR = {
   both: 'both',
 };
 
-export const HEARTBEAT_INTERVAL = 60000; // 60 seconds
-
 export const MESSAGE_LIMIT = 10; // Max messages per person per chat
 
 export const ERROR_CODES = {

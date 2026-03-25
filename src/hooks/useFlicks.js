@@ -10,17 +10,16 @@ import {
   createMatch,
   getMatchedUserInfo,
 } from '../lib/flicks';
-import { hasSeenTip, markTipSeen } from '../lib/tips';
+
 
 /**
  * Manages flick state, real-time subscription, and the complete flick flow
- * including gender-based initiation rules and mutual match detection.
+ * including mutual match detection.
  *
  * @param {object} user - Current user from UserContext
  * @param {object} navigation - React Navigation object for navigating to GreenLight
- * @param {function} onAdvance - Called when ladies-first rule prevents a flick (advances carousel)
  */
-export function useFlicks(user, navigation, onAdvance) {
+export function useFlicks(user, navigation) {
   const [flickedUsers, setFlickedUsers] = useState(new Set());
   const [usersWhoFlickedMe, setUsersWhoFlickedMe] = useState(new Set());
   const flickSubscriptionRef = useRef(null);
@@ -73,32 +72,6 @@ export function useFlicks(user, navigation, onAdvance) {
 
     const iFlickedThem = flickedUsers.has(targetUser.id);
     const theyFlickedMe = usersWhoFlickedMe.has(targetUser.id);
-
-    // Gender-based rules: in straight matches, women must initiate first
-    const isStraightMale = user.gender === 'male' && user.lookingFor === 'female';
-    const targetIsFemale = targetUser.gender === 'female';
-    const isStraightMatch = isStraightMale && targetIsFemale;
-    const canInitiate = !isStraightMatch || theyFlickedMe;
-
-    if (!canInitiate && !iFlickedThem) {
-      const seen = await hasSeenTip('ladies_first');
-      if (!seen) {
-        Alert.alert(
-          'Ladies First',
-          'In straight matches, women make the first move. Wait for her to flick you first!',
-          [{
-            text: 'Got it',
-            onPress: async () => {
-              await markTipSeen('ladies_first');
-              onAdvance?.();
-            },
-          }]
-        );
-      } else {
-        onAdvance?.();
-      }
-      return;
-    }
 
     // Unflick if already flicked
     if (iFlickedThem) {

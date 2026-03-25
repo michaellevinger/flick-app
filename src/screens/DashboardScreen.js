@@ -19,7 +19,7 @@ import EventBanner from '../components/EventBanner';
 import UserCard from '../components/UserCard';
 import { COLORS, SPACING } from '../constants/theme';
 
-export default function DashboardScreen({ navigation }) {
+export default function DashboardScreen({ navigation, route }) {
   const { user } = useUser();
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
 
@@ -33,8 +33,7 @@ export default function DashboardScreen({ navigation }) {
 
   const { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived, loadFlicksSent } = useFlicks(
     user,
-    navigation,
-    handleAdvance
+    navigation
   );
 
   // Hide users already flicked — reuses the flickedUsers Set from useFlicks
@@ -49,6 +48,18 @@ export default function DashboardScreen({ navigation }) {
       setCurrentUserIndex(visibleUsers.length - 1);
     }
   }, [visibleUsers.length]);
+
+  // Handle flick/pass actions returned from UserProfileScreen
+  useEffect(() => {
+    if (route.params?.pendingFlick) {
+      handleFlick(route.params.pendingFlick);
+      navigation.setParams({ pendingFlick: undefined });
+    }
+    if (route.params?.pendingPass) {
+      handleAdvance();
+      navigation.setParams({ pendingPass: undefined });
+    }
+  }, [route.params?.pendingFlick, route.params?.pendingPass]);
 
   // Reload silently every time the Radar tab comes into focus
   useFocusEffect(
@@ -105,8 +116,7 @@ export default function DashboardScreen({ navigation }) {
               onViewProfile={() =>
                 navigation.navigate('UserProfile', {
                   user: currentUser,
-                  onFlick: handleFlick,
-                  onPass: handleAdvance,
+                  fromRadar: true,
                 })
               }
               onPrev={() => setCurrentUserIndex((prev) => prev - 1)}

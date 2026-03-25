@@ -60,12 +60,6 @@ export default function HelpSupportScreen({ navigation }) {
           </Text>
         </View>
 
-        <View style={styles.faqCard}>
-          <Text style={styles.faqQuestion}>Is my location shared with others?</Text>
-          <Text style={styles.faqAnswer}>
-            No. Flick is event-based — you only see other people who joined the same event via the QR code. Your GPS coordinates are never used or shared.
-          </Text>
-        </View>
 
         <View style={styles.faqCard}>
           <Text style={styles.faqQuestion}>How do I delete my profile?</Text>

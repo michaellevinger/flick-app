@@ -17,6 +17,7 @@ export default function MessageInput({
   onSendImage,
   onRequestNumber,
   disabled = false,
+  disabledReason,
   messageCount = 0,
 }) {
   const insets = useSafeAreaInsets();
@@ -130,7 +131,7 @@ export default function MessageInput({
         style={[styles.input, disabled && styles.inputDisabled]}
         value={text}
         onChangeText={setText}
-        placeholder={disabled ? "Message limit reached" : "Type a message..."}
+        placeholder={disabled ? (disabledReason || 'Message limit reached') : 'Type a message...'}
         placeholderTextColor={disabled ? COLORS.grayDisabled : COLORS.gray}
         multiline
         maxLength={500}

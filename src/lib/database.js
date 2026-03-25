@@ -22,7 +22,6 @@ export async function upsertUser({ id, name, age, height, selfieUrl, photos, sta
         looking_for: lookingFor || null,
         festival_id: festivalId || null,
         bio: bio || null,
-        last_heartbeat: new Date().toISOString(),
       },
       {
         onConflict: 'id',
@@ -37,21 +36,6 @@ export async function upsertUser({ id, name, age, height, selfieUrl, photos, sta
   }
 
   return normalizeUserData(data);
-}
-
-/**
- * Update user's heartbeat to prevent auto-wipe
- */
-export async function updateHeartbeat(userId) {
-  const { error } = await supabase
-    .from('users')
-    .update({ last_heartbeat: new Date().toISOString() })
-    .eq('id', userId);
-
-  if (error) {
-    console.error('Error updating heartbeat:', error);
-    throw error;
-  }
 }
 
 /**

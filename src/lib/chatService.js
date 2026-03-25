@@ -101,50 +101,6 @@ export async function sendImageMessage(senderId, recipientId, imageUri) {
 }
 
 /**
- * Send a location message (manual user-initiated share, not GPS tracking)
- */
-export async function sendLocationMessage(senderId, recipientId, location) {
-  try {
-    if (
-      !location ||
-      typeof location.latitude !== 'number' ||
-      typeof location.longitude !== 'number' ||
-      isNaN(location.latitude) ||
-      isNaN(location.longitude)
-    ) {
-      throw new Error('Invalid location: latitude and longitude must be valid numbers');
-    }
-
-    const matchId = getMatchId(senderId, recipientId);
-
-    const { data, error } = await supabase
-      .from('messages')
-      .insert({
-        match_id: matchId,
-        sender_id: senderId,
-        recipient_id: recipientId,
-        message_type: 'location',
-        location: `POINT(${location.longitude} ${location.latitude})`,
-        content: JSON.stringify({
-          latitude: location.latitude,
-          longitude: location.longitude,
-        }),
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    await updateMatchMetadata(matchId, senderId, recipientId);
-
-    return data;
-  } catch (error) {
-    console.error('Error sending location message:', error);
-    throw error;
-  }
-}
-
-/**
  * Send an emoji reaction to a message
  */
 export async function sendEmojiReaction(senderId, recipientId, messageId, emoji) {

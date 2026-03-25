@@ -17,10 +17,10 @@ async function main() {
   const { data: recentUsers } = await supabase
     .from('users')
     .select('*')
-    .order('last_heartbeat', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(5);
 
-  console.log('Recent users (sorted by last heartbeat):');
+  console.log('Recent users (sorted by created_at):');
   recentUsers.forEach((u, i) => {
     console.log(`  ${i + 1}. ${u.name} (${u.gender}) - Festival: ${u.festival_id || 'none'} - Looking for: ${u.looking_for}`);
   });

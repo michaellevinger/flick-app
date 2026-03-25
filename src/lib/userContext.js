@@ -1,10 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { HEARTBEAT_INTERVAL } from '../constants/theme';
 import { supabase } from './supabase';
 import {
   upsertUser,
-  updateHeartbeat,
   updateUserStatus,
   uploadPhotos,
   deleteSelfie,
@@ -17,23 +15,11 @@ const UserContext = createContext(null);
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const heartbeatInterval = useRef(null);
 
   // Load user from AsyncStorage on mount
   useEffect(() => {
     loadUser();
   }, []);
-
-  // Start heartbeat when user is active
-  useEffect(() => {
-    if (user?.status) {
-      startHeartbeat();
-    } else {
-      stopHeartbeat();
-    }
-
-    return () => stopHeartbeat();
-  }, [user?.status]);
 
   const loadUser = async () => {
     try {
@@ -132,37 +118,6 @@ export function UserProvider({ children }) {
     }
   };
 
-  const startHeartbeat = () => {
-    if (heartbeatInterval.current) return;
-
-    // Send heartbeat immediately
-    sendHeartbeat();
-
-    // Then send every HEARTBEAT_INTERVAL
-    heartbeatInterval.current = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
-  };
-
-  const stopHeartbeat = () => {
-    if (heartbeatInterval.current) {
-      clearInterval(heartbeatInterval.current);
-      heartbeatInterval.current = null;
-    }
-  };
-
-  const sendHeartbeat = async () => {
-    if (!user) return;
-
-    try {
-      // Update heartbeat (no location tracking in event-based model)
-      await updateHeartbeat(user.id);
-
-      // Note: In event-based model, matches persist regardless of distance
-      // Users are locked to their festival/event, no proximity-based cleanup
-    } catch (error) {
-      console.error('Error sending heartbeat:', error);
-    }
-  };
-
   const updateUser = async (updates) => {
     if (!user) return;
 
@@ -182,6 +137,7 @@ export function UserProvider({ children }) {
         gender: updatedUser.gender,
         lookingFor: updatedUser.lookingFor,
         festivalId: updatedUser.festival_id,
+        bio: updatedUser.bio,
       });
 
       // Update local state and storage
@@ -204,7 +160,6 @@ export function UserProvider({ children }) {
         height: user.height,
         selfieUrl: newSelfieUrl,
         status: user.status,
-        location: user.location,
         phoneNumber: user.phoneNumber,
         gender: user.gender,
         lookingFor: user.lookingFor,
@@ -221,9 +176,6 @@ export function UserProvider({ children }) {
 
   const leaveEvent = async () => {
     if (!user) return;
-
-    // Stop heartbeat
-    stopHeartbeat();
 
     try {
       // Clear festival association but keep profile
@@ -254,9 +206,6 @@ export function UserProvider({ children }) {
 
   const logout = async () => {
     if (!user) return;
-
-    // Stop heartbeat first
-    stopHeartbeat();
 
     // Store user data for cleanup
     const userId = user.id;
@@ -299,6 +248,101 @@ export function UserProvider({ children }) {
     }
   };
 
+  // DEV ONLY: fixed test account definitions (mirrors scripts/lib/test-accounts.js)
+  const DEV_TEST_ACCOUNTS = __DEV__
+    ? {
+        male: {
+          id: 'test_dor_male',
+          name: 'Dor (M)',
+          age: 28,
+          gender: 'male',
+          lookingFor: 'female',
+          selfieUrl:
+            'https://ui-avatars.com/api/?name=M&size=400&background=4A90E2&color=fff&bold=true&font-size=0.5',
+          photos: [
+            'https://ui-avatars.com/api/?name=M&size=400&background=4A90E2&color=fff&bold=true&font-size=0.5',
+          ],
+          status: true,
+          phoneNumber: '+15550100',
+          height: 180,
+          bio: '[DEV] Male test account',
+          festival_id: 'test-festival',
+        },
+        female: {
+          id: 'test_dor_female',
+          name: 'Dor (F)',
+          age: 26,
+          gender: 'female',
+          lookingFor: 'male',
+          selfieUrl:
+            'https://ui-avatars.com/api/?name=F&size=400&background=E24A90&color=fff&bold=true&font-size=0.5',
+          photos: [
+            'https://ui-avatars.com/api/?name=F&size=400&background=E24A90&color=fff&bold=true&font-size=0.5',
+          ],
+          status: true,
+          phoneNumber: '+15550101',
+          height: 165,
+          bio: '[DEV] Female test account',
+          festival_id: 'test-festival',
+        },
+      }
+    : null;
+
+  /**
+   * DEV ONLY: Switch to a fixed test account.
+   * Upserts the account to DB, wipes AsyncStorage, saves the new user,
+   * and updates React state. Navigation reset is handled by the caller.
+   */
+  const loginAsTestUser = async (gender) => {
+    if (!__DEV__) return;
+
+    const account = DEV_TEST_ACCOUNTS[gender];
+    if (!account) throw new Error(`Unknown gender: ${gender}`);
+
+    console.log(`[DEV] Logging in as test ${gender} account (${account.id})`);
+
+    // 1. Upsert to DB so the account exists
+    await upsertUser({
+      id: account.id,
+      name: account.name,
+      age: account.age,
+      height: account.height,
+      selfieUrl: account.selfieUrl,
+      photos: account.photos,
+      status: true,
+      phoneNumber: account.phoneNumber,
+      gender: account.gender,
+      lookingFor: account.lookingFor,
+      festivalId: account.festival_id,
+      bio: account.bio,
+    });
+
+    // 2. Wipe all existing session data from AsyncStorage
+    await AsyncStorage.multiRemove(['user', 'festivalId', '@dev_real_user_backup']);
+
+    // 3. Build and save the new user (saveUser also calls setUser)
+    const userToSave = {
+      id: account.id,
+      name: account.name,
+      age: account.age,
+      height: account.height,
+      selfieUrl: account.selfieUrl,
+      photos: account.photos,
+      status: true,
+      phoneNumber: account.phoneNumber,
+      gender: account.gender,
+      lookingFor: account.lookingFor,
+      festival_id: account.festival_id,
+      bio: account.bio,
+    };
+
+    await saveUser(userToSave);
+    await AsyncStorage.setItem('festivalId', account.festival_id);
+
+    console.log(`[DEV] Logged in as ${account.name}. Navigation reset should follow.`);
+    return userToSave;
+  };
+
   const refreshUser = async () => {
     if (!user) return;
 
@@ -320,7 +364,6 @@ export function UserProvider({ children }) {
           selfieUrl: data.selfie_url,
           photos: data.photos || [],
           status: Boolean(data.status),
-          location: data.location,
           phoneNumber: data.phone_number,
           gender: data.gender,
           lookingFor: data.looking_for,
@@ -346,6 +389,7 @@ export function UserProvider({ children }) {
         leaveEvent,
         logout,
         refreshUser,
+        loginAsTestUser,
       }}
     >
       {children}

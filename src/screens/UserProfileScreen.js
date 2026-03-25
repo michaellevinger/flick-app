@@ -20,13 +20,13 @@ import { COLORS, SPACING } from '../constants/theme';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function UserProfileScreen({ route, navigation }) {
-  const { user, onFlick, onPass } = route.params;
+  const { user, fromRadar } = route.params;
   const { user: currentUser } = useUser();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const insets = useSafeAreaInsets();
 
   // Check if this is a matched user (viewing from chat)
-  const isMatched = onFlick === null || onFlick === undefined;
+  const isMatched = !fromRadar;
 
   // Combine selfie and additional photos
   const allPhotos = user.selfie_url
@@ -34,17 +34,11 @@ export default function UserProfileScreen({ route, navigation }) {
     : user.photos || [];
 
   const handleFlick = () => {
-    if (onFlick) {
-      onFlick(user);
-    }
-    navigation.goBack();
+    navigation.navigate('DashboardTab', { pendingFlick: user });
   };
 
   const handlePass = () => {
-    if (onPass) {
-      onPass(user);
-    }
-    navigation.goBack();
+    navigation.navigate('DashboardTab', { pendingPass: true });
   };
 
   const handleUnmatch = () => {

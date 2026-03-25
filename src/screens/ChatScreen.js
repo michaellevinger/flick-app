@@ -41,7 +41,8 @@ export default function ChatScreen({ route, navigation }) {
     handleSendText,
     handleSendImage,
     markRead,
-  } = useChatMessages(matchId, user?.id, otherUser?.id);
+    isLadiesFirstBlocked,
+  } = useChatMessages(matchId, user?.id, otherUser?.id, user?.gender, otherUser?.gender);
 
   const [exchangeRequest, setExchangeRequest] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -149,10 +150,7 @@ export default function ChatScreen({ route, navigation }) {
                 { type: 'exchange_request', exchange_id: result.exchange.id }
               );
 
-              Alert.alert('Request Sent', `Waiting for ${otherUser.name} to accept.`, [
-                { text: 'OK' },
-              ]);
-
+              setExchangeRequest(result.exchange);
               setShowLimitModal(false);
             } catch (error) {
               console.error('Error requesting number exchange:', error);
@@ -293,11 +291,28 @@ export default function ChatScreen({ route, navigation }) {
         }
       />
 
+      {isLadiesFirstBlocked && (
+        <View style={styles.ladiesFirstBanner}>
+          <Text style={styles.ladiesFirstText}>
+            Waiting for {otherUser.name} to say hello first
+          </Text>
+        </View>
+      )}
+
+      {exchangeRequest?.status === 'pending' && exchangeRequest?.requested_by === user?.id && (
+        <View style={styles.exchangePendingBanner}>
+          <Text style={styles.exchangePendingText}>
+            {otherUser.name} should approve your request before you can exchange numbers
+          </Text>
+        </View>
+      )}
+
       <MessageInput
         onSendText={handleSendText}
         onSendImage={handleSendImage}
         onRequestNumber={handleRequestNumber}
-        disabled={myMessageCount >= MESSAGE_LIMIT}
+        disabled={myMessageCount >= MESSAGE_LIMIT || isLadiesFirstBlocked}
+        disabledReason={isLadiesFirstBlocked ? 'She sends the first message...' : undefined}
         messageCount={myMessageCount}
       />
 
@@ -437,6 +452,32 @@ const styles = StyleSheet.create({
   emptyText: {
     ...TYPOGRAPHY.body,
     color: COLORS.gray,
+  },
+  exchangePendingBanner: {
+    backgroundColor: '#F0F4FF',
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: '#C7D4FF',
+    alignItems: 'center',
+  },
+  exchangePendingText: {
+    fontSize: 13,
+    color: '#5B7CFA',
+    fontWeight: '500',
+  },
+  ladiesFirstBanner: {
+    backgroundColor: '#FFF0F8',
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: '#FFB6D9',
+    alignItems: 'center',
+  },
+  ladiesFirstText: {
+    fontSize: 13,
+    color: '#C44CE0',
+    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
