@@ -216,6 +216,45 @@ export async function createMatch(user1Id, user2Id) {
 }
 
 /**
+ * Pass a user (X button). Upserts so re-passing resets created_at,
+ * which allows future time-based re-showing (e.g. after 1 hour).
+ */
+export async function passUser(fromUserId, toUserId) {
+  try {
+    const { error } = await supabase
+      .from('passes')
+      .upsert(
+        { from_user_id: fromUserId, to_user_id: toUserId, created_at: new Date().toISOString() },
+        { onConflict: 'from_user_id,to_user_id' }
+      );
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error passing user:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get all users passed by this user.
+ * Returns an array of to_user_id strings.
+ */
+export async function getPassedUsers(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('passes')
+      .select('to_user_id')
+      .eq('from_user_id', userId);
+
+    if (error) throw error;
+    return (data || []).map((r) => r.to_user_id);
+  } catch (error) {
+    console.error('Error fetching passed users:', error);
+    return [];
+  }
+}
+
+/**
  * Unmatch with a user (delete both flicks and match record)
  */
 export async function unmatchUser(currentUserId, otherUserId) {

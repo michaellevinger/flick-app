@@ -9,6 +9,8 @@ import {
   deleteFlick,
   createMatch,
   getMatchedUserInfo,
+  passUser,
+  getPassedUsers,
 } from '../lib/flicks';
 
 
@@ -22,6 +24,7 @@ import {
 export function useFlicks(user, navigation) {
   const [flickedUsers, setFlickedUsers] = useState(new Set());
   const [usersWhoFlickedMe, setUsersWhoFlickedMe] = useState(new Set());
+  const [passedUsers, setPassedUsers] = useState(new Set());
   const flickSubscriptionRef = useRef(null);
 
   useEffect(() => {
@@ -29,6 +32,7 @@ export function useFlicks(user, navigation) {
 
     loadFlicksSent();
     loadFlicksReceived();
+    loadPassedUsers();
     setupFlickSubscription();
 
     return () => flickSubscriptionRef.current?.unsubscribe();
@@ -40,6 +44,32 @@ export function useFlicks(user, navigation) {
       setFlickedUsers(new Set(sent.map((n) => n.to_user_id)));
     } catch (error) {
       console.error('Error loading sent flicks:', error);
+    }
+  };
+
+  const loadPassedUsers = async () => {
+    try {
+      const ids = await getPassedUsers(user.id);
+      setPassedUsers(new Set(ids));
+    } catch (error) {
+      console.error('Error loading passed users:', error);
+    }
+  };
+
+  const handlePass = async (targetUser) => {
+    if (!user) return;
+    // Optimistically remove from view immediately
+    setPassedUsers((prev) => new Set([...prev, targetUser.id]));
+    try {
+      await passUser(user.id, targetUser.id);
+    } catch (error) {
+      console.error('Error passing user:', error);
+      // Rollback on failure
+      setPassedUsers((prev) => {
+        const next = new Set(prev);
+        next.delete(targetUser.id);
+        return next;
+      });
     }
   };
 
@@ -123,5 +153,5 @@ export function useFlicks(user, navigation) {
     }
   };
 
-  return { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived, loadFlicksSent };
+  return { flickedUsers, usersWhoFlickedMe, passedUsers, handleFlick, handlePass, loadFlicksReceived, loadFlicksSent };
 }

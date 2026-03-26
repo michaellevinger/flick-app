@@ -15,7 +15,6 @@ import { useUser } from '../lib/userContext';
 import { useFestival } from '../hooks/useFestival';
 import { useFestivalUsers } from '../hooks/useFestivalUsers';
 import { useFlicks } from '../hooks/useFlicks';
-import EventBanner from '../components/EventBanner';
 import UserCard from '../components/UserCard';
 import { COLORS, SPACING } from '../constants/theme';
 
@@ -23,7 +22,7 @@ export default function DashboardScreen({ navigation, route }) {
   const { user } = useUser();
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
 
-  const { festival } = useFestival(user?.id, user?.festival_id, navigation);
+  useFestival(user?.id, user?.festival_id, navigation);
   const { users, refresh, reload } = useFestivalUsers(user);
 
   // Advance to the next card; going past the end shows the empty state
@@ -31,15 +30,15 @@ export default function DashboardScreen({ navigation, route }) {
     setCurrentUserIndex((prev) => prev + 1);
   }, []);
 
-  const { flickedUsers, usersWhoFlickedMe, handleFlick, loadFlicksReceived, loadFlicksSent } = useFlicks(
+  const { flickedUsers, usersWhoFlickedMe, passedUsers, handleFlick, handlePass, loadFlicksReceived, loadFlicksSent } = useFlicks(
     user,
     navigation
   );
 
-  // Hide users already flicked — reuses the flickedUsers Set from useFlicks
+  // Hide users already flicked or passed
   const visibleUsers = useMemo(
-    () => users.filter((u) => !flickedUsers.has(u.id)),
-    [users, flickedUsers]
+    () => users.filter((u) => !flickedUsers.has(u.id) && !passedUsers.has(u.id)),
+    [users, flickedUsers, passedUsers]
   );
 
   // When the visible list shrinks, clamp the index to the last valid card
@@ -105,8 +104,6 @@ export default function DashboardScreen({ navigation, route }) {
             </TouchableOpacity>
           </View>
 
-          <EventBanner festival={festival} />
-
           {currentUser ? (
             <UserCard
               user={currentUser}
@@ -120,6 +117,7 @@ export default function DashboardScreen({ navigation, route }) {
                 })
               }
               onPrev={() => setCurrentUserIndex((prev) => prev - 1)}
+              onPass={handlePass}
               onNext={() => setCurrentUserIndex((prev) => prev + 1)}
               currentIndex={currentUserIndex}
               totalCount={visibleUsers.length}

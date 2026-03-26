@@ -22,6 +22,7 @@ export default function UserCard({
   isFlicked,
   hasFlickedMe,
   onFlick,
+  onPass,
   onViewProfile,
   onPrev,
   onNext,
@@ -48,45 +49,29 @@ export default function UserCard({
           <Text style={styles.name}>
             {user.name}, {user.age}
           </Text>
-          <Text style={styles.distance}>
-            {user.distance_meters ? `${user.distance_meters}m away` : 'Nearby'}
-          </Text>
           {hasFlickedMe && <Text style={styles.interestedLabel}>Wants to meet you! 💫</Text>}
         </View>
 
-        <LinearGradient
-          colors={isFlicked ? [COLORS.grayFlicked, COLORS.grayFlickedDark] : [COLORS.purple, COLORS.pink]}
-          style={styles.flickButton}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <TouchableOpacity style={styles.flickButtonInner} onPress={() => onFlick(user)}>
-            <Text style={styles.flickButtonText}>{isFlicked ? 'Flicked ✓' : 'Flick'}</Text>
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={styles.passButton}
+            onPress={() => onPass(user)}
+          >
+            <Text style={styles.passButtonText}>✕</Text>
           </TouchableOpacity>
-        </LinearGradient>
-      </View>
 
-      {totalCount > 1 && (
-        <View style={styles.navigation}>
-          <TouchableOpacity
-            style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
-            onPress={onPrev}
-            disabled={currentIndex === 0}
+          <LinearGradient
+            colors={isFlicked ? [COLORS.grayFlicked, COLORS.grayFlickedDark] : [COLORS.purple, COLORS.pink]}
+            style={styles.flickButton}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
           >
-            <Text style={styles.navButtonText}>←</Text>
-          </TouchableOpacity>
-          <Text style={styles.navCounter}>
-            {currentIndex + 1} / {totalCount}
-          </Text>
-          <TouchableOpacity
-            style={[styles.navButton, currentIndex === totalCount - 1 && styles.navButtonDisabled]}
-            onPress={onNext}
-            disabled={currentIndex === totalCount - 1}
-          >
-            <Text style={styles.navButtonText}>→</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.flickButtonInner} onPress={() => onFlick(user)}>
+              <Text style={styles.flickButtonText}>{isFlicked ? 'Flicked ✓' : 'Flick'}</Text>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
-      )}
+      </View>
     </View>
   );
 }
@@ -165,7 +150,32 @@ const styles = StyleSheet.create({
     color: COLORS.pink,
     marginTop: 4,
   },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: SPACING.md,
+    gap: SPACING.sm,
+  },
+  passButton: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  passButtonText: {
+    fontSize: 20,
+    color: COLORS.gray,
+    fontWeight: '300',
+  },
   flickButton: {
+    flex: 1,
     borderRadius: 30,
     overflow: 'hidden',
   },
@@ -177,39 +187,6 @@ const styles = StyleSheet.create({
   flickButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLORS.white,
-  },
-  navigation: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: SPACING.lg,
-    gap: 50,
-  },
-  navButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  navButtonDisabled: {
-    opacity: 0.4,
-  },
-  navButtonText: {
-    fontSize: 28,
-    color: COLORS.purple,
-    fontWeight: 'bold',
-  },
-  navCounter: {
-    fontSize: 18,
-    fontWeight: '600',
     color: COLORS.white,
   },
 });
