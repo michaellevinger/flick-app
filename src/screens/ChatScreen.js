@@ -17,6 +17,7 @@ import { COLORS, SPACING, TYPOGRAPHY, MESSAGE_LIMIT } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 import { useChatMessages } from '../hooks/useChatMessages';
 import { sendSystemMessage } from '../lib/chatService';
+import { sendPushNotification } from '../lib/notifications';
 import {
   requestNumberExchange,
   subscribeToExchanges,
@@ -42,7 +43,7 @@ export default function ChatScreen({ route, navigation }) {
     handleSendImage,
     markRead,
     isLadiesFirstBlocked,
-  } = useChatMessages(matchId, user?.id, otherUser?.id, user?.gender, otherUser?.gender);
+  } = useChatMessages(matchId, user?.id, otherUser?.id, user?.gender, otherUser?.gender, user?.name);
 
   const [exchangeRequest, setExchangeRequest] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -150,6 +151,11 @@ export default function ChatScreen({ route, navigation }) {
                 { type: 'exchange_request', exchange_id: result.exchange.id }
               );
 
+              sendPushNotification(otherUser.id, 'exchange_request', user.name, {
+                matchId,
+                otherUser: { id: user.id, name: user.name, selfie_url: user.selfieUrl },
+              });
+
               setExchangeRequest(result.exchange);
               setShowLimitModal(false);
             } catch (error) {
@@ -167,6 +173,10 @@ export default function ChatScreen({ route, navigation }) {
       await acceptExchangeRequest(exchangeId);
       await sendSystemMessage(matchId, 'Number exchange accepted! Check your vault.', {
         type: 'exchange_accepted',
+      });
+      sendPushNotification(otherUser.id, 'exchange_accepted', user.name, {
+        matchId,
+        otherUser: { id: user.id, name: user.name, selfie_url: user.selfieUrl },
       });
       navigation.navigate('Vault');
     } catch (error) {

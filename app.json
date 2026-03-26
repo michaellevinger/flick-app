@@ -21,7 +21,8 @@
       },
       "infoPlist": {
         "NSCameraUsageDescription": "flick needs camera access to take your profile photo and scan event QR codes",
-        "NSPhotoLibraryUsageDescription": "flick needs photo library access to select profile photos"
+        "NSPhotoLibraryUsageDescription": "flick needs photo library access to select profile photos",
+        "NSUserNotificationUsageDescription": "flick notifies you when someone flicks you, you get a match, or you receive a message."
       }
     },
     "android": {
@@ -32,7 +33,10 @@
       },
       "permissions": [
         "CAMERA",
-        "READ_EXTERNAL_STORAGE"
+        "READ_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
       ]
     },
     "web": {
@@ -48,6 +52,14 @@
     "plugins": [
       "@react-native-community/datetimepicker",
       "expo-camera",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#C44CE0",
+          "androidMode": "default"
+        }
+      ],
       [
         "expo-build-properties",
         {

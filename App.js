@@ -39,8 +39,17 @@ import NotificationSettingsScreen from './src/screens/NotificationSettingsScreen
 import HostAuthScreen from './src/screens/HostAuthScreen';
 import { COLORS } from './src/constants/theme';
 import { AuthProvider } from './src/lib/authContext';
-import { UserProvider } from './src/lib/userContext';
+import { UserProvider, useUser } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
+import { useNotifications } from './src/hooks/useNotifications';
+import { navigationRef } from './src/lib/navigationRef';
+
+// Mounted inside UserProvider — registers push token and handles notification taps
+function NotificationManager() {
+  const { user } = useUser();
+  useNotifications(user, navigationRef);
+  return null;
+}
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -120,8 +129,9 @@ export default function App() {
         <AuthProvider>
           <UserProvider>
             <MatchesProvider>
+              <NotificationManager />
               <StatusBar style="dark" />
-              <NavigationContainer>
+              <NavigationContainer ref={navigationRef}>
             <Stack.Navigator
               initialRouteName="Welcome"
               screenOptions={{

@@ -95,6 +95,7 @@ export function UserProvider({ children }) {
         lookingFor,
         festival_id: festivalId,
         bio,
+        notificationPreferences: { matches: true, messages: true, flicks: true, exchanges: true },
       };
 
       await saveUser(userToSave);
@@ -369,6 +370,7 @@ export function UserProvider({ children }) {
           lookingFor: data.looking_for,
           festival_id: data.festival_id,
           bio: data.bio,
+          notificationPreferences: data.notification_preferences || { matches: true, messages: true, flicks: true, exchanges: true },
         };
         await saveUser(updatedUser);
       }

@@ -11,19 +11,37 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SPACING } from '../constants/theme';
+import { useUser } from '../lib/userContext';
 
 export default function NotificationSettingsScreen({ navigation }) {
-  // Notification preferences
-  const [matchNotifications, setMatchNotifications] = useState(true);
-  const [messageNotifications, setMessageNotifications] = useState(true);
-  const [flickNotifications, setFlickNotifications] = useState(true);
-  const [nearbyNotifications, setNearbyNotifications] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [vibrationEnabled, setVibrationEnabled] = useState(true);
+  const { user, updateUser } = useUser();
 
-  const handleToggle = (setter, value, title) => {
-    setter(!value);
-    // In a real app, you'd save this to backend or AsyncStorage
+  const prefs = user?.notificationPreferences || {
+    matches: true,
+    messages: true,
+    flicks: true,
+    exchanges: true,
+  };
+
+  const [matchNotifications, setMatchNotifications] = useState(prefs.matches !== false);
+  const [messageNotifications, setMessageNotifications] = useState(prefs.messages !== false);
+  const [flickNotifications, setFlickNotifications] = useState(prefs.flicks !== false);
+  const [exchangeNotifications, setExchangeNotifications] = useState(prefs.exchanges !== false);
+
+  const handleToggle = async (key, setter, currentValue) => {
+    const newValue = !currentValue;
+    setter(newValue);
+    try {
+      await updateUser({
+        notificationPreferences: {
+          ...prefs,
+          [key]: newValue,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to save notification preference:', error);
+      setter(currentValue); // rollback on failure
+    }
   };
 
   return (
@@ -44,7 +62,6 @@ export default function NotificationSettingsScreen({ navigation }) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Push Notifications Section */}
         <Text style={styles.sectionTitle}>Push Notifications</Text>
 
         <View style={styles.settingCard}>
@@ -57,7 +74,7 @@ export default function NotificationSettingsScreen({ navigation }) {
             </View>
             <Switch
               value={matchNotifications}
-              onValueChange={() => handleToggle(setMatchNotifications, matchNotifications, 'Match')}
+              onValueChange={() => handleToggle('matches', setMatchNotifications, matchNotifications)}
               trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
               thumbColor={matchNotifications ? COLORS.white : COLORS.grayLight}
             />
@@ -74,7 +91,7 @@ export default function NotificationSettingsScreen({ navigation }) {
             </View>
             <Switch
               value={messageNotifications}
-              onValueChange={() => handleToggle(setMessageNotifications, messageNotifications, 'Message')}
+              onValueChange={() => handleToggle('messages', setMessageNotifications, messageNotifications)}
               trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
               thumbColor={messageNotifications ? COLORS.white : COLORS.grayLight}
             />
@@ -91,7 +108,7 @@ export default function NotificationSettingsScreen({ navigation }) {
             </View>
             <Switch
               value={flickNotifications}
-              onValueChange={() => handleToggle(setFlickNotifications, flickNotifications, 'Flick')}
+              onValueChange={() => handleToggle('flicks', setFlickNotifications, flickNotifications)}
               trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
               thumbColor={flickNotifications ? COLORS.white : COLORS.grayLight}
             />
@@ -101,58 +118,20 @@ export default function NotificationSettingsScreen({ navigation }) {
         <View style={styles.settingCard}>
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Nearby Users</Text>
+              <Text style={styles.settingLabel}>Number Exchange</Text>
               <Text style={styles.settingDescription}>
-                Get notified when new users join nearby
+                Get notified for number exchange requests and acceptances
               </Text>
             </View>
             <Switch
-              value={nearbyNotifications}
-              onValueChange={() => handleToggle(setNearbyNotifications, nearbyNotifications, 'Nearby')}
+              value={exchangeNotifications}
+              onValueChange={() => handleToggle('exchanges', setExchangeNotifications, exchangeNotifications)}
               trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
-              thumbColor={nearbyNotifications ? COLORS.white : COLORS.grayLight}
+              thumbColor={exchangeNotifications ? COLORS.white : COLORS.grayLight}
             />
           </View>
         </View>
 
-        {/* Sound & Vibration Section */}
-        <Text style={styles.sectionTitle}>Sound & Vibration</Text>
-
-        <View style={styles.settingCard}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Sound</Text>
-              <Text style={styles.settingDescription}>
-                Play sound for notifications
-              </Text>
-            </View>
-            <Switch
-              value={soundEnabled}
-              onValueChange={() => handleToggle(setSoundEnabled, soundEnabled, 'Sound')}
-              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
-              thumbColor={soundEnabled ? COLORS.white : COLORS.grayLight}
-            />
-          </View>
-        </View>
-
-        <View style={styles.settingCard}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Vibration</Text>
-              <Text style={styles.settingDescription}>
-                Vibrate for notifications and matches
-              </Text>
-            </View>
-            <Switch
-              value={vibrationEnabled}
-              onValueChange={() => handleToggle(setVibrationEnabled, vibrationEnabled, 'Vibration')}
-              trackColor={{ false: COLORS.grayDisabled, true: COLORS.purple }}
-              thumbColor={vibrationEnabled ? COLORS.white : COLORS.grayLight}
-            />
-          </View>
-        </View>
-
-        {/* Info Box */}
         <View style={styles.infoBox}>
           <Text style={styles.infoIcon}>💡</Text>
           <Text style={styles.infoText}>
@@ -241,33 +220,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.grayMedium,
     lineHeight: 18,
-  },
-  menuCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: COLORS.grayBorder,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: SPACING.md,
-  },
-  menuIcon: {
-    fontSize: 18,
-    width: 30,
-    textAlign: 'center',
-  },
-  menuText: {
-    flex: 1,
-    fontSize: 16,
-    color: COLORS.grayDark,
-    marginLeft: SPACING.sm,
-  },
-  menuChevron: {
-    fontSize: 20,
-    color: COLORS.grayDisabled,
   },
   infoBox: {
     flexDirection: 'row',

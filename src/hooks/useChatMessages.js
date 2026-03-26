@@ -9,6 +9,7 @@ import {
   getMessageCount,
 } from '../lib/chatService';
 import { markMessagesAsRead } from '../lib/matchService';
+import { sendPushNotification } from '../lib/notifications';
 
 /**
  * Manages the full chat message flow for a single match:
@@ -22,7 +23,7 @@ import { markMessagesAsRead } from '../lib/matchService';
  * @param {string} userId      Current user's ID
  * @param {string} otherUserId The other user's ID
  */
-export function useChatMessages(matchId, userId, otherUserId, myGender, theirGender) {
+export function useChatMessages(matchId, userId, otherUserId, myGender, theirGender, fromName) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [myMessageCount, setMyMessageCount] = useState(0);
@@ -136,6 +137,7 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
       const sentMessage = await sendTextMessage(userId, otherUserId, text);
       setMessages((prev) => prev.map((msg) => (msg.id === tempId ? sentMessage : msg)));
       loadMessageCounts();
+      sendPushNotification(otherUserId, 'message', fromName, { matchId, content: text });
     } catch (error) {
       console.error('Failed to send message:', error);
       if (error.message === 'MESSAGE_LIMIT_REACHED') {
@@ -185,6 +187,7 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
       const sentMessage = await sendImageMessage(userId, otherUserId, imageUri);
       setMessages((prev) => prev.map((msg) => (msg.id === tempId ? sentMessage : msg)));
       loadMessageCounts();
+      sendPushNotification(otherUserId, 'message', fromName, { matchId, content: '📷 Photo' });
     } catch (error) {
       console.error('Failed to send image:', error);
       if (error.message === 'MESSAGE_LIMIT_REACHED') {

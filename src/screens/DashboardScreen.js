@@ -30,10 +30,7 @@ export default function DashboardScreen({ navigation, route }) {
     setCurrentUserIndex((prev) => prev + 1);
   }, []);
 
-  const { flickedUsers, usersWhoFlickedMe, passedUsers, handleFlick, handlePass, loadFlicksReceived, loadFlicksSent } = useFlicks(
-    user,
-    navigation
-  );
+  const { flickedUsers, usersWhoFlickedMe, passedUsers, handleFlick, handlePass, loadFlicksReceived, loadFlicksSent } = useFlicks(user);
 
   // Hide users already flicked or passed
   const visibleUsers = useMemo(
