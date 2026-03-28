@@ -113,6 +113,9 @@ serve(async (req) => {
     // Format message
     const { title, body } = formatMessage(type, fromName, data)
 
+    // Group notifications: same match stacks together, all flicks stack together
+    const threadId = type === 'flick' ? 'flicks' : (data.matchId as string) || type
+
     // Send via Expo Push API
     const pushResponse = await fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
@@ -128,6 +131,7 @@ serve(async (req) => {
         sound: 'default',
         priority: 'high',
         channelId: 'default',
+        threadId,
       }),
     })
 

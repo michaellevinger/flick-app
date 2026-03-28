@@ -3,11 +3,14 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { supabase } from './supabase';
 
-// Configure how notifications are presented when the app is in the foreground
+// When the app is in the foreground, suppress system notifications.
+// Real-time subscriptions already handle in-app state (badge on Matches tab,
+// messages in chat, GreenLight navigation). System notifications are only
+// useful when the app is backgrounded (handled natively by the OS).
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
+    shouldShowAlert: false,
+    shouldPlaySound: false,
     shouldSetBadge: true,
   }),
 });

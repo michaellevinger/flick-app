@@ -139,6 +139,7 @@ export function UserProvider({ children }) {
         lookingFor: updatedUser.lookingFor,
         festivalId: updatedUser.festival_id,
         bio: updatedUser.bio,
+        notificationPreferences: updatedUser.notificationPreferences,
       });
 
       // Update local state and storage

@@ -5,7 +5,7 @@ import { uploadFileToStorage } from '../utils/uploadUtils';
 /**
  * Create or update a user in the database
  */
-export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, phoneNumber, gender, lookingFor, festivalId, bio }) {
+export async function upsertUser({ id, name, age, height, selfieUrl, photos, status, phoneNumber, gender, lookingFor, festivalId, bio, notificationPreferences }) {
   const { data, error} = await supabase
     .from('users')
     .upsert(
@@ -22,6 +22,7 @@ export async function upsertUser({ id, name, age, height, selfieUrl, photos, sta
         looking_for: lookingFor || null,
         festival_id: festivalId || null,
         bio: bio || null,
+        notification_preferences: notificationPreferences || null,
       },
       {
         onConflict: 'id',

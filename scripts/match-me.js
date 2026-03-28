@@ -179,6 +179,21 @@ async function main() {
     log.success('Match record created.');
   }
 
+  // Send push notification via Edge Function
+  log.step('Sending push notification...');
+  const { error: pushError } = await supabase.functions.invoke('push-notification', {
+    body: { toUserId: userId, type: 'match', fromName: chosen.name, data: {
+      matchId,
+      otherUser: { id: chosen.id },
+    }},
+  });
+
+  if (pushError) {
+    log.step(`Push notification failed (non-critical): ${pushError.message}`);
+  } else {
+    log.step('Push notification sent.');
+  }
+
   log.success(`${chosen.name} flicked you back — it's a mutual match!`);
   log.footer('The Green Light screen should appear in the app right now.');
 }

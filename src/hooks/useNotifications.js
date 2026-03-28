@@ -7,26 +7,33 @@ import {
 
 /**
  * Initializes push notifications for the app lifecycle.
- * - Registers for push permission + saves token to DB (on every user?.id change)
+ * - Registers for push permission + saves token to DB
  * - Sets up notification tap listener for deep linking
+ * - Sets up foreground notification listener for in-app banner
  *
- * Mount this inside UserProvider so it has access to the user.
- *
- * @param {object} user          Current user from UserContext (or null)
- * @param {object} navigationRef createNavigationContainerRef() from App.js
+ * @param {object}   user                        Current user from UserContext
+ * @param {object}   navigationRef               React Navigation ref
+ * @param {function} onForegroundNotification     Called with notification when received in foreground
  */
-export function useNotifications(user, navigationRef) {
+export function useNotifications(user, navigationRef, onForegroundNotification) {
   useEffect(() => {
     if (!user?.id) return;
 
-    // Register and save token (safe to call on every mount)
     registerForPushNotifications(user.id);
 
-    // Handle notification taps for deep linking
-    const subscription = Notifications.addNotificationResponseReceivedListener(
+    // Handle notification taps (background → app opened)
+    const tapSub = Notifications.addNotificationResponseReceivedListener(
       (response) => handleNotificationTap(response, navigationRef)
     );
 
-    return () => subscription.remove();
+    // Handle foreground notifications (show in-app banner)
+    const receivedSub = Notifications.addNotificationReceivedListener(
+      (notification) => onForegroundNotification?.(notification)
+    );
+
+    return () => {
+      tapSub.remove();
+      receivedSub.remove();
+    };
   }, [user?.id]);
 }

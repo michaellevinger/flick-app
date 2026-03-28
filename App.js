@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -43,12 +43,33 @@ import { UserProvider, useUser } from './src/lib/userContext';
 import { MatchesProvider, useMatches } from './src/lib/matchesContext';
 import { useNotifications } from './src/hooks/useNotifications';
 import { navigationRef } from './src/lib/navigationRef';
+import { handleNotificationTap } from './src/lib/notifications';
+import InAppNotification from './src/components/InAppNotification';
 
-// Mounted inside UserProvider — registers push token and handles notification taps
+// Mounted inside UserProvider — registers push token, handles taps + foreground banner
 function NotificationManager() {
   const { user } = useUser();
-  useNotifications(user, navigationRef);
-  return null;
+  const [bannerNotification, setBannerNotification] = useState(null);
+
+  const handleForegroundNotification = useCallback((notification) => {
+    const title = notification.request.content.title;
+    const body = notification.request.content.body;
+    const data = notification.request.content.data;
+    setBannerNotification({ title, body, data });
+  }, []);
+
+  useNotifications(user, navigationRef, handleForegroundNotification);
+
+  return (
+    <InAppNotification
+      notification={bannerNotification}
+      onPress={(data) => {
+        setBannerNotification(null);
+        if (data) handleNotificationTap({ notification: { request: { content: { data } } } }, navigationRef);
+      }}
+      onDismiss={() => setBannerNotification(null)}
+    />
+  );
 }
 
 const Stack = createStackNavigator();
