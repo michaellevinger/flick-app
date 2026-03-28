@@ -174,13 +174,15 @@ Run these from a **separate terminal** while the app is open. Each script reads 
 5. Switch perspective: go back to Welcome screen → tap **Login as Female**
 6. Open Matches → see your reply from the male side
 
-### Scenario D — Test the ladies-first rule
+### Scenario D — Test the ladies-first messaging rule
 
 1. `npm run dev:male` → tap **Login as Male**
-2. In the radar, find a female user and try to flick her (you haven't been flicked first)
-3. You should see the "Ladies First" alert — the male cannot initiate
-4. `npm run flick:me` → she flicks you
-5. Now you (male) can flick her back → Green Light
+2. Flick a female user on the radar (males CAN flick freely)
+3. `npm run match:me` → Green Light
+4. Open the chat — you (male) should see "Waiting for [name] to say hello first"
+5. The text input is disabled — males cannot send the first message
+6. `npm run message:me` → she sends a message
+7. Now the input is unlocked — you can reply
 
 ### Scenario E — Full female perspective
 
@@ -228,6 +230,31 @@ npm run flick:me       # someone new flicks you (green border on their card)
 npm run match:me       # someone you already flicked flicks back (Green Light)
 npm run message:me     # a matched user sends you a message
 ```
+
+---
+
+## Testing Push Notifications
+
+Push notifications do NOT work in Expo Go (removed in SDK 53). You need an EAS development build.
+
+See [BUILD-AND-SHARE.md](./BUILD-AND-SHARE.md) > Option 2: Development Build for setup instructions.
+
+Once the dev build is installed on your phone:
+
+1. Start a test session: `npm run dev:male` (or `dev:female`)
+2. Open the dev build on your phone and connect to the dev server
+3. Tap **Login as Male** (or Female) — accept the notification permission prompt
+4. Confirm the push token appears in the terminal: `[Notifications] Push token: ExponentPushToken[...]`
+5. Background the app (go to home screen)
+6. Run `npm run flick:me` — you should receive a push notification
+7. Run `npm run message:me` — you should receive a message notification
+8. Tap the notification — the app should deep-link to the correct screen
+
+To test notification preferences:
+1. Go to Profile > Notification Settings
+2. Toggle off "Flick Notifications"
+3. Run `npm run flick:me` — no notification should arrive
+4. Toggle it back on — next flick should notify
 
 ---
 

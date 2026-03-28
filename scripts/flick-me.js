@@ -95,6 +95,18 @@ async function main() {
     process.exit(1);
   }
 
+  // Send push notification via Edge Function
+  log.step('Sending push notification...');
+  const { error: pushError } = await supabase.functions.invoke('push-notification', {
+    body: { toUserId: userId, type: 'flick', fromName: chosen.name },
+  });
+
+  if (pushError) {
+    log.step(`Push notification failed (non-critical): ${pushError.message}`);
+  } else {
+    log.step('Push notification sent.');
+  }
+
   log.success(`${chosen.name} just flicked you!`);
   log.footer(`Open the radar — ${chosen.name}'s card should now have a green border and "Wants to meet" label.`);
 }

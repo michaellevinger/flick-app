@@ -137,7 +137,7 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
       const sentMessage = await sendTextMessage(userId, otherUserId, text);
       setMessages((prev) => prev.map((msg) => (msg.id === tempId ? sentMessage : msg)));
       loadMessageCounts();
-      sendPushNotification(otherUserId, 'message', fromName, { matchId, content: text });
+      sendPushNotification(otherUserId, 'message', fromName, { matchId, content: text, otherUser: { id: userId } });
     } catch (error) {
       console.error('Failed to send message:', error);
       if (error.message === 'MESSAGE_LIMIT_REACHED') {
@@ -187,7 +187,7 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
       const sentMessage = await sendImageMessage(userId, otherUserId, imageUri);
       setMessages((prev) => prev.map((msg) => (msg.id === tempId ? sentMessage : msg)));
       loadMessageCounts();
-      sendPushNotification(otherUserId, 'message', fromName, { matchId, content: '📷 Photo' });
+      sendPushNotification(otherUserId, 'message', fromName, { matchId, content: '📷 Photo', otherUser: { id: userId } });
     } catch (error) {
       console.error('Failed to send image:', error);
       if (error.message === 'MESSAGE_LIMIT_REACHED') {

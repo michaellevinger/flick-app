@@ -126,6 +126,22 @@ async function main() {
     })
     .eq('id', match.id);
 
+  // Send push notification via Edge Function
+  log.step('Sending push notification...');
+  const { error: pushError } = await supabase.functions.invoke('push-notification', {
+    body: { toUserId: userId, type: 'message', fromName: senderName, data: {
+      matchId: match.id,
+      content,
+      otherUser: { id: senderId },
+    }},
+  });
+
+  if (pushError) {
+    log.step(`Push notification failed (non-critical): ${pushError.message}`);
+  } else {
+    log.step('Push notification sent.');
+  }
+
   log.success(`${senderName} sent: "${content}"`);
   log.footer('Check the Matches tab — the message should appear with an unread badge.');
 }

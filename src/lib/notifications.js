@@ -99,25 +99,38 @@ export async function sendPushNotification(toUserId, type, fromName, data = {}) 
  * @param {object} response       Expo notification response object
  * @param {object} navigationRef  React Navigation ref (createNavigationContainerRef)
  */
-export function handleNotificationTap(response, navigationRef) {
+export async function handleNotificationTap(response, navigationRef) {
   try {
     const data = response?.notification?.request?.content?.data;
     if (!data || !navigationRef?.isReady()) return;
 
-    const { type, matchId, otherUser } = data;
+    const { type, matchId } = data;
+
+    // otherUser may arrive as a JSON string from the push payload
+    let otherUser = data.otherUser;
+    if (typeof otherUser === 'string') {
+      try { otherUser = JSON.parse(otherUser); } catch { otherUser = null; }
+    }
+
+    const otherUserId = otherUser?.id;
 
     switch (type) {
       case 'flick':
-      case 'match':
         navigationRef.navigate('Dashboard');
         break;
+      case 'match':
       case 'message':
       case 'exchange_request':
       case 'exchange_accepted':
-        if (matchId && otherUser) {
-          navigationRef.navigate('Chat', { matchId, otherUser });
+        if (matchId && otherUserId) {
+          const fullUser = await fetchUserForNotification(otherUserId);
+          if (fullUser) {
+            navigationRef.navigate('Chat', { matchId, otherUser: fullUser });
+          } else {
+            navigationRef.navigate('MatchesTab');
+          }
         } else {
-          navigationRef.navigate('Dashboard');
+          navigationRef.navigate('MatchesTab');
         }
         break;
       default:
@@ -125,5 +138,23 @@ export function handleNotificationTap(response, navigationRef) {
     }
   } catch (error) {
     console.error('[notifications] handleNotificationTap error:', error.message);
+  }
+}
+
+/**
+ * Fetches a user's full profile for notification deep linking.
+ */
+async function fetchUserForNotification(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, name, age, height, selfie_url, photos, gender, looking_for, bio')
+      .eq('id', userId)
+      .single();
+
+    if (error || !data) return null;
+    return data;
+  } catch {
+    return null;
   }
 }

@@ -34,6 +34,10 @@ yarn-error.*
 .env
 .env*.local
 
+# Firebase credentials
+google-services.json
+*-firebase-adminsdk-*.json
+
 # dev testing session (local only, never commit)
 .dev-session.json
 

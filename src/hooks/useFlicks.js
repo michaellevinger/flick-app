@@ -14,6 +14,7 @@ import {
 } from '../lib/flicks';
 import { sendPushNotification } from '../lib/notifications';
 import { navigationRef } from '../lib/navigationRef';
+import { getMatchId } from '../utils/matchUtils';
 
 /**
  * Manages flick state, real-time subscription, and the complete flick flow
@@ -110,7 +111,11 @@ export function useFlicks(user, navigation) {
 
         // Push notification to the person who just flicked us (they triggered the match)
         // They may be in a different part of the app or backgrounded
-        sendPushNotification(flick.from_user_id, 'match', user.name);
+        const subMatchId = getMatchId(user.id, flick.from_user_id);
+        sendPushNotification(flick.from_user_id, 'match', user.name, {
+          matchId: subMatchId,
+          otherUser: { id: user.id },
+        });
       }
     });
   };
@@ -151,6 +156,8 @@ export function useFlicks(user, navigation) {
       // Notify the other person they were flicked (if they're not looking)
       sendPushNotification(targetUser.id, 'flick', user.name);
 
+      const flickMatchId = getMatchId(user.id, targetUser.id);
+
       // Fast path: they already flicked us — it's a match
       if (theyFlickedMe) {
         createMatch(user.id, targetUser.id).catch((err) =>
@@ -158,7 +165,7 @@ export function useFlicks(user, navigation) {
         );
         navigateToGreenLight(targetUser);
         // Notify them of the match
-        sendPushNotification(targetUser.id, 'match', user.name);
+        sendPushNotification(targetUser.id, 'match', user.name, { matchId: flickMatchId, otherUser: { id: user.id } });
         return;
       }
 
@@ -169,7 +176,7 @@ export function useFlicks(user, navigation) {
           console.error('createMatch failed:', err)
         );
         navigateToGreenLight(targetUser);
-        sendPushNotification(targetUser.id, 'match', user.name);
+        sendPushNotification(targetUser.id, 'match', user.name, { matchId: flickMatchId, otherUser: { id: user.id } });
       }
     } catch (error) {
       console.error('Error sending flick:', error);

@@ -493,6 +493,21 @@ RETURNS INTEGER
 3. **Update docs:** Update CLAUDE.md status if needed
 4. **Clean imports:** Remove unused imports
 
+### Repo Hygiene
+
+Keep the repo clean. When you encounter files, folders, scripts, or docs that appear unused or redundant:
+
+1. **Flag them** — tell the user what you found and why you think it's dead
+2. **Ask before deleting** — never silently remove files
+3. **Check references first** — grep for imports, requires, or references before calling something unused
+
+Common signs of dead weight:
+- Scripts with hardcoded paths to other developers' machines
+- One-time setup/verification scripts that already ran
+- Old session notes, progress logs, or plan files from completed work
+- Generated images or assets not referenced by any code
+- Archived folders that have already been superseded
+
 ---
 
 ## 🎯 Ready for Testing

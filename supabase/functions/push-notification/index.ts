@@ -125,8 +125,9 @@ serve(async (req) => {
         title,
         body,
         data: { type, ...data },
-        sound: prefs.sound !== false ? 'default' : undefined,
+        sound: 'default',
         priority: 'high',
+        channelId: 'default',
       }),
     })
 
