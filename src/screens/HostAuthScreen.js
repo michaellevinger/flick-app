@@ -22,9 +22,12 @@ try {
 } catch (e) {
   console.log('Google Sign-in not available (Expo Go)');
 }
+import Constants from 'expo-constants';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
+
+const GOOGLE_WEB_CLIENT_ID = Constants.expoConfig?.extra?.googleWebClientId || process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 
 export default function HostAuthScreen({ navigation, route }) {
   const { session, signUpWithEmail, signInWithEmail } = useAuth();
@@ -48,7 +51,7 @@ export default function HostAuthScreen({ navigation, route }) {
   React.useEffect(() => {
     if (GoogleSignin?.configure) {
       GoogleSignin.configure({
-        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+        webClientId: GOOGLE_WEB_CLIENT_ID,
       });
     }
   }, []);
