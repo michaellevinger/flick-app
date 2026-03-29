@@ -147,7 +147,6 @@ export function useFlicks(user, navigation) {
       const result = await sendFlick(user.id, targetUser.id);
 
       if (result.alreadyFlicked) {
-        Alert.alert('Already Flicked', `You've already flicked them!`);
         return;
       }
 
