@@ -24,6 +24,7 @@ import {
   acceptExchangeRequest,
   declineExchangeRequest,
   getUserPhoneNumber,
+  getExchangeRequest,
 } from '../lib/vault';
 import MessageBubble from '../components/MessageBubble';
 import MessageInput from '../components/MessageInput';
@@ -42,15 +43,17 @@ export default function ChatScreen({ route, navigation }) {
     handleSendText,
     handleSendImage,
     markRead,
+    loadMessages,
     isLadiesFirstBlocked,
   } = useChatMessages(matchId, user?.id, otherUser?.id, user?.gender, otherUser?.gender, user?.name);
 
   const [exchangeRequest, setExchangeRequest] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
-  // Mark as read when screen regains focus
+  // Reload messages and mark as read when screen regains focus
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      loadMessages();
       markRead();
     });
     return () => unsubscribe();
@@ -67,9 +70,12 @@ export default function ChatScreen({ route, navigation }) {
   useEffect(() => {
     if (!user) return;
 
-    const exchangeSub = subscribeToExchanges(user.id, async (exchangeUpdate) => {
-      if (exchangeUpdate.status === 'pending') {
-        setExchangeRequest(exchangeUpdate);
+    const exchangeSub = subscribeToExchanges(user.id, async (payload) => {
+      const exchange = payload.new;
+      if (!exchange) return;
+
+      if (exchange.status === 'pending' && exchange.requested_by !== user.id) {
+        setExchangeRequest(exchange);
         Alert.alert(
           'Number Exchange Request',
           `${otherUser.name} wants to exchange phone numbers. Accept?`,
@@ -77,19 +83,25 @@ export default function ChatScreen({ route, navigation }) {
             {
               text: 'Decline',
               style: 'cancel',
-              onPress: () => handleDeclineExchange(exchangeUpdate.id),
+              onPress: () => handleDeclineExchange(exchange.id),
             },
             {
               text: 'Accept',
-              onPress: () => handleAcceptExchange(exchangeUpdate.id),
+              onPress: () => handleAcceptExchange(exchange.id),
             },
           ]
         );
       }
 
-      if (exchangeUpdate.status === 'accepted') {
+      if (exchange.status === 'accepted') {
         Alert.alert('Exchange Accepted!', 'Check your vault to see phone numbers.', [
-          { text: 'View Vault', onPress: () => navigation.navigate('Vault') },
+          {
+            text: 'View Vault',
+            onPress: () => navigation.navigate('Vault', {
+              exchangeId: exchange.id,
+              otherUserName: otherUser.name,
+            }),
+          },
         ]);
       }
     });
@@ -100,6 +112,38 @@ export default function ChatScreen({ route, navigation }) {
   const handleRequestNumber = async () => {
     if (!user) return;
 
+    // Check existing exchange state first
+    const existing = await getExchangeRequest(user.id, otherUser.id);
+
+    // Already accepted → go to Vault
+    if (existing && existing.status === 'accepted') {
+      navigation.navigate('Vault', {
+        exchangeId: existing.id,
+        otherUserName: otherUser.name,
+      });
+      return;
+    }
+
+    // Pending request FROM them → show accept/decline
+    if (existing && existing.status === 'pending' && existing.requested_by !== user.id) {
+      Alert.alert(
+        'Number Exchange Request',
+        `${otherUser.name} wants to exchange phone numbers. Accept?`,
+        [
+          { text: 'Decline', style: 'cancel', onPress: () => handleDeclineExchange(existing.id) },
+          { text: 'Accept', onPress: () => handleAcceptExchange(existing.id) },
+        ]
+      );
+      return;
+    }
+
+    // Pending request FROM me → already waiting
+    if (existing && existing.status === 'pending') {
+      Alert.alert('Request Pending', `Waiting for ${otherUser.name} to respond.`, [{ text: 'OK' }]);
+      return;
+    }
+
+    // No exchange exists → start new request flow
     const myPhone = await getUserPhoneNumber(user.id);
 
     if (!myPhone) {
@@ -178,7 +222,10 @@ export default function ChatScreen({ route, navigation }) {
         matchId,
         otherUser: { id: user.id, name: user.name, selfie_url: user.selfieUrl },
       });
-      navigation.navigate('Vault');
+      navigation.navigate('Vault', {
+        exchangeId,
+        otherUserName: otherUser.name,
+      });
     } catch (error) {
       console.error('Error accepting exchange:', error);
       Alert.alert('Error', 'Failed to accept. Please try again.');
@@ -194,6 +241,17 @@ export default function ChatScreen({ route, navigation }) {
       setExchangeRequest(null);
     } catch (error) {
       console.error('Error declining exchange:', error);
+    }
+  };
+
+  const handleSystemAction = async (action, message) => {
+    const exchangeId = message.metadata?.exchange_id;
+    if (!exchangeId) return;
+
+    if (action === 'accept') {
+      await handleAcceptExchange(exchangeId);
+    } else if (action === 'decline') {
+      await handleDeclineExchange(exchangeId);
     }
   };
 
@@ -217,6 +275,7 @@ export default function ChatScreen({ route, navigation }) {
         onLongPress={() => {}}
         messageNumber={messageNumber}
         totalLimit={MESSAGE_LIMIT}
+        onSystemAction={handleSystemAction}
       />
     );
   };

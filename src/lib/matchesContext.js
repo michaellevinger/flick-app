@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { AppState } from 'react-native';
 import { fetchMatches } from './matchService';
 import { useUser } from './userContext';
 import { supabase } from './supabase';
@@ -19,12 +20,21 @@ export function MatchesProvider({ children }) {
   const [totalUnread, setTotalUnread] = useState(0);
   const [loading, setLoading] = useState(false);
   const subscriptionRef = useRef(null);
+  const pollRef = useRef(null);
 
   // Load matches when user is available
   useEffect(() => {
     if (user) {
       loadMatches();
       setupSubscription();
+
+      // Poll every 10s for match updates (unread counts, new matches)
+      // Only poll when app is in foreground
+      pollRef.current = setInterval(() => {
+        if (AppState.currentState === 'active') {
+          loadMatches();
+        }
+      }, 10000);
     } else {
       setMatches([]);
       setTotalUnread(0);
@@ -37,6 +47,10 @@ export function MatchesProvider({ children }) {
     return () => {
       if (subscriptionRef.current) {
         subscriptionRef.current.unsubscribe();
+      }
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
       }
     };
   }, [user]);

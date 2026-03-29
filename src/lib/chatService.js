@@ -180,21 +180,28 @@ export async function fetchMessages(matchId, limit = 50) {
  * Subscribe to new messages in a match in real-time
  */
 export function subscribeToMessages(matchId, callback) {
+  // Note: matchId contains a pipe character (e.g. "userA|userB") which breaks
+  // Supabase real-time filters (pipe is parsed as OR). Filter in the callback instead.
+  const channelName = `messages_${matchId.replace('|', '_')}`;
   const subscription = supabase
-    .channel(`messages_${matchId}`)
+    .channel(channelName)
     .on(
       'postgres_changes',
       {
         event: 'INSERT',
         schema: 'public',
         table: 'messages',
-        filter: `match_id=eq.${matchId}`,
       },
       (payload) => {
-        callback(payload.new);
+        console.log('[RT] Message event received:', payload.new?.id, payload.new?.match_id);
+        if (payload.new.match_id === matchId) {
+          callback(payload.new);
+        }
       }
     )
-    .subscribe();
+    .subscribe((status, err) => {
+      console.log('[RT] Messages subscription status:', status, err || '');
+    });
 
   return subscription;
 }

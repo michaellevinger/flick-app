@@ -55,6 +55,27 @@ function NotificationManager() {
     const title = notification.request.content.title;
     const body = notification.request.content.body;
     const data = notification.request.content.data;
+
+    // Suppress if user is already on the relevant screen
+    if (navigationRef.isReady()) {
+      const currentRoute = navigationRef.getCurrentRoute();
+      const routeName = currentRoute?.name;
+      const routeParams = currentRoute?.params;
+
+      // In a chat with this match → suppress message/exchange notifications
+      if (routeName === 'Chat' && routeParams?.matchId === data?.matchId) {
+        return;
+      }
+      // On the matches tab → suppress message notifications
+      if (routeName === 'MatchesTab' && data?.type === 'message') {
+        return;
+      }
+      // On the radar tab → suppress flick/match notifications
+      if (routeName === 'DashboardTab' && (data?.type === 'flick' || data?.type === 'match')) {
+        return;
+      }
+    }
+
     setBannerNotification({ title, body, data });
   }, []);
 

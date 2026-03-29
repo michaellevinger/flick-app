@@ -38,13 +38,24 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
   const flatListRef = useRef(null);
   const subscriptionRef = useRef(null);
 
+  const pollRef = useRef(null);
+
   useEffect(() => {
     loadMessages();
     loadMessageCounts();
     setupSubscription();
     markRead();
 
-    return () => subscriptionRef.current?.unsubscribe();
+    // Poll for new messages every 3s as reliable fallback
+    // (Supabase Realtime may be blocked by RLS on anon key)
+    pollRef.current = setInterval(() => {
+      pollForNewMessages();
+    }, 3000);
+
+    return () => {
+      subscriptionRef.current?.unsubscribe();
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
   }, [matchId]);
 
   const loadMessages = async () => {
@@ -55,6 +66,25 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
       console.error('Error loading messages:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const pollForNewMessages = async () => {
+    try {
+      const data = await fetchMessages(matchId);
+      const fetched = data.reverse();
+      setMessages((prev) => {
+        // Only update if the count changed (avoids unnecessary re-renders)
+        if (fetched.length !== prev.filter((m) => !m.sending).length) {
+          loadMessageCounts();
+          markRead();
+          setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+          return fetched;
+        }
+        return prev;
+      });
+    } catch (error) {
+      // Silent — polling errors are non-critical
     }
   };
 
@@ -210,6 +240,7 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
     handleSendText,
     handleSendImage,
     markRead,
+    loadMessages,
     loadMessageCounts,
     isLadiesFirstBlocked,
   };

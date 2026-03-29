@@ -46,21 +46,22 @@ export default function MessageBubble({ message, isSender, onLongPress, messageN
           <Text style={styles.emoji}>{message.content}</Text>
         );
 
-      case 'system':
+      case 'system': {
+        const isExchangeRequest = message.metadata?.type === 'exchange_request';
         return (
           <View style={styles.systemMessageContainer}>
             <Text style={styles.systemMessageText}>{message.content}</Text>
-            {message.metadata?.buttons && (
+            {isExchangeRequest && onSystemAction && (
               <View style={styles.systemButtonsContainer}>
                 <TouchableOpacity
                   style={styles.declineButton}
-                  onPress={() => onSystemAction?.('decline', message)}
+                  onPress={() => onSystemAction('decline', message)}
                 >
                   <Text style={styles.declineButtonText}>Decline</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.acceptButton}
-                  onPress={() => onSystemAction?.('accept', message)}
+                  onPress={() => onSystemAction('accept', message)}
                 >
                   <Text style={styles.acceptButtonText}>Accept</Text>
                 </TouchableOpacity>
@@ -68,6 +69,7 @@ export default function MessageBubble({ message, isSender, onLongPress, messageN
             )}
           </View>
         );
+      }
 
       default:
         return null;

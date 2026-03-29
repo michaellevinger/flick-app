@@ -12,6 +12,7 @@
     "flick:me": "node scripts/flick-me.js",
     "match:me": "node scripts/match-me.js",
     "message:me": "node scripts/message-me.js",
+    "exchange:me": "node scripts/exchange-me.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",

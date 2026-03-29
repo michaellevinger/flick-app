@@ -14,12 +14,14 @@ import {
   getActiveExchange,
   deleteExchange,
 } from '../lib/vault';
+import { supabase } from '../lib/supabase';
 
 export default function VaultScreen({ route, navigation }) {
-  const { exchangeId, otherUserName } = route.params;
+  const { exchangeId, otherUserName } = route.params || {};
   const { user } = useUser();
   const [timeRemaining, setTimeRemaining] = useState(900); // 15 minutes in seconds
   const [exchange, setExchange] = useState(null);
+  const [displayName, setDisplayName] = useState(otherUserName || '');
   const [isWiping, setIsWiping] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
@@ -63,6 +65,16 @@ export default function VaultScreen({ route, navigation }) {
 
       setExchange(activeExchange);
       setTimeRemaining(activeExchange.time_remaining_seconds);
+
+      // Fetch other user's name if not provided via route params
+      if (!otherUserName && activeExchange.other_user_id) {
+        const { data: otherUser } = await supabase
+          .from('users')
+          .select('name')
+          .eq('id', activeExchange.other_user_id)
+          .single();
+        if (otherUser?.name) setDisplayName(otherUser.name);
+      }
     } catch (error) {
       console.error('Error loading exchange:', error);
       Alert.alert('Error', 'Failed to load number exchange.');
@@ -90,7 +102,7 @@ export default function VaultScreen({ route, navigation }) {
     setIsWiping(true);
 
     try {
-      await deleteExchange(exchangeId);
+      await deleteExchange(exchangeId || exchange?.id);
 
       Alert.alert(
         'Self-Destruct',
@@ -170,7 +182,7 @@ export default function VaultScreen({ route, navigation }) {
       {/* Vault Content */}
       <View style={styles.vaultContent}>
         <Text style={styles.vaultTitle}>Number Exchange</Text>
-        <Text style={styles.vaultSubtitle}>with {otherUserName}</Text>
+        <Text style={styles.vaultSubtitle}>with {displayName}</Text>
 
         {/* Your Number */}
         <View style={styles.numberSection}>
@@ -182,7 +194,7 @@ export default function VaultScreen({ route, navigation }) {
 
         {/* Their Number */}
         <View style={styles.numberSection}>
-          <Text style={styles.numberLabel}>{otherUserName}'s Number</Text>
+          <Text style={styles.numberLabel}>{displayName}'s Number</Text>
           <View style={[styles.numberBox, styles.numberBoxHighlight]}>
             <Text style={styles.numberText}>{exchange.other_phone}</Text>
           </View>
