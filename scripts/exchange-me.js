@@ -142,7 +142,7 @@ async function main() {
       recipient_id: null,
       message_type: 'system',
       content: `${senderName} requested to exchange phone numbers`,
-      metadata: JSON.stringify({ type: 'exchange_request', exchange_id: exchange.id }),
+      metadata: { type: 'exchange_request', exchange_id: exchange.id },
     });
 
   if (msgError) {

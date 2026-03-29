@@ -49,25 +49,17 @@ export default function MessageBubble({ message, isSender, onLongPress, messageN
       case 'system': {
         const isExchangeRequest = message.metadata?.type === 'exchange_request';
         return (
-          <View style={styles.systemMessageContainer}>
-            <Text style={styles.systemMessageText}>{message.content}</Text>
-            {isExchangeRequest && onSystemAction && (
-              <View style={styles.systemButtonsContainer}>
-                <TouchableOpacity
-                  style={styles.declineButton}
-                  onPress={() => onSystemAction('decline', message)}
-                >
-                  <Text style={styles.declineButtonText}>Decline</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.acceptButton}
-                  onPress={() => onSystemAction('accept', message)}
-                >
-                  <Text style={styles.acceptButtonText}>Accept</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+          <TouchableOpacity
+            style={styles.systemMessageContainer}
+            onPress={isExchangeRequest && onSystemAction ? () => onSystemAction('tap', message) : undefined}
+            activeOpacity={isExchangeRequest ? 0.6 : 1}
+            disabled={!isExchangeRequest}
+          >
+            <Text style={[styles.systemMessageText, isExchangeRequest && styles.systemMessageTappable]}>
+              {message.content}
+            </Text>
+            {isExchangeRequest && <Text style={styles.systemMessageHint}>Tap to respond</Text>}
+          </TouchableOpacity>
         );
       }
 
@@ -213,6 +205,17 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  systemMessageTappable: {
+    color: COLORS.purple,
+    fontWeight: '600',
+    fontStyle: 'normal',
+  },
+  systemMessageHint: {
+    fontSize: 11,
+    color: COLORS.gray,
+    marginTop: 2,
+    textAlign: 'center',
   },
   systemButtonsContainer: {
     flexDirection: 'row',

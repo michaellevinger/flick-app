@@ -50,14 +50,32 @@ export default function ChatScreen({ route, navigation }) {
   const [exchangeRequest, setExchangeRequest] = useState(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
-  // Reload messages and mark as read when screen regains focus
+  // Check for pending exchange on mount
+  useEffect(() => {
+    checkPendingExchange();
+  }, [user, otherUser]);
+
+  // Reload messages, mark as read, and check for pending exchanges on focus
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadMessages();
       markRead();
+      checkPendingExchange();
     });
     return () => unsubscribe();
   }, [matchId]);
+
+  const checkPendingExchange = async () => {
+    if (!user) return;
+    const existing = await getExchangeRequest(user.id, otherUser.id);
+    if (existing && existing.status === 'pending') {
+      setExchangeRequest(existing);
+    } else if (existing && existing.status === 'accepted') {
+      setExchangeRequest(existing);
+    } else {
+      setExchangeRequest(null);
+    }
+  };
 
   // Show limit modal when user reaches the message cap
   useEffect(() => {
@@ -248,7 +266,26 @@ export default function ChatScreen({ route, navigation }) {
     const exchangeId = message.metadata?.exchange_id;
     if (!exchangeId) return;
 
-    if (action === 'accept') {
+    if (action === 'tap') {
+      // Check exchange state and show appropriate UI
+      const existing = await getExchangeRequest(user.id, otherUser.id);
+      if (!existing) return;
+
+      if (existing.status === 'accepted') {
+        navigation.navigate('Vault', { exchangeId: existing.id, otherUserName: otherUser.name });
+      } else if (existing.status === 'pending' && existing.requested_by !== user.id) {
+        Alert.alert(
+          'Number Exchange Request',
+          `${otherUser.name} wants to exchange phone numbers. Accept?`,
+          [
+            { text: 'Decline', style: 'cancel', onPress: () => handleDeclineExchange(existing.id) },
+            { text: 'Accept', onPress: () => handleAcceptExchange(existing.id) },
+          ]
+        );
+      } else if (existing.status === 'pending') {
+        Alert.alert('Request Pending', `Waiting for ${otherUser.name} to respond.`, [{ text: 'OK' }]);
+      }
+    } else if (action === 'accept') {
       await handleAcceptExchange(exchangeId);
     } else if (action === 'decline') {
       await handleDeclineExchange(exchangeId);
@@ -383,6 +420,7 @@ export default function ChatScreen({ route, navigation }) {
         disabled={myMessageCount >= MESSAGE_LIMIT || isLadiesFirstBlocked}
         disabledReason={isLadiesFirstBlocked ? 'She sends the first message...' : undefined}
         messageCount={myMessageCount}
+        hasPendingExchange={exchangeRequest?.status === 'pending' && exchangeRequest?.requested_by !== user?.id}
       />
 
       {showLimitModal && (

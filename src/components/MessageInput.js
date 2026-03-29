@@ -19,6 +19,7 @@ export default function MessageInput({
   disabled = false,
   disabledReason,
   messageCount = 0,
+  hasPendingExchange = false,
 }) {
   const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
@@ -123,6 +124,7 @@ export default function MessageInput({
           disabled={sending}
         >
           <Text style={styles.iconText}>📞</Text>
+          {hasPendingExchange && <View style={styles.phoneDot} />}
         </TouchableOpacity>
       )}
 
@@ -178,6 +180,17 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 24,
+  },
+  phoneDot: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: COLORS.green,
+    borderWidth: 1.5,
+    borderColor: COLORS.white,
   },
   iconTextDisabled: {
     opacity: 0.4,
