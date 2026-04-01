@@ -16,8 +16,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, SPACING, TYPOGRAPHY, MESSAGE_LIMIT } from '../constants/theme';
 import { useUser } from '../lib/userContext';
 import { useChatMessages } from '../hooks/useChatMessages';
+import { canRequestExchange } from '../utils/matchUtils';
 import { sendSystemMessage } from '../lib/chatService';
 import { sendPushNotification } from '../lib/notifications';
+import { supabase } from '../lib/supabase';
 import {
   requestNumberExchange,
   subscribeToExchanges,
@@ -68,13 +70,19 @@ export default function ChatScreen({ route, navigation }) {
   const checkPendingExchange = async () => {
     if (!user) return;
     const existing = await getExchangeRequest(user.id, otherUser.id);
-    if (existing && existing.status === 'pending') {
-      setExchangeRequest(existing);
-    } else if (existing && existing.status === 'accepted') {
-      setExchangeRequest(existing);
-    } else {
-      setExchangeRequest(null);
-    }
+    const isActive = existing && (existing.status === 'pending' || existing.status === 'accepted');
+    setExchangeRequest(isActive ? existing : null);
+  };
+
+  const showExchangeAlert = (exchangeId) => {
+    Alert.alert(
+      'Number Exchange Request',
+      `${otherUser.name} wants to exchange phone numbers. Accept?`,
+      [
+        { text: 'Decline', style: 'cancel', onPress: () => handleDeclineExchange(exchangeId) },
+        { text: 'Accept', onPress: () => handleAcceptExchange(exchangeId) },
+      ]
+    );
   };
 
   // Show limit modal when user reaches the message cap
@@ -94,21 +102,7 @@ export default function ChatScreen({ route, navigation }) {
 
       if (exchange.status === 'pending' && exchange.requested_by !== user.id) {
         setExchangeRequest(exchange);
-        Alert.alert(
-          'Number Exchange Request',
-          `${otherUser.name} wants to exchange phone numbers. Accept?`,
-          [
-            {
-              text: 'Decline',
-              style: 'cancel',
-              onPress: () => handleDeclineExchange(exchange.id),
-            },
-            {
-              text: 'Accept',
-              onPress: () => handleAcceptExchange(exchange.id),
-            },
-          ]
-        );
+        showExchangeAlert(exchange.id);
       }
 
       if (exchange.status === 'accepted') {
@@ -144,20 +138,19 @@ export default function ChatScreen({ route, navigation }) {
 
     // Pending request FROM them → show accept/decline
     if (existing && existing.status === 'pending' && existing.requested_by !== user.id) {
-      Alert.alert(
-        'Number Exchange Request',
-        `${otherUser.name} wants to exchange phone numbers. Accept?`,
-        [
-          { text: 'Decline', style: 'cancel', onPress: () => handleDeclineExchange(existing.id) },
-          { text: 'Accept', onPress: () => handleAcceptExchange(existing.id) },
-        ]
-      );
+      showExchangeAlert(existing.id);
       return;
     }
 
     // Pending request FROM me → already waiting
     if (existing && existing.status === 'pending') {
       Alert.alert('Request Pending', `Waiting for ${otherUser.name} to respond.`, [{ text: 'OK' }]);
+      return;
+    }
+
+    // Ladies first: block male from requesting until she messages or requests first
+    if (!canRequestExchange({ myGender: user.gender, theirGender: otherUser.gender, theirMessageCount, existingExchange: existing })) {
+      Alert.alert('Ladies First', `Wait for ${otherUser.name} to message you first.`);
       return;
     }
 
@@ -184,20 +177,11 @@ export default function ChatScreen({ route, navigation }) {
             try {
               const theirPhone = await getUserPhoneNumber(otherUser.id);
 
-              if (!theirPhone) {
-                Alert.alert(
-                  'Cannot Request',
-                  `${otherUser.name} hasn't set a phone number yet.`,
-                  [{ text: 'OK' }]
-                );
-                return;
-              }
-
               const result = await requestNumberExchange(
                 user.id,
                 otherUser.id,
                 myPhone,
-                theirPhone
+                theirPhone || 'pending'
               );
 
               if (result.alreadyExists) {
@@ -232,6 +216,34 @@ export default function ChatScreen({ route, navigation }) {
 
   const handleAcceptExchange = async (exchangeId) => {
     try {
+      // Check if user has a phone number before accepting
+      const myPhone = await getUserPhoneNumber(user.id);
+      if (!myPhone) {
+        Alert.alert(
+          'Phone Number Required',
+          'Add your phone number to accept the exchange.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Go to Profile',
+              onPress: () => navigation.navigate('ProfileTab'),
+            },
+          ]
+        );
+        return;
+      }
+
+      // Update the exchange with the user's phone number if it was pending
+      const exchange = await getExchangeRequest(user.id, otherUser.id);
+      if (exchange) {
+        const isUserA = exchange.user_a_id === user.id;
+        const phoneField = isUserA ? 'user_a_phone' : 'user_b_phone';
+        const currentPhone = isUserA ? exchange.user_a_phone : exchange.user_b_phone;
+        if (currentPhone === 'pending') {
+          await supabase.from('exchanges').update({ [phoneField]: myPhone }).eq('id', exchangeId);
+        }
+      }
+
       await acceptExchangeRequest(exchangeId);
       await sendSystemMessage(matchId, 'Number exchange accepted! Check your vault.', {
         type: 'exchange_accepted',
@@ -274,14 +286,7 @@ export default function ChatScreen({ route, navigation }) {
       if (existing.status === 'accepted') {
         navigation.navigate('Vault', { exchangeId: existing.id, otherUserName: otherUser.name });
       } else if (existing.status === 'pending' && existing.requested_by !== user.id) {
-        Alert.alert(
-          'Number Exchange Request',
-          `${otherUser.name} wants to exchange phone numbers. Accept?`,
-          [
-            { text: 'Decline', style: 'cancel', onPress: () => handleDeclineExchange(existing.id) },
-            { text: 'Accept', onPress: () => handleAcceptExchange(existing.id) },
-          ]
-        );
+        showExchangeAlert(existing.id);
       } else if (existing.status === 'pending') {
         Alert.alert('Request Pending', `Waiting for ${otherUser.name} to respond.`, [{ text: 'OK' }]);
       }

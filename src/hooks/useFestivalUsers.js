@@ -19,14 +19,14 @@ export function useFestivalUsers(user) {
     return () => subscriptionRef.current?.unsubscribe();
   }, [user?.id]);
 
-  // Reload when user's active status or festival changes
+  // Reload when user's active status, festival, or age range changes
   useEffect(() => {
     if (user?.status && user?.festival_id) {
       loadUsers();
     } else {
       setUsers([]);
     }
-  }, [user?.status, user?.festival_id]);
+  }, [user?.status, user?.festival_id, user?.ageRangeMin, user?.ageRangeMax]);
 
   const loadUsers = async () => {
     if (!user?.festival_id) {
@@ -41,7 +41,13 @@ export function useFestivalUsers(user) {
         user.gender,
         user.lookingFor
       );
-      setUsers(fetched.filter((u) => u.id !== user.id));
+      const minAge = user.ageRangeMin ?? 20;
+      const maxAge = user.ageRangeMax ?? 35;
+      setUsers(
+        fetched
+          .filter((u) => u.id !== user.id)
+          .filter((u) => u.age >= minAge && u.age <= maxAge)
+      );
     } catch (error) {
       console.error('Error loading festival users:', error);
     }

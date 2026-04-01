@@ -58,7 +58,7 @@ export default function QRScannerScreen({ navigation }) {
         // Check if user already has a profile
         if (user) {
           // User exists - update festival ID and activate status
-          await updateUser({ festivalId: data });
+          await updateUser({ festival_id: data });
           if (!user.status) {
             await toggleStatus();
           }

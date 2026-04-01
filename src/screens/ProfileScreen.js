@@ -122,6 +122,14 @@ export default function ProfileScreen({ navigation }) {
     navigation.navigate('NotificationSettings');
   };
 
+  const handleAgeFilter = () => {
+    navigation.navigate('AgeRangeScreen', {
+      editMode: true,
+      ageRangeMin: user.ageRangeMin ?? 20,
+      ageRangeMax: user.ageRangeMax ?? 35,
+    });
+  };
+
   if (!user) {
     return null;
   }
@@ -214,6 +222,14 @@ export default function ProfileScreen({ navigation }) {
             <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
               <Text style={styles.menuIcon}>💬</Text>
               <Text style={styles.menuText}>Help & Support</Text>
+              <Text style={styles.menuChevron}>›</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.menuCard}>
+            <TouchableOpacity style={styles.menuItem} onPress={handleAgeFilter}>
+              <Text style={styles.menuIcon}>🎂</Text>
+              <Text style={styles.menuText}>Age Filter</Text>
               <Text style={styles.menuChevron}>›</Text>
             </TouchableOpacity>
           </View>

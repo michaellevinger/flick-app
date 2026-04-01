@@ -18,7 +18,7 @@ export default function LookingForScreen({ route, navigation }) {
 
   const handleNext = () => {
     if (!isValid) return;
-    navigation.navigate('BioScreen', {
+    navigation.navigate('AgeRangeScreen', {
       festivalId,
       name,
       age,

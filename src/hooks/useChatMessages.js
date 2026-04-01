@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import { MESSAGE_LIMIT } from '../constants/theme';
+import { isLadiesFirstMatch } from '../utils/matchUtils';
 import {
   fetchMessages,
   subscribeToMessages,
@@ -29,11 +30,7 @@ export function useChatMessages(matchId, userId, otherUserId, myGender, theirGen
   const [myMessageCount, setMyMessageCount] = useState(0);
   const [theirMessageCount, setTheirMessageCount] = useState(0);
 
-  // In a male+female match, the male cannot send until the female sends first
-  const isLadiesFirstMatch =
-    (myGender === 'male' && theirGender === 'female') ||
-    (myGender === 'female' && theirGender === 'male');
-  const isLadiesFirstBlocked = isLadiesFirstMatch && myGender === 'male' && theirMessageCount === 0;
+  const isLadiesFirstBlocked = isLadiesFirstMatch(myGender, theirGender) && myGender === 'male' && theirMessageCount === 0;
 
   const flatListRef = useRef(null);
   const subscriptionRef = useRef(null);

@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function BioScreen({ route, navigation }) {
-  const { festivalId, name, age, gender, lookingFor } = route.params;
+  const { festivalId, name, age, gender, lookingFor, ageRangeMin, ageRangeMax } = route.params;
   const [bio, setBio] = useState('');
 
   // Bio is optional, so always valid
@@ -27,6 +27,8 @@ export default function BioScreen({ route, navigation }) {
       age,
       gender,
       lookingFor,
+      ageRangeMin,
+      ageRangeMax,
       bio: bio.trim(),
       phoneNumber: '', // Optional, not collected in this flow
       height: null, // Optional, not collected in this flow

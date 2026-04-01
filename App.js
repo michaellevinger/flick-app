@@ -36,6 +36,7 @@ import CreateEventScreen from './src/screens/CreateEventScreen';
 import EventSuccessScreen from './src/screens/EventSuccessScreen';
 import HelpSupportScreen from './src/screens/HelpSupportScreen';
 import NotificationSettingsScreen from './src/screens/NotificationSettingsScreen';
+import AgeRangeScreen from './src/screens/AgeRangeScreen';
 import HostAuthScreen from './src/screens/HostAuthScreen';
 import { COLORS } from './src/constants/theme';
 import { AuthProvider } from './src/lib/authContext';
@@ -151,13 +152,11 @@ function MainTabs() {
   );
 }
 
-export default function App() {
-  const [fontsLoaded, fontError] = useFonts({
-    Inter_900Black,
-  });
+// Determines the initial route based on user state
+function AppNavigator() {
+  const { user, isLoading } = useUser();
 
-  // Continue with system font if Inter fails to load
-  if (!fontsLoaded && !fontError) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.black }}>
         <ActivityIndicator size="large" color={COLORS.pink} />
@@ -165,21 +164,22 @@ export default function App() {
     );
   }
 
+  // No user → onboarding. User without event → QR scan. User with event → dashboard.
+  let initialRoute = 'NameScreen';
+  if (user && user.festival_id) {
+    initialRoute = 'Dashboard';
+  } else if (user) {
+    initialRoute = 'QRScanner';
+  }
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <UserProvider>
-            <MatchesProvider>
-              <NotificationManager />
-              <StatusBar style="dark" />
-              <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator
-              initialRouteName="Welcome"
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
+    <NavigationContainer ref={navigationRef}>
+      <Stack.Navigator
+        initialRouteName={initialRoute}
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
               {/* Onboarding Flow */}
               <Stack.Screen name="Welcome" component={WelcomeScreen} />
               <Stack.Screen name="QRScanner" component={QRScannerScreen} />
@@ -189,6 +189,7 @@ export default function App() {
               <Stack.Screen name="BirthdayScreen" component={BirthdayScreen} options={{ headerShown: false }} />
               <Stack.Screen name="GenderScreen" component={GenderScreen} options={{ headerShown: false }} />
               <Stack.Screen name="LookingForScreen" component={LookingForScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="AgeRangeScreen" component={AgeRangeScreen} options={{ headerShown: false }} />
               <Stack.Screen name="BioScreen" component={BioScreen} options={{ headerShown: false }} />
               <Stack.Screen name="Photos" component={PhotosScreen} options={{ headerShown: false }} />
 
@@ -264,6 +265,32 @@ export default function App() {
               />
             </Stack.Navigator>
           </NavigationContainer>
+  );
+}
+
+export default function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_900Black,
+  });
+
+  // Continue with system font if Inter fails to load
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.black }}>
+        <ActivityIndicator size="large" color={COLORS.pink} />
+      </View>
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <UserProvider>
+            <MatchesProvider>
+              <NotificationManager />
+              <StatusBar style="dark" />
+              <AppNavigator />
             </MatchesProvider>
           </UserProvider>
         </AuthProvider>

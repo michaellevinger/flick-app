@@ -20,7 +20,13 @@ export default function WelcomeScreen({ navigation }) {
   const { isAuthenticated } = useAuth();
 
   const handleScanQR = () => {
-    navigation.navigate('QRScanner');
+    if (user) {
+      // Returning user — go straight to QR scanner
+      navigation.navigate('QRScanner');
+    } else {
+      // New user — create profile first, then scan QR
+      navigation.navigate('NameScreen');
+    }
   };
 
   const handleHostEvent = () => {
@@ -101,7 +107,7 @@ export default function WelcomeScreen({ navigation }) {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.primaryButton} onPress={handleScanQR}>
               <Text style={styles.primaryButtonIcon}>⊞</Text>
-              <Text style={styles.primaryButtonText}>Scan Event QR</Text>
+              <Text style={styles.primaryButtonText}>{user ? 'Scan Event QR' : 'Join Event'}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.outlineButton} onPress={handleHostEvent}>

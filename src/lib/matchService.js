@@ -36,7 +36,7 @@ export async function fetchMatches(userId) {
       .from('messages')
       .select('match_id, content, message_type, sender_id')
       .in('match_id', matchIds)
-      .in('message_type', ['text', 'image'])
+      .in('message_type', ['text', 'image', 'system'])
       .order('created_at', { ascending: false });
 
     // Keep only the most recent message per match
@@ -57,7 +57,21 @@ export async function fetchMatches(userId) {
 
       let lastMessagePreview = null;
       if (lastMsg) {
-        lastMessagePreview = lastMsg.message_type === 'image' ? '📷 Photo' : lastMsg.content;
+        if (lastMsg.message_type === 'image') {
+          lastMessagePreview = '📷 Photo';
+        } else if (lastMsg.message_type === 'system') {
+          const isFromMe = lastMsg.sender_id === userId;
+          const otherName = otherUser?.name || 'They';
+          if (lastMsg.content?.includes('exchange') || lastMsg.content?.includes('number')) {
+            lastMessagePreview = isFromMe
+              ? `You asked for ${otherName}'s number`
+              : `${otherName} asked for your number`;
+          } else {
+            lastMessagePreview = lastMsg.content;
+          }
+        } else {
+          lastMessagePreview = lastMsg.content;
+        }
       }
 
       return {
@@ -115,9 +129,10 @@ export async function markMessagesAsRead(matchId, userId) {
       .from('matches')
       .select('user1_id, user2_id')
       .eq('id', matchId)
-      .single();
+      .maybeSingle();
 
     if (fetchError) throw fetchError;
+    if (!matchData) return;
 
     const columnToReset =
       matchData.user1_id === userId ? 'unread_count_user1' : 'unread_count_user2';

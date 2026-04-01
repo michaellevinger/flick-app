@@ -71,8 +71,13 @@ export default function DashboardScreen({ navigation, route }) {
     await loadFlicksReceived();
   };
 
+  useEffect(() => {
+    if (!user) {
+      navigation.replace('NameScreen');
+    }
+  }, [user, navigation]);
+
   if (!user) {
-    navigation.replace('Welcome');
     return null;
   }
 

@@ -78,7 +78,7 @@ async function cleanup(festivalId) {
 
 async function createSeedUser(myUserId, festivalId, seedGender, seedLookingFor, name) {
   const id = `seed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  const age = 21 + Math.floor(Math.random() * 12);
+  const age = 18 + Math.floor(Math.random() * 43); // 18-60
   const height = seedGender === 'male'
     ? 170 + Math.floor(Math.random() * 20)
     : 158 + Math.floor(Math.random() * 15);
@@ -123,13 +123,13 @@ async function main() {
 
   await cleanup(festivalId);
 
-  log.step('Creating 10 seed users...');
+  log.step('Creating 20 seed users...');
   console.log('');
 
   const usedNames = new Set();
   let created = 0;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     const name = pickName(usedNames);
     usedNames.add(name);
 

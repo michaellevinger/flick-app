@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NameScreen({ route, navigation }) {
-  const { festivalId } = route.params;
+  const festivalId = route.params?.festivalId || null;
   const [name, setName] = useState('');
 
   const isValid = name.trim().length > 0;

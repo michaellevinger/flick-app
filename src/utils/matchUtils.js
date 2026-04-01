@@ -7,6 +7,29 @@ export function getMatchId(userId1, userId2) {
 }
 
 /**
+ * Check if a straight match requires "ladies first" behavior.
+ */
+export function isLadiesFirstMatch(myGender, theirGender) {
+  return (myGender === 'male' && theirGender === 'female') ||
+    (myGender === 'female' && theirGender === 'male');
+}
+
+/**
+ * Check if the user can request a number exchange.
+ * In a straight match, a male cannot request until the female has
+ * either messaged first or sent an exchange request herself.
+ */
+export function canRequestExchange({ myGender, theirGender, theirMessageCount, existingExchange }) {
+  if (!isLadiesFirstMatch(myGender, theirGender)) return true;
+  if (myGender !== 'male') return true;
+  // She messaged first — he can request
+  if (theirMessageCount > 0) return true;
+  // She already requested his number — he can respond (handled elsewhere)
+  if (existingExchange?.requested_by && existingExchange.requested_by !== null) return true;
+  return false;
+}
+
+/**
  * Normalize user data from Supabase to ensure correct JS types.
  * Supabase may return booleans as strings or numbers as strings.
  */

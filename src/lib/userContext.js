@@ -47,7 +47,7 @@ export function UserProvider({ children }) {
     }
   };
 
-  const createUser = async ({ name, age, height, photoUri, photoUris, phoneNumber, gender, lookingFor, festivalId, bio }) => {
+  const createUser = async ({ name, age, height, photoUri, photoUris, phoneNumber, gender, lookingFor, festivalId, bio, ageRangeMin, ageRangeMax }) => {
     try {
       // Generate a unique user ID
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -79,6 +79,8 @@ export function UserProvider({ children }) {
         lookingFor,
         festivalId,
         bio,
+        ageRangeMin: ageRangeMin ?? 20,
+        ageRangeMax: ageRangeMax ?? 35,
       });
 
       // Save to local storage
@@ -96,6 +98,8 @@ export function UserProvider({ children }) {
         festival_id: festivalId,
         bio,
         notificationPreferences: { matches: true, messages: true, flicks: true, exchanges: true },
+        ageRangeMin: ageRangeMin ?? 20,
+        ageRangeMax: ageRangeMax ?? 35,
       };
 
       await saveUser(userToSave);
@@ -140,6 +144,8 @@ export function UserProvider({ children }) {
         festivalId: updatedUser.festival_id,
         bio: updatedUser.bio,
         notificationPreferences: updatedUser.notificationPreferences,
+        ageRangeMin: updatedUser.ageRangeMin,
+        ageRangeMax: updatedUser.ageRangeMax,
       });
 
       // Update local state and storage
@@ -372,6 +378,8 @@ export function UserProvider({ children }) {
           festival_id: data.festival_id,
           bio: data.bio,
           notificationPreferences: data.notification_preferences || { matches: true, messages: true, flicks: true, exchanges: true },
+          ageRangeMin: data.age_range_min ?? 20,
+          ageRangeMax: data.age_range_max ?? 35,
         };
         await saveUser(updatedUser);
       }

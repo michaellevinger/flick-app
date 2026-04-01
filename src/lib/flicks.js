@@ -259,23 +259,37 @@ export async function getPassedUsers(userId) {
  */
 export async function unmatchUser(currentUserId, otherUserId) {
   try {
+    const matchId = getMatchId(currentUserId, otherUserId);
+
+    // Delete all messages in this match
+    const { error: msgError } = await supabase
+      .from('messages')
+      .delete()
+      .eq('match_id', matchId);
+
+    if (msgError) console.error('Error deleting messages:', msgError);
+
+    // Delete any exchange requests between the two users
+    const { error: exchError } = await supabase
+      .from('exchanges')
+      .delete()
+      .or(`and(user_a_id.eq.${currentUserId},user_b_id.eq.${otherUserId}),and(user_a_id.eq.${otherUserId},user_b_id.eq.${currentUserId})`);
+
+    if (exchError) console.error('Error deleting exchanges:', exchError);
+
     // Delete both directions of flicks
     await deleteFlick(currentUserId, otherUserId);
     await deleteFlick(otherUserId, currentUserId);
 
-    const matchId = getMatchId(currentUserId, otherUserId);
-
+    // Delete the match record
     const { error: matchError } = await supabase
       .from('matches')
       .delete()
       .eq('id', matchId);
 
-    if (matchError) {
-      console.error('Error deleting match:', matchError);
-      // Don't throw - flicks are already deleted
-    }
+    if (matchError) console.error('Error deleting match:', matchError);
 
-    console.log('Unmatched successfully');
+    console.log('Unmatched successfully — all data cleared');
   } catch (error) {
     console.error('Error unmatching user:', error);
     throw error;

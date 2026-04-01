@@ -9,6 +9,7 @@ import {
   subscribeToExchanges,
   getUserPhoneNumber,
 } from '../lib/vault';
+import { canRequestExchange } from '../utils/matchUtils';
 
 /**
  * Manages the full number exchange flow for GreenLightScreen:
@@ -21,7 +22,7 @@ import {
  * @param {object} matchedUser  The matched user shown on GreenLightScreen
  * @param {object} navigation   React Navigation object for Vault navigation
  */
-export function useNumberExchange(user, matchedUser, navigation) {
+export function useNumberExchange(user, matchedUser, navigation, theirMessageCount = 0) {
   const [exchangeRequest, setExchangeRequest] = useState(null);
   const [showPhoneInput, setShowPhoneInput] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -95,7 +96,18 @@ export function useNumberExchange(user, matchedUser, navigation) {
     });
   };
 
-  const handleRequestNumber = () => setShowPhoneInput(true);
+  const handleRequestNumber = () => {
+    if (!canRequestExchange({
+      myGender: user.gender,
+      theirGender: matchedUser.gender,
+      theirMessageCount,
+      existingExchange: exchangeRequest,
+    })) {
+      Alert.alert('Ladies First', `Wait for ${matchedUser.name} to message you first.`);
+      return;
+    }
+    setShowPhoneInput(true);
+  };
 
   const handleSubmitPhoneNumber = async () => {
     if (!phoneNumber || phoneNumber.length < 10) {

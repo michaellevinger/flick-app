@@ -20,7 +20,7 @@ import { useUser } from '../lib/userContext';
 
 export default function PhotosScreen({ route, navigation }) {
   const { createUser } = useUser();
-  const { name, gender, age, height, lookingFor, phoneNumber, bio, festivalId } = route.params;
+  const { name, gender, age, height, lookingFor, phoneNumber, bio, festivalId, ageRangeMin, ageRangeMax } = route.params;
 
   const [photos, setPhotos] = useState([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -106,8 +106,15 @@ export default function PhotosScreen({ route, navigation }) {
         bio: bio?.trim() || null,
         festivalId,
         photoUris: photos, // Array of photo URIs
+        ageRangeMin: ageRangeMin ?? 20,
+        ageRangeMax: ageRangeMax ?? 35,
       });
-      navigation.replace('Dashboard');
+      if (festivalId) {
+        navigation.replace('Dashboard');
+      } else {
+        // Profile created — now scan QR to join an event
+        navigation.replace('QRScanner');
+      }
     } catch (error) {
       console.error('Error creating user:', error);
       Alert.alert('Error', 'Failed to create profile. Please try again.');
