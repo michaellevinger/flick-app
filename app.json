@@ -2,6 +2,7 @@
   "expo": {
     "name": "Flick",
     "slug": "flick-fresh-dev",
+    "scheme": "flick",
     "version": "1.0.0",
     "orientation": "portrait",
     "privacy": "public",
@@ -40,6 +41,20 @@
         "POST_NOTIFICATIONS",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "helloflick.com",
+              "pathPrefix": "/join/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {

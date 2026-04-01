@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
+import { clearPendingFestivalId } from '../lib/deepLinking';
 
 export default function PhotosScreen({ route, navigation }) {
   const { createUser } = useUser();
@@ -109,6 +110,7 @@ export default function PhotosScreen({ route, navigation }) {
         ageRangeMin: ageRangeMin ?? 20,
         ageRangeMax: ageRangeMax ?? 35,
       });
+      await clearPendingFestivalId();
       if (festivalId) {
         navigation.replace('Dashboard');
       } else {

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Event on Flick</title>
+  <meta name="description" content="You've been invited to an event on Flick - Turn a Look into Hello">
+  <meta property="og:title" content="Join Event on Flick">
+  <meta property="og:description" content="You've been invited to an event on Flick. Download the app to join!">
+  <meta property="og:type" content="website">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #FF6B9D, #C44CE0, #7B5EE3);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 48px 32px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .logo { font-size: 64px; margin-bottom: 16px; }
+    h1 {
+      font-size: 28px;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .open-btn {
+      display: block;
+      background: linear-gradient(135deg, #FF6B9D, #C44CE0);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    .store-btn {
+      display: inline-block;
+      background: #1a1a1a;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 6px;
+    }
+    .divider {
+      color: #ccc;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .footer {
+      margin-top: 24px;
+      color: #999;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">👻</div>
+    <h1>You're Invited!</h1>
+    <p class="subtitle">Someone shared an event on Flick with you.<br>Open the app to join and start matching.</p>
+
+    <a id="openApp" class="open-btn" href="#">Open in Flick</a>
+
+    <p class="divider">Don't have the app yet?</p>
+
+    <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.michaellevinger.flick" target="_blank">
+      Get it on Google Play
+    </a>
+
+    <p class="footer">flick &mdash; Turn a Look into Hello</p>
+  </div>
+
+  <script>
+    // Extract event ID from URL path: /join/EVENT_ID
+    const pathParts = window.location.pathname.split('/');
+    const eventId = pathParts[pathParts.indexOf('join') + 1];
+
+    if (eventId) {
+      const appUrl = 'flick://join/' + eventId;
+      const openBtn = document.getElementById('openApp');
+      openBtn.href = appUrl;
+
+      // Try to open the app automatically
+      window.location.href = appUrl;
+    }
+  </script>
+</body>
+</html>

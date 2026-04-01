@@ -19,7 +19,7 @@ Updated: 2026-04-01
 
 ## Missing Features (General)
 
-- [ ] **Join event via deep link (no QR scan)** — Share an event link via WhatsApp/SMS/etc. that opens the app and joins the event directly, instead of requiring a QR code scan every time.
+- [x] **Join event via deep link (no QR scan)** — Share an event link via WhatsApp/SMS/etc. that opens the app and joins the event directly, instead of requiring a QR code scan every time.
 - [ ] **Google Sign-In for hosts** — Web + Android OAuth clients created, Supabase configured. Needs testing in preview build.
 - [ ] **App Store / Play Store submission** — Production builds, store listings, screenshots, review process.
 

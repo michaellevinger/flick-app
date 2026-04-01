@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,21 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { getPendingFestivalId } from '../lib/deepLinking';
 
 export default function NameScreen({ route, navigation }) {
-  const festivalId = route.params?.festivalId || null;
+  const paramFestivalId = route.params?.festivalId || null;
+  const [festivalId, setFestivalId] = useState(paramFestivalId);
   const [name, setName] = useState('');
+
+  // If no festivalId from params, check AsyncStorage (app killed mid-onboarding after deep link)
+  useEffect(() => {
+    if (!paramFestivalId) {
+      getPendingFestivalId().then((pending) => {
+        if (pending) setFestivalId(pending);
+      });
+    }
+  }, [paramFestivalId]);
 
   const isValid = name.trim().length > 0;
 

@@ -96,6 +96,34 @@
       display: inline-block;
       margin-top: 20px;
       font-weight: bold;
+      cursor: pointer;
+    }
+    .link-box {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .link-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #333;
+      font-size: 14px;
+    }
+    .copy-btn {
+      background: #FF6B9D;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      white-space: nowrap;
     }
     .info {
       background: rgba(255, 107, 157, 0.1);
@@ -194,6 +222,10 @@
       <p style="color: #666; margin-top: 10px;">
         Festival ID: <code id="outputId" style="color: #FF6B9D; font-weight: bold;"></code>
       </p>
+      <div id="linkBox" class="link-box" style="display:none;">
+        <input type="text" id="linkInput" readonly>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
       <a id="downloadBtn" class="download-btn" download>📥 Download QR Code</a>
     </div>
   </div>
@@ -207,9 +239,11 @@
       const sponsorName = document.getElementById('sponsorName').value.trim();
       const qrSize = parseInt(document.getElementById('qrSize').value);
 
-      // Generate QR code
+      const joinLink = `https://helloflick.com/join/${festivalId}`;
+
+      // Generate QR code with full join URL
       const canvas = document.getElementById('qrCanvas');
-      await QRCode.toCanvas(canvas, festivalId, {
+      await QRCode.toCanvas(canvas, joinLink, {
         width: qrSize,
         margin: 2,
         color: {
@@ -223,6 +257,8 @@
       const title = document.getElementById('outputTitle');
       const outputId = document.getElementById('outputId');
       const downloadBtn = document.getElementById('downloadBtn');
+      const linkBox = document.getElementById('linkBox');
+      const linkInput = document.getElementById('linkInput');
 
       let titleText = festivalName;
       if (sponsorName) {
@@ -231,6 +267,10 @@
 
       title.textContent = titleText;
       outputId.textContent = festivalId;
+
+      // Show shareable link
+      linkInput.value = joinLink;
+      linkBox.style.display = 'flex';
 
       // Setup download
       canvas.toBlob((blob) => {
@@ -242,6 +282,16 @@
       output.classList.add('active');
       output.scrollIntoView({ behavior: 'smooth' });
     });
+
+    function copyLink() {
+      const input = document.getElementById('linkInput');
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    }
   </script>
 </body>
 </html>

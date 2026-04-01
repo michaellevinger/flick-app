@@ -16,6 +16,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
 import { validateAndJoinFestival } from '../lib/database';
 import { useUser } from '../lib/userContext';
+import { parseEventIdFromQR } from '../lib/deepLinking';
 
 export default function QRScannerScreen({ navigation }) {
   const { user, updateUser, toggleStatus } = useUser();
@@ -49,16 +50,18 @@ export default function QRScannerScreen({ navigation }) {
     setScanned(true);
     setIsJoining(true);
 
+    const eventId = parseEventIdFromQR(data);
+
     try {
-      const festival = await validateAndJoinFestival(null, data);
+      const festival = await validateAndJoinFestival(null, eventId);
 
       if (festival) {
-        await AsyncStorage.setItem('festivalId', data);
+        await AsyncStorage.setItem('festivalId', eventId);
 
         // Check if user already has a profile
         if (user) {
           // User exists - update festival ID and activate status
-          await updateUser({ festival_id: data });
+          await updateUser({ festival_id: eventId });
           if (!user.status) {
             await toggleStatus();
           }
@@ -85,7 +88,7 @@ export default function QRScannerScreen({ navigation }) {
                 text: 'Create Profile',
                 onPress: () => {
                   // Navigate to new onboarding flow
-                  navigation.replace('NameScreen', { festivalId: data });
+                  navigation.replace('NameScreen', { festivalId: eventId });
                 },
               },
             ]

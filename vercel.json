@@ -9,6 +9,15 @@
   ],
   "routes": [
     {
+      "src": "/.well-known/(.*)",
+      "dest": "/website/.well-known/$1",
+      "headers": { "Content-Type": "application/json" }
+    },
+    {
+      "src": "/join/(.*)",
+      "dest": "/website/join/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     }

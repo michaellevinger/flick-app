@@ -15,10 +15,12 @@ import QRCode from 'react-native-qrcode-svg';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import ViewShot from 'react-native-view-shot';
+import { getJoinLink } from '../lib/deepLinking';
 
 export default function EventSuccessScreen({ route, navigation }) {
   const { event } = route.params;
   const qrRef = useRef();
+  const joinLink = getJoinLink(event.id);
 
   const handleDone = () => {
     // Navigate back to Welcome screen
@@ -92,7 +94,7 @@ export default function EventSuccessScreen({ route, navigation }) {
             <ViewShot ref={qrRef} options={{ format: 'png', quality: 1.0 }}>
               <View style={styles.qrBackground}>
                 <QRCode
-                  value={event.id}
+                  value={joinLink}
                   size={220}
                   backgroundColor="white"
                   color="black"
@@ -103,7 +105,7 @@ export default function EventSuccessScreen({ route, navigation }) {
           </View>
 
           <Text style={styles.instructions}>
-            Scan this QR code to join the event
+            Scan this QR or share the link to join
           </Text>
 
           <View style={styles.spacer} />
@@ -113,6 +115,18 @@ export default function EventSuccessScreen({ route, navigation }) {
             <TouchableOpacity style={styles.outlineButton} onPress={handleShare}>
               <Text style={styles.outlineButtonIcon}>📤</Text>
               <Text style={styles.outlineButtonText}>Share QR</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.outlineButton}
+              onPress={() => {
+                Share.share({
+                  message: `Join ${event.name} on Flick!\n${joinLink}`,
+                });
+              }}
+            >
+              <Text style={styles.outlineButtonIcon}>🔗</Text>
+              <Text style={styles.outlineButtonText}>Share Link</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={handleDone}>

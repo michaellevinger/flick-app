@@ -4,6 +4,9 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
+const DOMAIN = 'https://helloflick.com';
+const joinLink = (id) => `${DOMAIN}/join/${id}`;
+
 // Sample festivals
 const festivals = [
   { id: 'coachella2024', name: 'Coachella 2024', sponsor: 'Heineken' },
@@ -27,8 +30,8 @@ festivals.forEach(async (festival) => {
   const filepath = path.join(qrDir, filename);
 
   try {
-    // Generate QR code (just the festival ID)
-    await QRCode.toFile(filepath, festival.id, {
+    // Generate QR code with full join URL
+    await QRCode.toFile(filepath, joinLink(festival.id), {
       width: 1024,
       margin: 2,
       color: {
@@ -39,6 +42,7 @@ festivals.forEach(async (festival) => {
 
     console.log(`✅ ${festival.name} (${festival.sponsor})`);
     console.log(`   Festival ID: ${festival.id}`);
+    console.log(`   Join link:   ${joinLink(festival.id)}`);
     console.log(`   File: qr-codes/${filename}\n`);
   } catch (err) {
     console.error(`❌ Error generating QR for ${festival.id}:`, err.message);
@@ -65,7 +69,7 @@ if (process.argv.length >= 4) {
   const filename = `${customId}.png`;
   const filepath = path.join(qrDir, filename);
 
-  QRCode.toFile(filepath, customId, {
+  QRCode.toFile(filepath, joinLink(customId), {
     width: 1024,
     margin: 2,
     color: {
@@ -77,6 +81,7 @@ if (process.argv.length >= 4) {
     console.log(`✅ Custom QR code generated:`);
     console.log(`   ${customName} (${customSponsor})`);
     console.log(`   Festival ID: ${customId}`);
+    console.log(`   Join link:   ${joinLink(customId)}`);
     console.log(`   File: qr-codes/${filename}\n`);
   }).catch((err) => {
     console.error(`❌ Error:`, err.message);

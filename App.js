@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,7 +7,8 @@ import { enableScreens } from 'react-native-screens';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
-import { View, ActivityIndicator, Text, Platform } from 'react-native';
+import { View, ActivityIndicator, Text, Platform, Alert } from 'react-native';
+import * as Linking from 'expo-linking';
 
 // WORKAROUND: Disable native screens for Expo SDK 54 compatibility
 enableScreens(false);
@@ -45,6 +46,8 @@ import { MatchesProvider, useMatches } from './src/lib/matchesContext';
 import { useNotifications } from './src/hooks/useNotifications';
 import { navigationRef } from './src/lib/navigationRef';
 import { handleNotificationTap } from './src/lib/notifications';
+import { parseEventIdFromUrl, storePendingFestivalId } from './src/lib/deepLinking';
+import { validateAndJoinFestival } from './src/lib/festivals';
 import InAppNotification from './src/components/InAppNotification';
 
 // Mounted inside UserProvider — registers push token, handles taps + foreground banner
@@ -152,11 +155,63 @@ function MainTabs() {
   );
 }
 
-// Determines the initial route based on user state
+// Determines the initial route based on user state + deep link
 function AppNavigator() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, updateUser } = useUser();
+  const [initialUrl, setInitialUrl] = useState(undefined); // undefined = not checked yet
+  const coldLinkProcessed = useRef(false);
 
-  if (isLoading) {
+  // Check for cold-start deep link URL
+  useEffect(() => {
+    Linking.getInitialURL().then((url) => setInitialUrl(url || null));
+  }, []);
+
+  // Handle warm-start deep links (app already open, user taps a link)
+  useEffect(() => {
+    const sub = Linking.addEventListener('url', ({ url }) => {
+      handleDeepLink(url);
+    });
+    return () => sub.remove();
+  }, [user]);
+
+  // Process cold-start deep link once user + URL are both ready
+  useEffect(() => {
+    if (isLoading || initialUrl === undefined || coldLinkProcessed.current) return;
+    if (!initialUrl) return;
+    coldLinkProcessed.current = true;
+
+    const eventId = parseEventIdFromUrl(initialUrl);
+    // Only handle existing users here — new users get festivalId via initialParams
+    if (eventId && user) {
+      handleDeepLink(initialUrl);
+    }
+  }, [isLoading, initialUrl, user]);
+
+  const handleDeepLink = async (url) => {
+    const eventId = parseEventIdFromUrl(url);
+    if (!eventId) return;
+
+    const festival = await validateAndJoinFestival(null, eventId);
+    if (!festival) {
+      Alert.alert('Invalid Link', 'This event link is not valid or has expired.');
+      return;
+    }
+
+    if (user) {
+      // Existing user → join event and go to Dashboard
+      await updateUser({ festival_id: eventId });
+      navigationRef.reset({ index: 0, routes: [{ name: 'Dashboard' }] });
+    } else {
+      // New user → store pending festival and start onboarding
+      await storePendingFestivalId(eventId);
+      navigationRef.reset({
+        index: 0,
+        routes: [{ name: 'NameScreen', params: { festivalId: eventId } }],
+      });
+    }
+  };
+
+  if (isLoading || initialUrl === undefined) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.black }}>
         <ActivityIndicator size="large" color={COLORS.pink} />
@@ -164,12 +219,19 @@ function AppNavigator() {
     );
   }
 
-  // No user → onboarding. User without event → QR scan. User with event → dashboard.
+  // Determine initial route, incorporating cold-start deep link for new users
+  const deepLinkEventId = initialUrl ? parseEventIdFromUrl(initialUrl) : null;
+
   let initialRoute = 'NameScreen';
+  let nameScreenInitialParams = {};
+
   if (user && user.festival_id) {
     initialRoute = 'Dashboard';
   } else if (user) {
     initialRoute = 'QRScanner';
+  } else if (deepLinkEventId) {
+    // New user from deep link — seed festivalId into onboarding
+    nameScreenInitialParams = { festivalId: deepLinkEventId };
   }
 
   return (
@@ -185,7 +247,7 @@ function AppNavigator() {
               <Stack.Screen name="QRScanner" component={QRScannerScreen} />
 
               {/* New Onboarding */}
-              <Stack.Screen name="NameScreen" component={NameScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="NameScreen" component={NameScreen} options={{ headerShown: false }} initialParams={nameScreenInitialParams} />
               <Stack.Screen name="BirthdayScreen" component={BirthdayScreen} options={{ headerShown: false }} />
               <Stack.Screen name="GenderScreen" component={GenderScreen} options={{ headerShown: false }} />
               <Stack.Screen name="LookingForScreen" component={LookingForScreen} options={{ headerShown: false }} />
