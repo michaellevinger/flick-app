@@ -85,16 +85,25 @@ export default function NameScreen({ route, navigation }) {
               <View style={styles.spacer} />
 
               {/* Next Button */}
-              <TouchableOpacity
-                style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
-                onPress={handleNext}
-                disabled={!isValid}
-              >
-                <View style={styles.arrowContainer}>
-                  <View style={styles.arrowLine} />
-                  <View style={styles.arrowHead} />
-                </View>
-              </TouchableOpacity>
+              <View style={styles.bottomRow}>
+                <TouchableOpacity
+                  style={styles.hostLink}
+                  onPress={() => navigation.navigate('HostAuth')}
+                >
+                  <Text style={styles.hostLinkText}>Host an Event</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
+                  onPress={handleNext}
+                  disabled={!isValid}
+                >
+                  <View style={styles.arrowContainer}>
+                    <View style={styles.arrowLine} />
+                    <View style={styles.arrowHead} />
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </SafeAreaView>
@@ -169,6 +178,20 @@ const styles = StyleSheet.create({
   spacer: {
     flex: 1,
   },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  hostLink: {
+    paddingVertical: 12,
+  },
+  hostLinkText: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.7)',
+    textDecorationLine: 'underline',
+  },
   nextButton: {
     width: 60,
     height: 60,
@@ -176,8 +199,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-end',
-    marginBottom: 40,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,

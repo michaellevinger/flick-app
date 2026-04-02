@@ -46,7 +46,7 @@ import { MatchesProvider, useMatches } from './src/lib/matchesContext';
 import { useNotifications } from './src/hooks/useNotifications';
 import { navigationRef } from './src/lib/navigationRef';
 import { handleNotificationTap } from './src/lib/notifications';
-import { parseEventIdFromUrl, storePendingFestivalId } from './src/lib/deepLinking';
+import { parseDeepLink, parseEventIdFromUrl, storePendingFestivalId } from './src/lib/deepLinking';
 import { validateAndJoinFestival } from './src/lib/festivals';
 import InAppNotification from './src/components/InAppNotification';
 
@@ -180,33 +180,38 @@ function AppNavigator() {
     if (!initialUrl) return;
     coldLinkProcessed.current = true;
 
-    const eventId = parseEventIdFromUrl(initialUrl);
-    // Only handle existing users here — new users get festivalId via initialParams
-    if (eventId && user) {
+    const link = parseDeepLink(initialUrl);
+    if (!link) return;
+    // Host links: always handle. Join links for existing users: handle here (new users get festivalId via initialParams)
+    if (link.type === 'host' || (link.type === 'join' && user)) {
       handleDeepLink(initialUrl);
     }
   }, [isLoading, initialUrl, user]);
 
   const handleDeepLink = async (url) => {
-    const eventId = parseEventIdFromUrl(url);
-    if (!eventId) return;
+    const link = parseDeepLink(url);
+    if (!link) return;
 
-    const festival = await validateAndJoinFestival(null, eventId);
+    if (link.type === 'host') {
+      navigationRef.reset({ index: 0, routes: [{ name: 'HostAuth' }] });
+      return;
+    }
+
+    // type === 'join'
+    const festival = await validateAndJoinFestival(null, link.eventId);
     if (!festival) {
       Alert.alert('Invalid Link', 'This event link is not valid or has expired.');
       return;
     }
 
     if (user) {
-      // Existing user → join event and go to Dashboard
-      await updateUser({ festival_id: eventId });
+      await updateUser({ festival_id: link.eventId });
       navigationRef.reset({ index: 0, routes: [{ name: 'Dashboard' }] });
     } else {
-      // New user → store pending festival and start onboarding
-      await storePendingFestivalId(eventId);
+      await storePendingFestivalId(link.eventId);
       navigationRef.reset({
         index: 0,
-        routes: [{ name: 'NameScreen', params: { festivalId: eventId } }],
+        routes: [{ name: 'NameScreen', params: { festivalId: link.eventId } }],
       });
     }
   };

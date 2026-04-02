@@ -4,30 +4,43 @@ const PENDING_FESTIVAL_KEY = 'pendingDeepLinkFestivalId';
 const DEEP_LINK_DOMAIN = 'helloflick.com';
 
 /**
- * Extract event ID from a deep link URL.
- * Supports: https://helloflick.com/join/EVENT_ID, flick://join/EVENT_ID
- * Returns the event ID string or null.
+ * Parse a deep link URL and return its type and payload.
+ * Supports:
+ *   flick://join/EVENT_ID, https://helloflick.com/join/EVENT_ID  → { type: 'join', eventId }
+ *   flick://host,          https://helloflick.com/host            → { type: 'host' }
+ * Returns null for unrecognised URLs.
  */
-export function parseEventIdFromUrl(url) {
+export function parseDeepLink(url) {
   if (!url) return null;
 
   try {
-    // flick://join/EVENT_ID
-    if (url.startsWith('flick://')) {
-      const match = url.match(/^flick:\/\/join\/(.+)/);
-      return match?.[1] || null;
+    // Host deep link
+    if (url === 'flick://host' || url.includes(`${DEEP_LINK_DOMAIN}/host`)) {
+      return { type: 'host' };
     }
 
-    // https://helloflick.com/join/EVENT_ID
+    // Join event deep link
+    if (url.startsWith('flick://join/')) {
+      const match = url.match(/^flick:\/\/join\/(.+)/);
+      return match?.[1] ? { type: 'join', eventId: match[1] } : null;
+    }
     if (url.includes(`${DEEP_LINK_DOMAIN}/join/`)) {
       const match = url.match(/\/join\/([^/?#]+)/);
-      return match?.[1] || null;
+      return match?.[1] ? { type: 'join', eventId: match[1] } : null;
     }
   } catch {
     // malformed URL
   }
 
   return null;
+}
+
+/**
+ * Extract event ID from a deep link URL (convenience wrapper).
+ */
+export function parseEventIdFromUrl(url) {
+  const result = parseDeepLink(url);
+  return result?.type === 'join' ? result.eventId : null;
 }
 
 /**

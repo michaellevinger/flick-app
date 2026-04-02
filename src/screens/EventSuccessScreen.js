@@ -9,7 +9,7 @@ import {
   Alert,
   Share,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import * as Sharing from 'expo-sharing';
@@ -21,6 +21,7 @@ export default function EventSuccessScreen({ route, navigation }) {
   const { event } = route.params;
   const qrRef = useRef();
   const joinLink = getJoinLink(event.id);
+  const insets = useSafeAreaInsets();
 
   const handleDone = () => {
     // Navigate back to Welcome screen
@@ -79,7 +80,12 @@ export default function EventSuccessScreen({ route, navigation }) {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <SafeAreaView style={styles.safeArea}>
+        <View
+          style={[
+            styles.content,
+            { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 },
+          ]}
+        >
           {/* Success Icon */}
           <View style={styles.successIconContainer}>
             <Text style={styles.successIcon}>✓</Text>
@@ -95,7 +101,7 @@ export default function EventSuccessScreen({ route, navigation }) {
               <View style={styles.qrBackground}>
                 <QRCode
                   value={joinLink}
-                  size={220}
+                  size={200}
                   backgroundColor="white"
                   color="black"
                 />
@@ -112,28 +118,28 @@ export default function EventSuccessScreen({ route, navigation }) {
 
           {/* Buttons */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.outlineButton} onPress={handleShare}>
-              <Text style={styles.outlineButtonIcon}>📤</Text>
-              <Text style={styles.outlineButtonText}>Share QR</Text>
-            </TouchableOpacity>
+            <View style={styles.shareRow}>
+              <TouchableOpacity style={[styles.outlineButton, styles.shareHalf]} onPress={handleShare}>
+                <Text style={styles.outlineButtonText}>Share QR</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.outlineButton}
-              onPress={() => {
-                Share.share({
-                  message: `Join ${event.name} on Flick!\n${joinLink}`,
-                });
-              }}
-            >
-              <Text style={styles.outlineButtonIcon}>🔗</Text>
-              <Text style={styles.outlineButtonText}>Share Link</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.outlineButton, styles.shareHalf]}
+                onPress={() => {
+                  Share.share({
+                    message: `Join ${event.name} on Flick!\n${joinLink}`,
+                  });
+                }}
+              >
+                <Text style={styles.outlineButtonText}>Share Link</Text>
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity style={styles.button} onPress={handleDone}>
               <Text style={styles.buttonText}>Done</Text>
             </TouchableOpacity>
           </View>
-        </SafeAreaView>
+        </View>
       </LinearGradient>
     </View>
   );
@@ -146,10 +152,9 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  safeArea: {
+  content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 60,
     alignItems: 'center',
   },
   successIconContainer: {
@@ -218,7 +223,13 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     gap: 12,
-    marginBottom: 40,
+  },
+  shareRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  shareHalf: {
+    flex: 1,
   },
   button: {
     backgroundColor: '#FFFFFF',
