@@ -17,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../lib/userContext';
 import { updateUserBio, updateUserPhoneNumber } from '../lib/database';
 import { COLORS, SPACING } from '../constants/theme';
+import { validatePhoneNumber } from '../utils/matchUtils';
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -25,6 +26,7 @@ export default function ProfileScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
 
   const handleBioChange = (text) => {
     setBio(text);
@@ -34,15 +36,30 @@ export default function ProfileScreen({ navigation }) {
   const handlePhoneNumberChange = (text) => {
     setPhoneNumber(text);
     setHasChanges(bio !== (user?.bio || '') || text !== (user?.phoneNumber || ''));
+    if (text.trim()) {
+      const { valid, error } = validatePhoneNumber(text);
+      setPhoneError(valid ? '' : error);
+    } else {
+      setPhoneError('');
+    }
   };
 
   const handleSaveChanges = async () => {
     if (!user || !hasChanges) return;
 
+    if (phoneNumber.trim()) {
+      const { valid, error } = validatePhoneNumber(phoneNumber);
+      if (!valid) {
+        Alert.alert('Invalid Phone Number', error);
+        return;
+      }
+    }
+
     setIsSaving(true);
     try {
       await updateUserBio(user.id, bio);
-      await updateUserPhoneNumber(user.id, phoneNumber);
+      const { cleaned } = validatePhoneNumber(phoneNumber);
+      await updateUserPhoneNumber(user.id, cleaned || '');
       await refreshUser();
       setHasChanges(false);
       Alert.alert('Success', 'Profile updated!');
@@ -185,7 +202,7 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Phone Number</Text>
               <TextInput
-                style={[styles.input, styles.phoneInput]}
+                style={[styles.input, styles.phoneInput, phoneError ? styles.inputError : null]}
                 value={phoneNumber}
                 onChangeText={handlePhoneNumberChange}
                 placeholder="+1 (555) 123-4567"
@@ -193,14 +210,18 @@ export default function ProfileScreen({ navigation }) {
                 keyboardType="phone-pad"
                 maxLength={20}
               />
-              <Text style={styles.helperText}>Used only for number exchange after matching</Text>
+              {phoneError ? (
+                <Text style={styles.errorText}>{phoneError}</Text>
+              ) : (
+                <Text style={styles.helperText}>Used only for number exchange after matching</Text>
+              )}
             </View>
 
             {/* Save Button */}
             <TouchableOpacity
-              style={[styles.saveButton, (!hasChanges || isSaving) && styles.saveButtonDisabled]}
+              style={[styles.saveButton, (!hasChanges || isSaving || phoneError) && styles.saveButtonDisabled]}
               onPress={handleSaveChanges}
-              disabled={!hasChanges || isSaving}
+              disabled={!hasChanges || isSaving || !!phoneError}
             >
               <LinearGradient
                 colors={hasChanges ? [COLORS.pink, COLORS.purple] : [COLORS.grayDisabled, '#AAAAAA']}
@@ -381,6 +402,14 @@ const styles = StyleSheet.create({
     color: COLORS.graySubtle,
     marginTop: 4,
     fontStyle: 'italic',
+  },
+  inputError: {
+    borderColor: '#E53935',
+  },
+  errorText: {
+    fontSize: 12,
+    color: '#E53935',
+    marginTop: 4,
   },
   saveButton: {
     borderRadius: 30,

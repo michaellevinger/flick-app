@@ -169,6 +169,31 @@ export function subscribeToExchanges(userId, onUpdate) {
 }
 
 /**
+ * Update the accepting user's phone on an exchange record if it's still 'pending'.
+ */
+export async function updateExchangePhone(exchangeId, userId, phone) {
+  try {
+    const { data, error: fetchErr } = await supabase
+      .from('exchanges')
+      .select('*')
+      .eq('id', exchangeId)
+      .single();
+
+    if (fetchErr || !data) return;
+
+    const isUserA = data.user_a_id === userId;
+    const phoneField = isUserA ? 'user_a_phone' : 'user_b_phone';
+    const currentPhone = isUserA ? data.user_a_phone : data.user_b_phone;
+
+    if (currentPhone === 'pending') {
+      await supabase.from('exchanges').update({ [phoneField]: phone }).eq('id', exchangeId);
+    }
+  } catch (error) {
+    console.error('Error updating exchange phone:', error);
+  }
+}
+
+/**
  * Update user's phone number
  */
 export async function updateUserPhoneNumber(userId, phoneNumber) {

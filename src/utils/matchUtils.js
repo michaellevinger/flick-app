@@ -30,6 +30,30 @@ export function canRequestExchange({ myGender, theirGender, theirMessageCount, e
 }
 
 /**
+ * Validate a phone number. Strips non-digit characters (except leading +),
+ * then checks for 7-15 digits (E.164 range).
+ * Returns { valid, cleaned, error }.
+ */
+export function validatePhoneNumber(raw) {
+  if (!raw || !raw.trim()) {
+    return { valid: false, cleaned: '', error: 'Please enter a phone number.' };
+  }
+
+  const hasPlus = raw.trim().startsWith('+');
+  const digits = raw.replace(/\D/g, '');
+
+  if (digits.length < 7) {
+    return { valid: false, cleaned: '', error: 'Phone number is too short.' };
+  }
+  if (digits.length > 15) {
+    return { valid: false, cleaned: '', error: 'Phone number is too long.' };
+  }
+
+  const cleaned = (hasPlus ? '+' : '') + digits;
+  return { valid: true, cleaned, error: null };
+}
+
+/**
  * Normalize user data from Supabase to ensure correct JS types.
  * Supabase may return booleans as strings or numbers as strings.
  */

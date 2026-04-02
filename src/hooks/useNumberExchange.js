@@ -8,8 +8,9 @@ import {
   getExchangeRequest,
   subscribeToExchanges,
   getUserPhoneNumber,
+  updateExchangePhone,
 } from '../lib/vault';
-import { canRequestExchange } from '../utils/matchUtils';
+import { canRequestExchange, validatePhoneNumber } from '../utils/matchUtils';
 
 /**
  * Manages the full number exchange flow for GreenLightScreen:
@@ -110,24 +111,20 @@ export function useNumberExchange(user, matchedUser, navigation, theirMessageCou
   };
 
   const handleSubmitPhoneNumber = async () => {
-    if (!phoneNumber || phoneNumber.length < 10) {
-      Alert.alert('Invalid Number', 'Please enter a valid phone number.');
+    const { valid, cleaned, error } = validatePhoneNumber(phoneNumber);
+    if (!valid) {
+      Alert.alert('Invalid Phone Number', error);
       return;
     }
 
     try {
       const theirPhone = await getUserPhoneNumber(matchedUser.id);
 
-      if (!theirPhone) {
-        Alert.alert('Not Available', `${matchedUser.name} hasn't set their phone number yet.`);
-        return;
-      }
-
       const result = await requestNumberExchange(
         user.id,
         matchedUser.id,
-        phoneNumber,
-        theirPhone
+        cleaned,
+        theirPhone || 'pending'
       );
 
       setShowPhoneInput(false);
@@ -147,6 +144,20 @@ export function useNumberExchange(user, matchedUser, navigation, theirMessageCou
     if (!incomingRequest) return;
 
     try {
+      const myPhone = await getUserPhoneNumber(user.id);
+      if (!myPhone) {
+        Alert.alert(
+          'Phone Number Required',
+          'Add your phone number to accept the exchange.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Go to Profile', onPress: () => navigation.navigate('Dashboard', { screen: 'ProfileTab' }) },
+          ]
+        );
+        return;
+      }
+
+      await updateExchangePhone(incomingRequest.id, user.id, myPhone);
       await acceptExchangeRequest(incomingRequest.id);
       setShowIncomingRequest(false);
       navigation.navigate('Vault', {

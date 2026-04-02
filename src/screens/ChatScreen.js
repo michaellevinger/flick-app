@@ -19,7 +19,6 @@ import { useChatMessages } from '../hooks/useChatMessages';
 import { canRequestExchange } from '../utils/matchUtils';
 import { sendSystemMessage } from '../lib/chatService';
 import { sendPushNotification } from '../lib/notifications';
-import { supabase } from '../lib/supabase';
 import {
   requestNumberExchange,
   subscribeToExchanges,
@@ -27,6 +26,7 @@ import {
   declineExchangeRequest,
   getUserPhoneNumber,
   getExchangeRequest,
+  updateExchangePhone,
 } from '../lib/vault';
 import MessageBubble from '../components/MessageBubble';
 import MessageInput from '../components/MessageInput';
@@ -160,8 +160,11 @@ export default function ChatScreen({ route, navigation }) {
     if (!myPhone) {
       Alert.alert(
         'Phone Number Required',
-        'Please add your phone number in profile settings first.',
-        [{ text: 'OK' }]
+        'Add your phone number to request an exchange.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Go to Profile', onPress: () => navigation.navigate('Dashboard', { screen: 'ProfileTab' }) },
+        ]
       );
       return;
     }
@@ -234,15 +237,7 @@ export default function ChatScreen({ route, navigation }) {
       }
 
       // Update the exchange with the user's phone number if it was pending
-      const exchange = await getExchangeRequest(user.id, otherUser.id);
-      if (exchange) {
-        const isUserA = exchange.user_a_id === user.id;
-        const phoneField = isUserA ? 'user_a_phone' : 'user_b_phone';
-        const currentPhone = isUserA ? exchange.user_a_phone : exchange.user_b_phone;
-        if (currentPhone === 'pending') {
-          await supabase.from('exchanges').update({ [phoneField]: myPhone }).eq('id', exchangeId);
-        }
-      }
+      await updateExchangePhone(exchangeId, user.id, myPhone);
 
       await acceptExchangeRequest(exchangeId);
       await sendSystemMessage(matchId, 'Number exchange accepted! Check your vault.', {
